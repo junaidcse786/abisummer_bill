@@ -1,1 +1,1 @@
-<?php  echo "fun part"; ?>
+<?php  /*echo "fun part";*/ ?>
