@@ -146,7 +146,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 										while($parent_obj = mysqli_fetch_object($parent_query))
 										{	
 											
-                                                $selected=($parent_obj->content_id == $locations_ID)? 'selected="selected"': '';
+                                                $selected=($parent_obj->locations_ID == $locations_ID)? 'selected="selected"': '';
                                             
 												echo '<option '.$selected.' value="'.$parent_obj->locations_ID.'">'.$parent_obj->locations_name.'</option>';											
 									
@@ -249,26 +249,6 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
        <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.min.js"></script>
        
        <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/ckeditor/ckeditor.js"></script>
-       
-       <script>
-	   
-	    $( "#exercise_type1" ).change(function() {
-            $('input[name="content_topic"]').val($(this).val());
-        });
-		
-		$( 'select[name="grammar"]' ).change(function() {
-           
-		   if($(this).val()=='1')
-		   
-		   		$( '#content_topic' ).show();
-				
-			else
-			
-				$( '#content_topic' ).hide();	
-		   	
-        });
-	   
-	   </script>
        
        <!-----PAGE LEVEL SCRIPTS END--->
  

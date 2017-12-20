@@ -28,8 +28,6 @@ function export($table, $db){
         fputcsv($f, $fields, $delimiter);
         
         $query_records = mysqli_query($db, "SELECT * FROM $table");
-        
-        
 
         while($row_fields = mysqli_fetch_array($query_records)){
          

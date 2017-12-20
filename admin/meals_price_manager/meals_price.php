@@ -1,6 +1,15 @@
 <?php 
+
+$hotels_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
+$sql = "select hotels_name from ".$db_suffix."hotels where hotels_ID = $hotels_ID limit 1";				
+$query = mysqli_query($db, $sql);
+if(mysqli_num_rows($query) > 0)
+{
+	$content     = mysqli_fetch_object($query);
+	$hotels_name    = $content->hotels_name;
+}
 	
-$sql = "SELECT h.*,l.locations_name FROM ".$db_suffix."hotels h LEFT JOIN ".$db_suffix."locations l ON h.locations_ID=l.locations_ID ORDER BY h.hotels_name ASC";
+$sql = "SELECT mp.*, m.meals_title FROM ".$db_suffix."meals m LEFT JOIN ".$db_suffix."meals_price mp ON m.meals_ID=mp.meals_ID WHERE mp.hotels_ID='$hotels_ID' ORDER BY m.meals_title ASC";
 $news_query = mysqli_query($db,$sql);
 
 ?>
@@ -17,7 +26,7 @@ $news_query = mysqli_query($db,$sql);
 
                                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->
                                         <h3 class="page-title">
-                                                <?php echo $menus["$mKey"]["$pKey"]; ?>
+                                                Mealpreise für Hotel: <?php echo $hotels_name; ?>
                                         </h3>
                                <div class="page-bar">         
                                         <ul class="page-breadcrumb">
@@ -32,7 +41,7 @@ $news_query = mysqli_query($db,$sql);
                                                         <i class="fa fa-angle-right"></i>
                                                 </li>
                                                 <li>
-                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey='.$pKey; ?>"><?php echo $menus["$mKey"]["$pKey"]; ?></a>
+                                                        Mealpreise für Hotel: <?php echo $hotels_name; ?>
                                                 </li>
                                         </ul>
                                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -50,10 +59,9 @@ $news_query = mysqli_query($db,$sql);
                
                <div class="portlet box grey-cascade">
                   <div class="portlet-title">
-                     <div class="caption"><i class="fa fa-table"></i>Hotels</div>
+                     <div class="caption"><i class="fa fa-table"></i>Mealpreise</div>
                      <div class="actions">
-                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addhotels'; ?>" class="btn blue"><i class="fa fa-plus"></i> Hotels einfügen</a>
-                         
+                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addmeals_price&id='.$hotels_ID; ?>" class="btn blue"><i class="fa fa-plus"></i> Mealpreise für diesen Hotel einfügen</a>
                         <div class="btn-group">
                            <a class="btn green" href="#" data-toggle="dropdown">
                            <i class="fa fa-cogs"></i> Tools
@@ -72,12 +80,11 @@ $news_query = mysqli_query($db,$sql);
                         <thead>
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
-                              <th>Name</th>
-                              <th>Sterne</th>
-                              <th>Destination</th>   
+                              <th>Mealtyp</th>
+                              <th>Preis</th>
+                              <th>Preistyp?</th>   
                               <th >Status</th>
-                              <th >eingefügt am</th>
-                              <th></th>   
+                               <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
                            </tr>
                         </thead>
@@ -90,27 +97,21 @@ $news_query = mysqli_query($db,$sql);
 		   ?>
            
                            <tr class="odd gradeX">
-                              <td><input type="checkbox" class="checkboxes" value="<?php echo $row->hotels_ID;?>" /></td>
-                              <td><a href="<?php echo '?mKey='.$mKey.'&pKey=edithotels&id='.$row->hotels_ID;?>"><?php echo $row->hotels_name;?></a></td>
+                              <td><input type="checkbox" class="checkboxes" value="<?php echo $row->mp_ID;?>" /></td>
+                              <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editmeals_price&id='.$row->mp_ID;?>"><?php echo $row->meals_title;?></a></td>
                               
-                              <td><?php echo $row->hotels_star;?></td>
-                              <td><?php echo $row->locations_name;?></td>   
+                              <td><?php echo $row->mp_price;?></td>
+                              <td><?php echo $show = (empty($row->mp_price_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span> <span class="label label-md label-danger">'.$row->mp_price_date_range.'</span>';?></td>   
                               <td> 
-							  <?php if($row->hotels_status)
+							  <?php if($row->mp_status)
 							  
 											echo '<span class="label label-md label-success">aktiv</span>'; 
 									else 
 											echo '<span class="label label-md label-danger">inaktiv</span>';
 									?>
                               </td>
-                            <td><?php echo $row->hotels_creation_time;?></td>
-                              <td>
-                              
-                              <a href="<?php echo '?mKey='.$mKey.'&pKey=meals_price&id='.$row->hotels_ID;?>" class="btn default btn-xs purple"><i class="fa fa-cutlery"></i> MealPreis</a>
-                                  
-                              <a href="<?php echo '?mKey='.$mKey.'&pKey=meals_price&id='.$row->hotels_ID;?>" class="btn default btn-xs blue"><i class="fa fa-bed"></i> Zimmerpreis</a>      
-                              
-                               </td>                               
+                            <td><?php echo $row->mp_creation_time;?></td>
+                                                           
                            </tr>
                            
           <?php } ?>       
@@ -213,11 +214,11 @@ $news_query = mysqli_query($db,$sql);
                     TableManaged.init();                     
                 });
         
-                 var table_name='hotels';
+                 var table_name='meals_price';
 					 
-                 var column_name='hotels_status';
+                 var column_name='mp_status';
 
-                 var column_id='hotels_ID';
+                 var column_id='mp_ID';
 				
 				$('#confirmation_all').on('show.bs.modal', function(e) {
 					 

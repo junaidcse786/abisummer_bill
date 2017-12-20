@@ -267,27 +267,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
        
        <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/ckeditor/ckeditor.js"></script>
        
-       <script>
-	   
-	    $( "#exercise_type1" ).change(function() {
-            $('input[name="content_topic"]').val($(this).val());
-        });
-		
-		$( 'select[name="grammar"]' ).change(function() {
-           
-		   if($(this).val()=='1')
-		   
-		   		$( '#content_topic' ).show();
-				
-			else
-			
-				$( '#content_topic' ).hide();	
-		   	
-        });
-	   
-	   </script>
-       
-        <!-----PAGE LEVEL SCRIPTS END--->
+       <!-----PAGE LEVEL SCRIPTS END--->
  
  
         

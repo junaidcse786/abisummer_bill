@@ -85,7 +85,13 @@ $pages = array(
 						
 						"addhotels"  => "hotels_manager/add_hotels.php",
                             
-                        "edithotels"  => "hotels_manager/edit_hotels.php",    
+                        "edithotels"  => "hotels_manager/edit_hotels.php",
+                            
+                        "meals_price" 	=> "meals_price_manager/meals_price.php",
+						
+						"addmeals_price"  => "meals_price_manager/add_meals_price.php",
+                            
+                        "editmeals_price"  => "meals_price_manager/edit_meals_price.php",    
 						
 						),
     
@@ -107,11 +113,10 @@ $pages = array(
 						
 						"addmeals"  => "meals_manager/add_meals.php",
                             
-                        "editmeals"  => "meals_manager/edit_meals.php",    
-						
-						),
-
-		
+                        "editmeals"  => "meals_manager/edit_meals.php",
+                            
+                        ),
+    
 
 		"setup"        => array
 
