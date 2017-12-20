@@ -57,7 +57,7 @@ function import($table, $filename, $db){
     fclose($handle);
 }
 
-if(isset($_POST["submit"])){    
+if(isset($_POST["submit"]) && !empty($_POST["table_name"]) && !empty($_FILES["file_name"]["tmp_name"])){    
 
     import($db_suffix.$_POST["table_name"], $_FILES["file_name"]["tmp_name"], $db);
     
@@ -70,14 +70,14 @@ if(isset($_POST["submit"])){
     <body>
         <div style="width:30%; margin: 0 auto; padding: 15%;">
             <form action="import.php" method="post" enctype="multipart/form-data">
-                <h3>Import</h3>
+                <h1>Import</h3>
                 <input placeholder="Table name" type="text" name="table_name"><br/><br/>
                 <input type="file" name="file_name"><br/><br/>
                 <button type="submit" name="submit">Submit</button>
             </form>
             <br/><br/><br/>
             <form action="export.php" method="post" enctype="multipart/form-data">
-                <h3>Export</h3>
+                <h1>Export</h3>
                 <input placeholder="Table name" type="text" name="table_name"><br/><br/>
                 <button type="submit" name="submit_export">Submit</button>
             </form>

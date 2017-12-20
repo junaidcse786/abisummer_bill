@@ -53,7 +53,7 @@ function export($table, $db){
     
 }
 
-if(isset($_POST["submit_export"])){    
+if(isset($_POST["submit_export"]) && !empty($_POST["table_name"])){    
 
     export($db_suffix.$_POST["table_name"], $db);
     
