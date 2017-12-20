@@ -1,1 +1,0 @@
-Time for damage{\rtf1}
