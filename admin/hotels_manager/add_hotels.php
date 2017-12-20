@@ -145,14 +145,11 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 									   $sql_parent_menu = "SELECT locations_ID, locations_name FROM ".$db_suffix."locations where locations_status='1'";	
 										$parent_query = mysqli_query($db, $sql_parent_menu);
 										while($parent_obj = mysqli_fetch_object($parent_query))
-										{	
-											$selected="";
-                                            
-                                            if($parent_obj->content_id == $locations_ID)
+										{                                            
                                                 
-                                                $selected='selected="selected"';
+                                            $selected= ($parent_obj->content_id == $locations_ID)? 'selected="selected"' : '';
                                             
-												echo '<option '.$selected.' value="'.$parent_obj->locations_ID.'">'.$parent_obj->locations_name.'</option>';											
+								            echo '<option '.$selected.' value="'.$parent_obj->locations_ID.'">'.$parent_obj->locations_name.'</option>';											
 									
 										}
                                         ?>
