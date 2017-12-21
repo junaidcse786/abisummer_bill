@@ -5,12 +5,14 @@ $alert_message=""; $alert_box_show="hide"; $alert_type="success";
 $err_easy="has-error";
 
 $locations_name = "";
+$locations_profit = "";
 $locations_status = 1;
 
 $err=0;
 
 $messages = array(
-					'locations_name' => array('status' => '', 'msg' => ''),						  				 
+					'locations_name' => array('status' => '', 'msg' => ''),
+                    'locations_profit' => array('status' => '', 'msg' => ''),
 					'locations_status' => array('status' => '', 'msg' => ''),
 				);
 
@@ -23,11 +25,18 @@ if(isset($_POST['Submit']))
 		$messages["locations_name"]["status"]=$err_easy;
 		$messages["locations_name"]["msg"]="Titel ist Pflichtfeld";
 		$err++;		
-	}	
+	}
+    
+    if(empty($locations_profit))
+	{
+		$messages["locations_profit"]["status"]=$err_easy;
+		$messages["locations_profit"]["msg"]="Profit ist Pflichtfeld";
+		$err++;		
+	}
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."locations SET locations_name='$locations_name',locations_status='$locations_status'";
+		$sql = "INSERT INTO ".$db_suffix."locations SET locations_profit='$locations_profit',locations_name='$locations_name',locations_status='$locations_status'";
 		if(mysqli_query($db,$sql))
 		{		
 			$alert_message="Daten erfolgreich gespeichert";		
@@ -122,6 +131,15 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                  		<span for="locations_name" class="help-block"><?php echo $messages["locations_name"]["msg"] ?></span>
                               		</div>
                            	  </div>
+                                   
+                              <div class="form-group <?php echo $messages["locations_profit"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="locations_profit">Profit <span class="required">*</span></label>
+                              		<div class="col-md-4">
+                                 		<input type="text" placeholder="" class="form-control" name="locations_profit" value="<?php echo $locations_profit;?>"/>
+                                 		<span for="locations_profit" class="help-block">In Euro oder Prozent, wenn in Prozent bitte die Symbol % einfügen.
+                                            <br/><?php echo $messages["locations_profit"]["msg"] ?></span>
+                              		</div>
+                           	  </div>       
                          	
                               <div class="form-group last">
                                   <label for="locations_status" class="control-label col-md-3">Status</label>

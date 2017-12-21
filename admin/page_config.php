@@ -63,7 +63,13 @@ $pages = array(
 						
 						"addlocations"  => "locations_manager/add_locations.php",
                             
-                        "editlocations"  => "locations_manager/edit_locations.php",    
+                        "editlocations"  => "locations_manager/edit_locations.php",
+                            
+                        "costs" 	=> "locations_costs_manager/costs.php",
+						
+						"addcosts"  => "locations_costs_manager/add_costs.php",
+                            
+                        "editcosts"  => "locations_costs_manager/edit_costs.php",    
 						
 						),     
     

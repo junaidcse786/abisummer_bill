@@ -1,6 +1,15 @@
 <?php 
+
+$locations_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
+$sql = "select locations_name from ".$db_suffix."locations where locations_ID = $locations_ID limit 1";				
+$query = mysqli_query($db, $sql);
+if(mysqli_num_rows($query) > 0)
+{
+	$content     = mysqli_fetch_object($query);
+	$locations_name    = $content->locations_name;
+}
 	
-$sql = "SELECT * FROM ".$db_suffix."locations";
+$sql = "SELECT * FROM ".$db_suffix."locations_costs WHERE locations_ID='$locations_ID' ORDER BY lc_costs ASC";
 $news_query = mysqli_query($db,$sql);
 
 ?>
@@ -17,7 +26,7 @@ $news_query = mysqli_query($db,$sql);
 
                                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->
                                         <h3 class="page-title">
-                                                <?php echo $menus["$mKey"]["$pKey"]; ?>
+                                                Kosten für Destination: <?php echo $locations_name; ?>
                                         </h3>
                                <div class="page-bar">         
                                         <ul class="page-breadcrumb">
@@ -32,7 +41,12 @@ $news_query = mysqli_query($db,$sql);
                                                         <i class="fa fa-angle-right"></i>
                                                 </li>
                                                 <li>
-                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey='.$pKey; ?>"><?php echo $menus["$mKey"]["$pKey"]; ?></a>
+                                                        <i class="<?php echo $active_module_icon; ?>"></i>
+                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=locations'; ?>"><?php echo $menus["$mKey"]["locations"]; ?></a>
+                                                        <i class="fa fa-angle-right"></i>
+                                                </li>
+                                                <li>
+                                                        Kosten für Destination: <?php echo $locations_name; ?>
                                                 </li>
                                         </ul>
                                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -50,9 +64,9 @@ $news_query = mysqli_query($db,$sql);
                
                <div class="portlet box grey-cascade">
                   <div class="portlet-title">
-                     <div class="caption"><i class="fa fa-table"></i>Destinations</div>
+                     <div class="caption"><i class="fa fa-table"></i>Kosten</div>
                      <div class="actions">
-                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addlocations'; ?>" class="btn blue"><i class="fa fa-plus"></i> Destination einfügen</a>
+                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addcosts&id='.$locations_ID; ?>" class="btn blue"><i class="fa fa-plus"></i> Kosten für diesen Hotel einfügen</a>
                         <div class="btn-group">
                            <a class="btn green" href="#" data-toggle="dropdown">
                            <i class="fa fa-cogs"></i> Tools
@@ -72,10 +86,11 @@ $news_query = mysqli_query($db,$sql);
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Titel</th>
-                              <th>Profit</th>
+                              <th>Kosten</th>
+                              <th>Typ?</th>   
                               <th >Status</th>
                                <th >eingefügt am</th>
-                              <th >&nbsp;</th>                       
+                              <!--<th >&nbsp;</th>    -->                          
                            </tr>
                         </thead>
                         <tbody>
@@ -87,24 +102,22 @@ $news_query = mysqli_query($db,$sql);
 		   ?>
            
                            <tr class="odd gradeX">
-                              <td><input type="checkbox" class="checkboxes" value="<?php echo $row->locations_ID;?>" /></td>
-                              <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editlocations&id='.$row->locations_ID;?>"><?php echo $row->locations_name;?></a></td>
+                              <td><input type="checkbox" class="checkboxes" value="<?php echo $row->lc_ID;?>" /></td>
+                              <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editcosts&id='.$row->lc_ID;?>"><?php echo $row->lc_title;?></a></td>
                                
-                              <td><?php echo $row->locations_profit;?></td>   
+                              <td><?php echo $row->lc_costs;?></td>    
                               
-                              <td>
-							  <?php if($row->locations_status)
+                              <td><?php echo $show = (empty($row->lc_costs_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span>';?></td>   
+                              <td> 
+							  <?php if($row->lc_status)
 							  
 											echo '<span class="label label-md label-success">aktiv</span>'; 
 									else 
 											echo '<span class="label label-md label-danger">inaktiv</span>';
 									?>
                               </td>
-                            <td><?php echo $row->locations_creation_time;?></td>
-                            <td>
-                              
-                              <a href="<?php echo '?mKey='.$mKey.'&pKey=costs&id='.$row->locations_ID;?>" class="btn default btn-xs purple"><i class="fa fa-euro"></i> Kosten Liste</a>
-                              </td>                       
+                            <td><?php echo $row->lc_creation_time;?></td>
+                                                           
                            </tr>
                            
           <?php } ?>       
@@ -207,11 +220,11 @@ $news_query = mysqli_query($db,$sql);
                     TableManaged.init();                     
                 });
         
-                 var table_name='locations';
+                 var table_name='locations_costs';
 					 
-                 var column_name='locations_status';
+                 var column_name='lc_status';
 
-                 var column_id='locations_ID';
+                 var column_id='lc_ID';
 				
 				$('#confirmation_all').on('show.bs.modal', function(e) {
 					 
