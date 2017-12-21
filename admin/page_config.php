@@ -91,7 +91,13 @@ $pages = array(
 						
 						"addmeals_price"  => "meals_price_manager/add_meals_price.php",
                             
-                        "editmeals_price"  => "meals_price_manager/edit_meals_price.php",    
+                        "editmeals_price"  => "meals_price_manager/edit_meals_price.php",  
+                            
+                        "rooms_price" 	=> "rooms_price_manager/rooms_price.php",
+						
+						"addrooms_price"  => "rooms_price_manager/add_rooms_price.php",
+                            
+                        "editrooms_price"  => "rooms_price_manager/edit_rooms_price.php",     
 						
 						),
     

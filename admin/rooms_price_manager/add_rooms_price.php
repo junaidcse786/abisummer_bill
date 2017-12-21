@@ -6,33 +6,33 @@ $hotels_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
 	
 $err_easy="has-error";
 
-$mp_price_date_range = "";
-$mp_status = 1;
-$mp_price = "";
-$mp_notes = "";
-$meals_ID = "";
+$rp_price_date_range = "";
+$rp_status = 1;
+$rp_price = "";
+$rp_notes = "";
+$rooms_ID = "";
 
 $err=0;
 
 $messages = array(
-					'meals_ID' => array('status' => '', 'msg' => ''),						  				 
-					'mp_price_date_range' => array('status' => '', 'msg' => ''),
-                    'mp_price' => array('status' => '', 'msg' => ''),
-                    'mp_status' => array('status' => '', 'msg' => ''),
-                    'mp_notes' => array('status' => '', 'msg' => ''),
+					'rooms_ID' => array('status' => '', 'msg' => ''),						  				 
+					'rp_price_date_range' => array('status' => '', 'msg' => ''),
+                    'rp_price' => array('status' => '', 'msg' => ''),
+                    'rp_status' => array('status' => '', 'msg' => ''),
+                    'rp_notes' => array('status' => '', 'msg' => ''),
 				);
 
 if(isset($_POST['Submit']))
 {	
 	extract($_POST);
-	//echo "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND meals_ID = $meals_ID AND mp_price_range=''";
+	//echo "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND rp_price_range=''";
 	
     if(empty($date_from) && empty($date_to)):
     
-        if(mysqli_num_rows(mysqli_query($db, "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND meals_ID = $meals_ID AND mp_price_date_range=''"))>0)
+        if(mysqli_num_rows(mysqli_query($db, "SELECT rp_ID from ".$db_suffix."rooms_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND rp_price_date_range=''"))>0)
         {
-            $messages["meals_ID"]["status"]=$err_easy;
-            $messages["meals_ID"]["msg"]="Regularpreis schon existiert";
+            $messages["rooms_ID"]["status"]=$err_easy;
+            $messages["rooms_ID"]["msg"]="Regularpreis schon existiert";
             $err++;		
         }
     
@@ -40,20 +40,20 @@ if(isset($_POST['Submit']))
     
     if(!empty($date_from) || !empty($date_to)):
     
-        $mp_price_date_range=$date_from."::".$date_to;
+        $rp_price_date_range=$date_from."::".$date_to;
     
     endif;
     
-    if(empty($mp_price))
+    if(empty($rp_price))
 	{
-		$messages["mp_price"]["status"]=$err_easy;
-		$messages["mp_price"]["msg"]="Preis ist Pflichtfeld";
+		$messages["rp_price"]["status"]=$err_easy;
+		$messages["rp_price"]["msg"]="Preis ist Pflichtfeld";
 		$err++;		
 	}    
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."meals_price SET hotels_ID='$hotels_ID',meals_ID='$meals_ID',mp_price_date_range='$mp_price_date_range',mp_price='$mp_price',mp_status='$mp_status',mp_notes='$mp_notes'";
+		$sql = "INSERT INTO ".$db_suffix."rooms_price SET hotels_ID='$hotels_ID',rooms_ID='$rooms_ID',rp_price_date_range='$rp_price_date_range',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -61,7 +61,7 @@ if(isset($_POST['Submit']))
 			$alert_box_show="show";
 			$alert_type="success";
 			
-			$mp_price_date_range = "";
+			$rp_price_date_range = "";
 			
 		}else{
 			$alert_box_show="show";
@@ -96,9 +96,9 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE mp_price_date_range & BREADCRUMB-->
-                                        <h3 class="page-mp_price_date_range">
-                                                Mealpreis für diesen Hotel einfügen
+                                        <!-- BEGIN PAGE rp_price_date_range & BREADCRUMB-->
+                                        <h3 class="page-rp_price_date_range">
+                                                Zimmerpreis für diesen Hotel einfügen
                                         </h3>
                                         <div class="page-bar">         
                                         <ul class="page-breadcrumb">
@@ -113,10 +113,10 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <i class="fa fa-angle-right"></i>
                                                 </li>
                                                 <li>
-                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=meals_price&id='.$hotels_ID; ?>">Mealpreis Liste für diesen Hotel</a>
+                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=rooms_price&id='.$hotels_ID; ?>">Zimmerpreis Liste für diesen Hotel</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE mp_price_date_range & BREADCRUMB-->
+                                        <!-- END PAGE rp_price_date_range & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -142,61 +142,61 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                
                                <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
                                    
-                               <div class="form-group <?php echo $messages["meals_ID"]["status"] ?>">
-                                 <label for="parent" class="control-label col-md-3">Mealtyp <span class="required">*</span></label>
+                               <div class="form-group <?php echo $messages["rooms_ID"]["status"] ?>">
+                                 <label for="parent" class="control-label col-md-3">Zimmertyp <span class="required">*</span></label>
                                  <div class="col-md-4">
-                                    <select class="form-control select2me"  data-placeholder="Auswählen" tabindex="0" name="meals_ID">                                                                              
+                                    <select class="form-control select2me"  data-placeholder="Auswählen" tabindex="0" name="rooms_ID">                                                                              
                                        <?php
-									   $sql_parent_menu = "SELECT meals_ID, meals_title FROM ".$db_suffix."meals where meals_status='1'";	
+									   $sql_parent_menu = "SELECT rooms_ID, rooms_title FROM ".$db_suffix."rooms where rooms_status='1'";	
 								        $parent_query = mysqli_query($db, $sql_parent_menu);
 										while($parent_obj = mysqli_fetch_object($parent_query))
 										{                                            
                                                 
-                                            $selected= ($parent_obj->meals_ID == $meals_ID)? 'selected="selected"' : '';
+                                            $selected= ($parent_obj->rooms_ID == $rooms_ID)? 'selected="selected"' : '';
                                             
-								            echo '<option '.$selected.' value="'.$parent_obj->meals_ID.'">'.$parent_obj->meals_title.'</option>';											
+								            echo '<option '.$selected.' value="'.$parent_obj->rooms_ID.'">'.$parent_obj->rooms_title.'</option>';											
 									
 										}
                                         ?>
                                        
                                     </select>
-                                    <span for="meals_ID" class="help-block"><?php echo $messages["meals_ID"]["msg"] ?></span>
+                                    <span for="rooms_ID" class="help-block"><?php echo $messages["rooms_ID"]["msg"] ?></span>
                                  </div>
                               </div>   
                                                           
-                              <div class="form-group <?php echo $messages["mp_price"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="mp_price">Preis <span class="required">*</span></label>
+                              <div class="form-group <?php echo $messages["rp_price"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="rp_price">Preis <span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="number" min="0" step="any" placeholder="" class="form-control" name="mp_price" value="<?php echo $mp_price;?>"/>
-                                 		<span for="mp_price" class="help-block"><?php echo $messages["mp_price"]["msg"] ?></span>
+                                 		<input type="number" min="0" step="any" placeholder="" class="form-control" name="rp_price" value="<?php echo $rp_price;?>"/>
+                                 		<span for="rp_price" class="help-block"><?php echo $messages["rp_price"]["msg"] ?></span>
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["mp_price_date_range"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="mp_price_date_range">Besonder preis für Datum</label>
+                              <div class="form-group <?php echo $messages["rp_price_date_range"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="rp_price_date_range">Besonder preis für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
                                                             <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
                                                             <span class="input-group-addon"> - </span>
                                                             <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> </div>
-                                 		<span for="mp_price_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["mp_price_date_range"]["msg"] ?></span>
+                                 		<span for="rp_price_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["rp_price_date_range"]["msg"] ?></span>
                               		</div>
                            	  </div>   
                                    
-                              <div class="form-group  <?php echo $messages["mp_notes"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="mp_notes">Notes</label>
+                              <div class="form-group  <?php echo $messages["rp_notes"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="rp_notes">Notes</label>
                               		<div class="col-md-9">
-                                 		<textarea rows="6" class="form-control" name="mp_notes"><?php echo $mp_notes; ?></textarea>
-                                 		<!--<span for="mp_notes" class="help-block"><span class="label label-danger">NOTE!</span> Use + (addition operator) to seperate answers (White space tolerable). For 2 or more correct answers, use = (equal sign) (Also White space tolerable). In case of a <strong>Text type</strong> question, just enter the text exactly how you want it (including punctuations).<br /><br /><strong><?php echo $messages["mp_notes"]["msg"] ?></strong></span>-->
+                                 		<textarea rows="6" class="form-control" name="rp_notes"><?php echo $rp_notes; ?></textarea>
+                                 		<!--<span for="rp_notes" class="help-block"><span class="label label-danger">NOTE!</span> Use + (addition operator) to seperate answers (White space tolerable). For 2 or more correct answers, use = (equal sign) (Also White space tolerable). In case of a <strong>Text type</strong> question, just enter the text exactly how you want it (including punctuations).<br /><br /><strong><?php echo $messages["rp_notes"]["msg"] ?></strong></span>-->
                               		</div>
                            	  </div>       
                          	
                               <div class="form-group last">
-                                  <label for="mp_status" class="control-label col-md-3">Status</label>
+                                  <label for="rp_status" class="control-label col-md-3">Status</label>
                                   <div class="col-md-2">
-                                     <select class="form-control" name="mp_status">
-                                        <option <?php if($mp_status==1) echo 'selected="selected"'; ?> value="1">aktiv</option>
-                                        <option <?php if($mp_status==0) echo 'selected="selected"'; ?> value="0">inaktiv</option>
+                                     <select class="form-control" name="rp_status">
+                                        <option <?php if($rp_status==1) echo 'selected="selected"'; ?> value="1">aktiv</option>
+                                        <option <?php if($rp_status==0) echo 'selected="selected"'; ?> value="0">inaktiv</option>
                                      </select>
                                   </div>
                               </div>

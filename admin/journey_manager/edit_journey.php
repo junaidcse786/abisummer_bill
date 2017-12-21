@@ -177,7 +177,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               <div class="form-group <?php echo $messages["journey_price"]["status"] ?>">
                               		<label class="control-label col-md-3" for="journey_price">Reisetyp Preis (Euro) <span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="number" placeholder="" class="form-control" name="journey_price" value="<?php echo $journey_price;?>"/>
+                                 		<input type="number" min="0" step="any" placeholder="" class="form-control" name="journey_price" value="<?php echo $journey_price;?>"/>
                                  		<span for="journey_price" class="help-block"><?php echo $messages["journey_price"]["msg"] ?></span>
                               		</div>
                            	  </div>

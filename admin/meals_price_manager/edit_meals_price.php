@@ -6,7 +6,6 @@ $err_easy="has-error";
 
 $err=0;
 
-
 $mp_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
 $sql = "select * from ".$db_suffix."meals_price where mp_ID = $mp_ID limit 1";				
 $query = mysqli_query($db, $sql);
@@ -20,9 +19,19 @@ if(mysqli_num_rows($query) > 0)
 	$mp_status    = $content->mp_status;
     $mp_notes    = $content->mp_notes;
     $mp_update_time    = $content->mp_update_time;
+    
+    if(!empty($content->mp_price_date_range)):
+        
+        $date_from=explode("::", $content->mp_price_date_range)[0];
+        
+        $date_to=explode("::", $content->mp_price_date_range)[1];
+    
+    else:
+    
+        $date_from=""; $date_to="";
+    
+    endif;
 }
-
-
 
 $messages = array(
 					'meals_ID' => array('status' => '', 'msg' => ''),						  				 
@@ -35,8 +44,6 @@ $messages = array(
 if(isset($_POST['Submit']))
 {	
 	extract($_POST);
-	
-    $mp_price_date_range=$date_from." :: ".$date_to;
     
     if(empty($date_from) && empty($date_to)):
         $any = mysqli_query($db, "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = '$content->hotels_ID' AND meals_ID = $meals_ID AND mp_price_date_range='' AND mp_ID != '$mp_ID'");
@@ -46,6 +53,16 @@ if(isset($_POST['Submit']))
             $messages["meals_ID"]["msg"]="Regularpreis schon existiert";
             $err++;		
         }
+    
+    endif;
+    
+    if(!empty($date_from) || !empty($date_to)):
+    
+        $mp_price_date_range=$date_from."::".$date_to;
+    
+    elseif(empty($date_from) && empty($date_to)):
+        
+         $mp_price_date_range="";
     
     endif;
     
@@ -169,7 +186,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               <div class="form-group <?php echo $messages["mp_price"]["status"] ?>">
                               		<label class="control-label col-md-3" for="mp_price">Preis <span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="number" placeholder="" class="form-control" name="mp_price" value="<?php echo $mp_price;?>"/>
+                                 		<input type="number" min="0" step="any" placeholder="" class="form-control" name="mp_price" value="<?php echo $mp_price;?>"/>
                                  		<span for="mp_price" class="help-block"><?php echo $messages["mp_price"]["msg"] ?></span>
                               		</div>
                            	  </div>
@@ -177,10 +194,14 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               <div class="form-group <?php echo $messages["mp_price_date_range"]["status"] ?>">
                               		<label class="control-label col-md-3" for="mp_price_date_range">Besonder preis für Datum</label>
                               		<div class="col-md-4">
-                                 		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
-                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
+                                 		<div class="input-group input-large date-picker input-daterange">
+                                                            
+                                                            <input value="<?php echo $date_from; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
+                                            
                                                             <span class="input-group-addon"> - </span>
-                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> </div>
+                                            
+                                                            <input value="<?php echo $date_to; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> 
+                                        </div>
                                  		<span for="mp_price_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["mp_price_date_range"]["msg"] ?></span>
                               		</div>
                            	  </div>   
@@ -282,6 +303,6 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 if($alert_type=='success' && isset($_POST["Submit"]))
 {
 	//usleep(3000000);
-	//echo '<script>window.location="'.$_SERVER['REQUEST_URI'].'&s_factor=1";</script>';
+	echo '<script>window.location="'.$_SERVER['REQUEST_URI'].'&s_factor=1";</script>';
 }
 ?>

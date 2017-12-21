@@ -101,7 +101,7 @@ $news_query = mysqli_query($db,$sql);
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editmeals_price&id='.$row->mp_ID;?>"><?php echo $row->meals_title;?></a></td>
                               
                               <td><?php echo $row->mp_price;?></td>
-                              <td><?php echo $show = (empty($row->mp_price_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span> <span class="label label-md label-danger">'.$row->mp_price_date_range.'</span>';?></td>   
+                              <td><?php echo $show = (empty($row->mp_price_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span>';?></td>   
                               <td> 
 							  <?php if($row->mp_status)
 							  
