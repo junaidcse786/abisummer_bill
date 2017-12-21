@@ -97,7 +97,13 @@ $pages = array(
 						
 						"addrooms_price"  => "rooms_price_manager/add_rooms_price.php",
                             
-                        "editrooms_price"  => "rooms_price_manager/edit_rooms_price.php",     
+                        "editrooms_price"  => "rooms_price_manager/edit_rooms_price.php", 
+                            
+                        "early_bird" 	=> "early_bird_manager/early_bird.php",
+						
+						"addearly_bird"  => "early_bird_manager/add_early_bird.php",
+                            
+                        "editearly_bird"  => "early_bird_manager/edit_early_bird.php",    
 						
 						),
     

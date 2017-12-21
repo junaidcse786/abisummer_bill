@@ -1,53 +1,65 @@
 <?php 
 	
 $alert_message=""; $alert_box_show="hide"; $alert_type="success";
+
+$hotels_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
 	
 $err_easy="has-error";
 
-$journey_title = "";
-$journey_status = 1;
-$journey_price = "";
-$journey_notes = "";
-$locations_ID = "";
+$eb_discount_date_range = "";
+$eb_status = 1;
+$eb_discount = "";
+$eb_notes = "";
 
 $err=0;
 
 $messages = array(
-					'locations_ID' => array('status' => '', 'msg' => ''),						  				 
-					'journey_title' => array('status' => '', 'msg' => ''),
-                    'journey_price' => array('status' => '', 'msg' => ''),
-                    'journey_status' => array('status' => '', 'msg' => ''),
-                    'journey_notes' => array('status' => '', 'msg' => ''),
+					'eb_discount_date_range' => array('status' => '', 'msg' => ''),
+                    'eb_discount' => array('status' => '', 'msg' => ''),
+                    'eb_status' => array('status' => '', 'msg' => ''),
+                    'eb_notes' => array('status' => '', 'msg' => ''),
 				);
 
 if(isset($_POST['Submit']))
 {	
 	extract($_POST);
 	
-	if(empty($journey_title))
-	{
-		$messages["journey_title"]["status"]=$err_easy;
-		$messages["journey_title"]["msg"]="Titel ist Pflichtfeld";
-		$err++;		
-	}	
+    if(!empty($date_from) || !empty($date_to)):
     
-    if(empty($locations_ID))
-	{
-		$messages["locations_ID"]["status"]=$err_easy;
-		$messages["locations_ID"]["msg"]="Destination ist Pflichtfeld";
-		$err++;		
-	}
+        $eb_discount_date_range=$date_from."::".$date_to;
     
-    if(empty($journey_price))
+        if(mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND eb_discount_date_range='$eb_discount_date_range'"))>0)
+        {
+            $messages["eb_discount_date_range"]["status"]=$err_easy;
+            $messages["eb_discount_date_range"]["msg"]="Rabatt schon existiert";
+            $err++;		
+        }
+    
+    endif;
+    
+    if(!empty($date_from) || !empty($date_to)):
+    
+        $eb_discount_date_range=$date_from."::".$date_to;
+    
+    elseif(empty($date_from) && empty($date_to)):
+        
+        $messages["eb_discount_date_range"]["status"]=$err_easy;
+        $messages["eb_discount_date_range"]["msg"]="Rabatt Datum ist Pflichtfeld";
+        $err++; 
+        $eb_discount_date_range="";
+    
+    endif;
+    
+    if(empty($eb_discount))
 	{
-		$messages["journey_price"]["status"]=$err_easy;
-		$messages["journey_price"]["msg"]="Preis ist Pflichtfeld";
+		$messages["eb_discount"]["status"]=$err_easy;
+		$messages["eb_discount"]["msg"]="Rabatt ist Pflichtfeld";
 		$err++;		
-	}
+	}    
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."journey SET locations_ID='$locations_ID',journey_title='$journey_title',journey_price='$journey_price',journey_status='$journey_status',journey_notes='$journey_notes'";
+		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_range='$eb_discount_date_range',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -55,7 +67,7 @@ if(isset($_POST['Submit']))
 			$alert_box_show="show";
 			$alert_type="success";
 			
-			$journey_title = "";
+			$eb_discount_date_range = "";
 			
 		}else{
 			$alert_box_show="show";
@@ -90,9 +102,9 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE journey_title & BREADCRUMB-->
-                                        <h3 class="page-journey_title">
-                                                <?php echo $menus["$mKey"]["$pKey"]; ?>
+                                        <!-- BEGIN PAGE eb_discount_date_range & BREADCRUMB-->
+                                        <h3 class="page-eb_discount_date_range">
+                                                Eary Bird Rabatt für diesen Hotel einfügen
                                         </h3>
                                         <div class="page-bar">         
                                         <ul class="page-breadcrumb">
@@ -107,10 +119,10 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <i class="fa fa-angle-right"></i>
                                                 </li>
                                                 <li>
-                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey='.$pKey; ?>"><?php echo $menus["$mKey"]["$pKey"]; ?></a>
+                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=early_bird&id='.$hotels_ID; ?>">Eary Bird Rabatt Liste für diesen Hotel</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE journey_title & BREADCRUMB-->
+                                        <!-- END PAGE eb_discount_date_range & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -136,57 +148,39 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                
                                <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
                                    
-                               <div class="form-group">
-                                 <label for="parent" class="control-label col-md-3">Destination <span class="required">*</span></label>
-                                 <div class="col-md-4">
-                                    <select class="form-control select2me"  data-placeholder="Auswählen" tabindex="0" name="locations_ID">                                                                              
-                                       <?php
-									   $sql_parent_menu = "SELECT locations_ID, locations_name FROM ".$db_suffix."locations where locations_status='1'";	
-										$parent_query = mysqli_query($db, $sql_parent_menu);
-										while($parent_obj = mysqli_fetch_object($parent_query))
-										{	
-											
-                                                $selected=($parent_obj->locations_ID == $locations_ID)? 'selected="selected"': '';
-                                            
-												echo '<option '.$selected.' value="'.$parent_obj->locations_ID.'">'.$parent_obj->locations_name.'</option>';											
-									
-										}
-                                        ?>
-                                       
-                                    </select>
-                                 </div>
-                              </div>   
-                                                          
-                               <div class="form-group <?php echo $messages["journey_title"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="journey_title">Reisetyp Titel <span class="required">*</span></label>
+                               <div class="form-group <?php echo $messages["eb_discount"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="eb_discount">Rabatt <span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="text" placeholder="" class="form-control" name="journey_title" value="<?php echo $journey_title;?>"/>
-                                 		<span for="journey_title" class="help-block"><?php echo $messages["journey_title"]["msg"] ?></span>
+                                 		<input type="number" min="1" step="any" placeholder="" class="form-control" name="eb_discount" value="<?php echo $eb_discount;?>"/>
+                                 		<span for="eb_discount" class="help-block"><?php echo $messages["eb_discount"]["msg"] ?></span>
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["journey_price"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="journey_price">Reisetyp Preis (Euro) <span class="required">*</span></label>
+                              <div class="form-group <?php echo $messages["eb_discount_date_range"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="eb_discount_date_range">Rabatt für Datum</label>
                               		<div class="col-md-4">
-                                 		<input type="number" step="any" placeholder="" class="form-control" name="journey_price" value="<?php echo $journey_price;?>"/>
-                                 		<span for="journey_price" class="help-block"><?php echo $messages["journey_price"]["msg"] ?></span>
+                                 		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
+                                                            <span class="input-group-addon"> - </span>
+                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> </div>
+                                 		<span for="eb_discount_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_range"]["msg"] ?></span>
                               		</div>
-                           	  </div>
+                           	  </div>   
                                    
-                              <div class="form-group  <?php echo $messages["journey_notes"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="journey_notes">Notes</label>
+                              <div class="form-group  <?php echo $messages["eb_notes"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="eb_notes">Notes</label>
                               		<div class="col-md-9">
-                                 		<textarea rows="6" class="form-control" name="journey_notes"><?php echo $journey_notes; ?></textarea>
-                                 		<!--<span for="journey_notes" class="help-block"><span class="label label-danger">NOTE!</span> Use + (addition operator) to seperate answers (White space tolerable). For 2 or more correct answers, use = (equal sign) (Also White space tolerable). In case of a <strong>Text type</strong> question, just enter the text exactly how you want it (including punctuations).<br /><br /><strong><?php echo $messages["journey_notes"]["msg"] ?></strong></span>-->
+                                 		<textarea rows="6" class="form-control" name="eb_notes"><?php echo $eb_notes; ?></textarea>
+                                 		<!--<span for="eb_notes" class="help-block"><span class="label label-danger">NOTE!</span> Use + (addition operator) to seperate answers (White space tolerable). For 2 or more correct answers, use = (equal sign) (Also White space tolerable). In case of a <strong>Text type</strong> question, just enter the text exactly how you want it (including punctuations).<br /><br /><strong><?php echo $messages["eb_notes"]["msg"] ?></strong></span>-->
                               		</div>
                            	  </div>       
                          	
                               <div class="form-group last">
-                                  <label for="journey_status" class="control-label col-md-3">Status</label>
+                                  <label for="eb_status" class="control-label col-md-3">Status</label>
                                   <div class="col-md-2">
-                                     <select class="form-control" name="journey_status">
-                                        <option <?php if($journey_status==1) echo 'selected="selected"'; ?> value="1">aktiv</option>
-                                        <option <?php if($journey_status==0) echo 'selected="selected"'; ?> value="0">inaktiv</option>
+                                     <select class="form-control" name="eb_status">
+                                        <option <?php if($eb_status==1) echo 'selected="selected"'; ?> value="1">aktiv</option>
+                                        <option <?php if($eb_status==0) echo 'selected="selected"'; ?> value="0">inaktiv</option>
                                      </select>
                                   </div>
                               </div>

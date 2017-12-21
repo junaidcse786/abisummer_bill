@@ -41,6 +41,11 @@ $news_query = mysqli_query($db,$sql);
                                                         <i class="fa fa-angle-right"></i>
                                                 </li>
                                                 <li>
+                                                        <i class="<?php echo $active_module_icon; ?>"></i>
+                                                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=hotels'; ?>"><?php echo $menus["$mKey"]["hotels"]; ?></a>
+                                                        <i class="fa fa-angle-right"></i>
+                                                </li>
+                                                <li>
                                                         Zimmerpreise für Hotel: <?php echo $hotels_name; ?>
                                                 </li>
                                         </ul>

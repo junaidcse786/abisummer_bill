@@ -9,7 +9,7 @@ if(mysqli_num_rows($query) > 0)
 	$hotels_name    = $content->hotels_name;
 }
 	
-$sql = "SELECT mp.*, m.meals_title FROM ".$db_suffix."meals m LEFT JOIN ".$db_suffix."meals_price mp ON m.meals_ID=mp.meals_ID WHERE mp.hotels_ID='$hotels_ID' ORDER BY m.meals_title ASC";
+$sql = "SELECT * FROM ".$db_suffix."early_bird WHERE hotels_ID='$hotels_ID' ORDER BY eb_discount ASC";
 $news_query = mysqli_query($db,$sql);
 
 ?>
@@ -26,7 +26,7 @@ $news_query = mysqli_query($db,$sql);
 
                                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->
                                         <h3 class="page-title">
-                                                Mealpreise für Hotel: <?php echo $hotels_name; ?>
+                                                Early Bird Rabatte für Hotel: <?php echo $hotels_name; ?>
                                         </h3>
                                <div class="page-bar">         
                                         <ul class="page-breadcrumb">
@@ -46,7 +46,7 @@ $news_query = mysqli_query($db,$sql);
                                                         <i class="fa fa-angle-right"></i>
                                                 </li>
                                                 <li>
-                                                        Mealpreise für Hotel: <?php echo $hotels_name; ?>
+                                                        Early Bird Rabatte für Hotel: <?php echo $hotels_name; ?>
                                                 </li>
                                         </ul>
                                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -64,9 +64,9 @@ $news_query = mysqli_query($db,$sql);
                
                <div class="portlet box grey-cascade">
                   <div class="portlet-title">
-                     <div class="caption"><i class="fa fa-table"></i>Mealpreise</div>
+                     <div class="caption"><i class="fa fa-table"></i>Early Bird Rabatte</div>
                      <div class="actions">
-                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addmeals_price&id='.$hotels_ID; ?>" class="btn blue"><i class="fa fa-plus"></i> Mealpreise für diesen Hotel einfügen</a>
+                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addearly_bird&id='.$hotels_ID; ?>" class="btn blue"><i class="fa fa-plus"></i> Early Bird Rabatte für diesen Hotel einfügen</a>
                         <div class="btn-group">
                            <a class="btn green" href="#" data-toggle="dropdown">
                            <i class="fa fa-cogs"></i> Tools
@@ -85,9 +85,8 @@ $news_query = mysqli_query($db,$sql);
                         <thead>
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
-                              <th>Mealtyp</th>
-                              <th>Preis</th>
-                              <th>Preistyp?</th>   
+                              <th>Rabatt</th>
+                              <th>Dauerhaft</th>   
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
@@ -102,20 +101,18 @@ $news_query = mysqli_query($db,$sql);
 		   ?>
            
                            <tr class="odd gradeX">
-                              <td><input type="checkbox" class="checkboxes" value="<?php echo $row->mp_ID;?>" /></td>
-                              <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editmeals_price&id='.$row->mp_ID;?>"><?php echo $row->meals_title;?></a></td>
-                              
-                              <td><?php echo $row->mp_price;?></td>
-                              <td><?php echo $show = (empty($row->mp_price_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span>';?></td>   
+                              <td><input type="checkbox" class="checkboxes" value="<?php echo $row->eb_ID;?>" /></td>
+                              <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editearly_bird&id='.$row->eb_ID;?>"><?php echo $row->eb_discount;?></a></td>                              
+                              <td><?php echo $row->eb_discount_date_range;?></td>   
                               <td> 
-							  <?php if($row->mp_status)
+							  <?php if($row->eb_status)
 							  
 											echo '<span class="label label-md label-success">aktiv</span>'; 
 									else 
 											echo '<span class="label label-md label-danger">inaktiv</span>';
 									?>
                               </td>
-                            <td><?php echo $row->mp_creation_time;?></td>
+                            <td><?php echo $row->eb_creation_time;?></td>
                                                            
                            </tr>
                            
@@ -219,11 +216,11 @@ $news_query = mysqli_query($db,$sql);
                     TableManaged.init();                     
                 });
         
-                 var table_name='meals_price';
+                 var table_name='early_bird';
 					 
-                 var column_name='mp_status';
+                 var column_name='eb_status';
 
-                 var column_id='mp_ID';
+                 var column_id='eb_ID';
 				
 				$('#confirmation_all').on('show.bs.modal', function(e) {
 					 

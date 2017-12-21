@@ -108,7 +108,9 @@ $news_query = mysqli_query($db,$sql);
                               
                               <a href="<?php echo '?mKey='.$mKey.'&pKey=meals_price&id='.$row->hotels_ID;?>" class="btn default btn-xs purple"><i class="fa fa-cutlery"></i> MealPreis</a>
                                   
-                              <a href="<?php echo '?mKey='.$mKey.'&pKey=rooms_price&id='.$row->hotels_ID;?>" class="btn default btn-xs blue"><i class="fa fa-bed"></i> Zimmerpreis</a>      
+                              <a href="<?php echo '?mKey='.$mKey.'&pKey=rooms_price&id='.$row->hotels_ID;?>" class="btn default btn-xs blue"><i class="fa fa-bed"></i> Zimmerpreis</a> 
+                                  
+                            <a href="<?php echo '?mKey='.$mKey.'&pKey=early_bird&id='.$row->hotels_ID;?>" class="btn default btn-xs red"><i class="fa fa-twitter"></i> Early Bird</a>      
                               
                                </td>                               
                            </tr>
