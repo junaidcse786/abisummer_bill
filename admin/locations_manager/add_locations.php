@@ -27,12 +27,12 @@ if(isset($_POST['Submit']))
 		$err++;		
 	}
     
-    if(empty($locations_profit))
+    /*if(empty($locations_profit))
 	{
 		$messages["locations_profit"]["status"]=$err_easy;
 		$messages["locations_profit"]["msg"]="Profit ist Pflichtfeld";
 		$err++;		
-	}
+	}*/
 	
 	if($err == 0)
 	{
@@ -132,14 +132,14 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["locations_profit"]["status"] ?>">
+                              <!--<div class="form-group <?php echo $messages["locations_profit"]["status"] ?>">
                               		<label class="control-label col-md-3" for="locations_profit">Profit <span class="required">*</span></label>
                               		<div class="col-md-4">
                                  		<input type="text" placeholder="" class="form-control" name="locations_profit" value="<?php echo $locations_profit;?>"/>
                                  		<span for="locations_profit" class="help-block">In Euro oder Prozent, wenn in Prozent bitte die Symbol % einfügen.
                                             <br/><?php echo $messages["locations_profit"]["msg"] ?></span>
                               		</div>
-                           	  </div>       
+                           	  </div>-->       
                          	
                               <div class="form-group last">
                                   <label for="locations_status" class="control-label col-md-3">Status</label>

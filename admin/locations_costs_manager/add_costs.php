@@ -29,7 +29,7 @@ if(isset($_POST['Submit']))
 	
     if(empty($date_from) && empty($date_to)):
     
-        if(mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND lc_costs_date_range=''"))>0)
+        if(mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND lc_costs_date_range='' AND lc_title='$lc_title'"))>0)
         {
             $messages["lc_costs"]["status"]=$err_easy;
             $messages["lc_costs"]["msg"]="Regularkosten schon existiert";
@@ -170,7 +170,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               <div class="form-group <?php echo $messages["lc_costs"]["status"] ?>">
                               		<label class="control-label col-md-3" for="lc_costs">Kosten <span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="number" min="0" step="any" placeholder="" class="form-control" name="lc_costs" value="<?php echo $lc_costs;?>"/>
+                                 		<input type="text" placeholder="100&euro; oder 7%" class="form-control" name="lc_costs" value="<?php echo $lc_costs;?>"/>
                                  		<span for="lc_costs" class="help-block">In Euro oder Prozent, wenn in Prozent bitte die Symbol % einfügen.
                                             <br/><?php echo $messages["lc_costs"]["msg"] ?></span>
                               		</div>

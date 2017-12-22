@@ -72,7 +72,7 @@ $news_query = mysqli_query($db,$sql);
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Titel</th>
-                              <th>Profit</th>
+                              <!--<th>Profit</th>-->
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <th >&nbsp;</th>                       
@@ -90,7 +90,7 @@ $news_query = mysqli_query($db,$sql);
                               <td><input type="checkbox" class="checkboxes" value="<?php echo $row->locations_ID;?>" /></td>
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editlocations&id='.$row->locations_ID;?>"><?php echo $row->locations_name;?></a></td>
                                
-                              <td><?php echo $row->locations_profit;?></td>   
+                              <!--<td><?php echo $row->locations_profit;?></td>-->   
                               
                               <td>
 							  <?php if($row->locations_status)
