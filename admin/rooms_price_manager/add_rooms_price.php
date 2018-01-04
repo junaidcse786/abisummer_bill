@@ -6,7 +6,8 @@ $hotels_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
 	
 $err_easy="has-error";
 
-$rp_price_date_range = "";
+$rp_price_date_from = "";
+$rp_price_date_to = "";
 $rp_status = 1;
 $rp_price = "";
 $rp_notes = "";
@@ -16,7 +17,7 @@ $err=0;
 
 $messages = array(
 					'rooms_ID' => array('status' => '', 'msg' => ''),						  				 
-					'rp_price_date_range' => array('status' => '', 'msg' => ''),
+					'rp_price_date_from' => array('status' => '', 'msg' => ''),
                     'rp_price' => array('status' => '', 'msg' => ''),
                     'rp_status' => array('status' => '', 'msg' => ''),
                     'rp_notes' => array('status' => '', 'msg' => ''),
@@ -25,24 +26,34 @@ $messages = array(
 if(isset($_POST['Submit']))
 {	
 	extract($_POST);
-	//echo "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND rp_price_range=''";
+	//echo "SELECT rp_ID from ".$db_suffix."rooms_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND rp_price_range=''";
 	
     if(empty($date_from) && empty($date_to)):
     
-        if(mysqli_num_rows(mysqli_query($db, "SELECT rp_ID from ".$db_suffix."rooms_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND rp_price_date_range=''"))>0)
+        if(mysqli_num_rows(mysqli_query($db, "SELECT rp_ID from ".$db_suffix."rooms_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND (rp_price_date_from='0000-00-00' AND rp_price_date_to='0000-00-00')"))>0)
         {
             $messages["rooms_ID"]["status"]=$err_easy;
             $messages["rooms_ID"]["msg"]="Regularpreis schon existiert";
             $err++;		
         }
-    
-    endif;
-    
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $rp_price_date_range=$date_from."::".$date_to;
-    
-    endif;
+		
+	endif;
+	
+	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT rp_ID from ".$db_suffix."rooms_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND (rp_price_date_from='$date_from' OR rp_price_date_to='$date_from')"))>0):		
+        
+		$messages["rooms_ID"]["status"]=$err_easy;
+		$messages["rooms_ID"]["msg"]="Besonderpreis für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
+	
+	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT rp_ID from ".$db_suffix."rooms_price where hotels_ID = $hotels_ID AND rooms_ID = $rooms_ID AND (rp_price_date_from='$date_to' OR rp_price_date_to='$date_to')"))>0):		
+        
+		$messages["rooms_ID"]["status"]=$err_easy;
+		$messages["rooms_ID"]["msg"]="Besonderpreis für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
     
     if(empty($rp_price))
 	{
@@ -53,7 +64,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."rooms_price SET hotels_ID='$hotels_ID',rooms_ID='$rooms_ID',rp_price_date_range='$rp_price_date_range',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes'";
+		$sql = "INSERT INTO ".$db_suffix."rooms_price SET hotels_ID='$hotels_ID',rooms_ID='$rooms_ID',rp_price_date_from='$date_from',rp_price_date_to='$date_to',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -61,7 +72,7 @@ if(isset($_POST['Submit']))
 			$alert_box_show="show";
 			$alert_type="success";
 			
-			$rp_price_date_range = "";
+			$rp_price_date_from = "";
 			
 		}else{
 			$alert_box_show="show";
@@ -96,8 +107,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE rp_price_date_range & BREADCRUMB-->
-                                        <h3 class="page-rp_price_date_range">
+                                        <!-- BEGIN PAGE rp_price_date_from & BREADCRUMB-->
+                                        <h3 class="page-rp_price_date_from">
                                                 Zimmerpreis für diesen Hotel einfügen
                                         </h3>
                                         <div class="page-bar">         
@@ -116,7 +127,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=rooms_price&id='.$hotels_ID; ?>">Zimmerpreis Liste für diesen Hotel</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE rp_price_date_range & BREADCRUMB-->
+                                        <!-- END PAGE rp_price_date_from & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -172,14 +183,14 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["rp_price_date_range"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="rp_price_date_range">Besonder preis für Datum</label>
+                              <div class="form-group <?php echo $messages["rp_price_date_from"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="rp_price_date_from">Besonder preis für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
-                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
+                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from" value="<?php echo $date_from ?>">
                                                             <span class="input-group-addon"> - </span>
-                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> </div>
-                                 		<span for="rp_price_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["rp_price_date_range"]["msg"] ?></span>
+                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to" value="<?php echo $date_to ?>"> </div>
+                                 		<span for="rp_price_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["rp_price_date_from"]["msg"] ?></span>
                               		</div>
                            	  </div>   
                                    
