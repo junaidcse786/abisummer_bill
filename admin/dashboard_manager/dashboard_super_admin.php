@@ -101,14 +101,14 @@
                                   <label for="rooms_ID" class="control-label col-md-3">Zimmertyp</label>
                                   <div class="col-md-1">
                                   	
-                                    <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="rooms_ID" name="rooms_ID"> 
+                                    <select class="form-control input-medium rooms_ID" name="rooms_ID[]"> 
                                     <option value=""></option>
 									</select> <br/><br/>
 									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="rooms_no"/>
                                     <span for="rooms_ID" class="help-block"></span>                                     
                                   </div>
 								  <div class="col-md-offset-1 col-md-1">
-									<button type="button" class="form-control clone-it input-extra-small"/>+</button>
+									<i class="fa fa-plus clone-it"/></i>
 								  </div>
                               </div>
 							  
@@ -116,7 +116,7 @@
                                   <label for="meals_ID" class="control-label col-md-3">Mealtyp</label>
                                   <div class="col-md-1">
                                   	
-                                    <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="meals_ID" name="meals_ID">
+                                    <select class="form-control meals_ID" name="meals_ID">
                                     <option value=""></option>
 									</select> <br/><br/>
 									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="meals_no"/>
@@ -196,10 +196,10 @@
 					   },
 			});
 			
-			$("#rooms_ID").val(null).trigger("change");
-			$("#rooms_ID option").remove();
-			$("#meals_ID").val(null).trigger("change");
-			$("#meals_ID option").remove();
+			$(".rooms_ID").val(null).trigger("change");
+			$(".rooms_ID option").remove();
+			$(".meals_ID").val(null).trigger("change");
+			$(".meals_ID option").remove();
 		}
 		else{
 			
@@ -207,10 +207,10 @@
 			$("#journey_ID option").remove();
 			$("#hotels_ID").val(null).trigger("change");
 			$("#hotels_ID option").remove();
-			$("#rooms_ID").val(null).trigger("change");
-			$("#rooms_ID option").remove();
-			$("#meals_ID").val(null).trigger("change");
-			$("#meals_ID option").remove();
+			$(".rooms_ID").val(null).trigger("change");
+			$(".rooms_ID option").remove();
+			$(".meals_ID").val(null).trigger("change");
+			$(".meals_ID option").remove();
 		
 		}	
 	});
@@ -228,9 +228,10 @@
 					   data: {hotels_ID: hotels_ID},
 					   success: function(data){ 
 					   
-							$("#rooms_ID").val(null).trigger("change");
-							$('#rooms_ID option').remove();							
-							$('#rooms_ID').append('<option value=""></option>'+data); 					   
+							$( ".rooms_ID" ).each(function() {
+							    $(this).val(null).trigger("change");
+								$(this).append(data); 
+							});				   
 					   },
 			}); 
 			
@@ -241,17 +242,18 @@
 					   data: {hotels_ID: hotels_ID},
 					   success: function(data){ 
 					   
-							$("#meals_ID").val(null).trigger("change");
-							$('#meals_ID option').remove();													
-							$('#meals_ID').append('<option value=""></option>'+data); 					   
+							$( ".meals_ID" ).each(function() {
+							    $(this).val(null).trigger("change");
+								$(this).append(data); 
+							}); 					   
 					   },
 			});
 		}
 		else{
-			$("#rooms_ID").val(null).trigger("change");
-			$("#rooms_ID option").remove();
-			$("#meals_ID").val(null).trigger("change");
-			$("#meals_ID option").remove();
+			$(".rooms_ID").val(null).trigger("change");
+			$(".rooms_ID option").remove();
+			$(".meals_ID").val(null).trigger("change");
+			$(".meals_ID option").remove();
 		
 		}	
 	});
