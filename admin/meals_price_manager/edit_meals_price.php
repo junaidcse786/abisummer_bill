@@ -14,57 +14,56 @@ if(mysqli_num_rows($query) > 0)
 {
 	$content     = mysqli_fetch_object($query);
 	$meals_ID       = $content->meals_ID;
-    $mp_price_date_range       = $content->mp_price_date_range;
+    $mp_price_date_from       = $content->mp_price_date_from;
     $mp_price       = $content->mp_price;
 	$mp_status    = $content->mp_status;
     $mp_notes    = $content->mp_notes;
     $mp_update_time    = $content->mp_update_time;
+	$hotels_ID=$content->hotels_ID;
     
-    if(!empty($content->mp_price_date_range)):
         
-        $date_from=explode("::", $content->mp_price_date_range)[0];
-        
-        $date_to=explode("::", $content->mp_price_date_range)[1];
-    
-    else:
-    
-        $date_from=""; $date_to="";
-    
-    endif;
+	$date_from=$content->mp_price_date_from;	
+	$date_to=$content->mp_price_date_to;    
 }
 
 $messages = array(
 					'meals_ID' => array('status' => '', 'msg' => ''),						  				 
-					'mp_price_date_range' => array('status' => '', 'msg' => ''),
+					'mp_price_date_from' => array('status' => '', 'msg' => ''),
                     'mp_price' => array('status' => '', 'msg' => ''),
                     'mp_status' => array('status' => '', 'msg' => ''),
                     'mp_notes' => array('status' => '', 'msg' => ''),
-				);
+				);				 
 
 if(isset($_POST['Submit']))
 {	
-	extract($_POST);
+	extract($_POST); 
     
     if(empty($date_from) && empty($date_to)):
-        $any = mysqli_query($db, "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = '$content->hotels_ID' AND meals_ID = $meals_ID AND mp_price_date_range='' AND mp_ID != '$mp_ID'");
-        if(mysqli_num_rows($any)>0)
+    
+        if(mysqli_num_rows(mysqli_query($db, "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND meals_ID = $meals_ID AND (mp_price_date_from='0000-00-00' AND mp_price_date_to='0000-00-00') AND mp_ID != '$mp_ID'"))>0)
         {
             $messages["meals_ID"]["status"]=$err_easy;
             $messages["meals_ID"]["msg"]="Regularpreis schon existiert";
             $err++;		
         }
-    
-    endif;
-    
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $mp_price_date_range=$date_from."::".$date_to;
-    
-    elseif(empty($date_from) && empty($date_to)):
+		
+	endif;
+	
+	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND meals_ID = $meals_ID AND (mp_price_date_from='$date_from' OR mp_price_date_to='$date_from') AND mp_ID != '$mp_ID'"))>0):		
         
-         $mp_price_date_range="";
-    
-    endif;
+		$messages["meals_ID"]["status"]=$err_easy;
+		$messages["meals_ID"]["msg"]="Besonderpreis für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
+	
+	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT mp_ID from ".$db_suffix."meals_price where hotels_ID = $hotels_ID AND meals_ID = $meals_ID AND (mp_price_date_from='$date_to' OR mp_price_date_to='$date_to') AND mp_ID != '$mp_ID'"))>0):		
+        
+		$messages["meals_ID"]["status"]=$err_easy;
+		$messages["meals_ID"]["msg"]="Besonderpreis für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
     
     if(empty($mp_price))
 	{
@@ -75,7 +74,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."meals_price SET meals_ID='$meals_ID',mp_price_date_range='$mp_price_date_range',mp_price='$mp_price',mp_status='$mp_status',mp_notes='$mp_notes' WHERE mp_ID='$mp_ID'";
+		$sql = "UPDATE ".$db_suffix."meals_price SET meals_ID='$meals_ID',mp_price_date_from='$date_from', mp_price_date_to='$date_to', mp_price='$mp_price',mp_status='$mp_status',mp_notes='$mp_notes' WHERE mp_ID='$mp_ID'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -115,8 +114,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE mp_price_date_range & BREADCRUMB-->
-                                        <h3 class="page-mp_price_date_range">
+                                        <!-- BEGIN PAGE mp_price_date_from & BREADCRUMB-->
+                                        <h3 class="page-mp_price_date_from">
                                                 Mealpreis für diesen Hotel aktualisieren
                                         </h3>
                                         <div class="page-bar">         
@@ -135,7 +134,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=meals_price&id='.$content->hotels_ID; ?>">Mealpreis Liste für diesen Hotel</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE mp_price_date_range & BREADCRUMB-->
+                                        <!-- END PAGE mp_price_date_from & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -191,8 +190,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["mp_price_date_range"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="mp_price_date_range">Besonder preis für Datum</label>
+                              <div class="form-group <?php echo $messages["mp_price_date_from"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="mp_price_date_from">Besonder preis für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange">
                                                             
@@ -202,7 +201,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             
                                                             <input value="<?php echo $date_to; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> 
                                         </div>
-                                 		<span for="mp_price_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["mp_price_date_range"]["msg"] ?></span>
+                                 		<span for="mp_price_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["mp_price_date_from"]["msg"] ?></span>
                               		</div>
                            	  </div>   
                                    

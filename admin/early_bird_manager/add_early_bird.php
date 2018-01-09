@@ -6,7 +6,7 @@ $hotels_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
 	
 $err_easy="has-error";
 
-$eb_discount_date_range = "";
+$eb_discount_date_from = "";
 $eb_status = 1;
 $eb_discount = "";
 $eb_notes = "";
@@ -14,7 +14,7 @@ $eb_notes = "";
 $err=0;
 
 $messages = array(
-					'eb_discount_date_range' => array('status' => '', 'msg' => ''),
+					'eb_discount_date_from' => array('status' => '', 'msg' => ''),
                     'eb_discount' => array('status' => '', 'msg' => ''),
                     'eb_status' => array('status' => '', 'msg' => ''),
                     'eb_notes' => array('status' => '', 'msg' => ''),
@@ -24,31 +24,29 @@ if(isset($_POST['Submit']))
 {	
 	extract($_POST);
 	
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $eb_discount_date_range=$date_from."::".$date_to;
-    
-        if(mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND eb_discount_date_range='$eb_discount_date_range'"))>0)
-        {
-            $messages["eb_discount_date_range"]["status"]=$err_easy;
-            $messages["eb_discount_date_range"]["msg"]="Rabatt schon existiert";
-            $err++;		
-        }
-    
-    endif;
-    
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $eb_discount_date_range=$date_from."::".$date_to;
-    
-    elseif(empty($date_from) && empty($date_to)):
+	if(empty($date_from) && empty($date_to)):    
         
-        $messages["eb_discount_date_range"]["status"]=$err_easy;
-        $messages["eb_discount_date_range"]["msg"]="Rabatt Datum ist Pflichtfeld";
-        $err++; 
-        $eb_discount_date_range="";
-    
-    endif;
+            $messages["eb_discount_date_from"]["status"]=$err_easy;
+            $messages["eb_discount_date_from"]["msg"]="Rabatt Datum ist Pflichtfeld";
+            $err++;	
+			
+	endif;
+	
+	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_from' OR eb_discount_date_to='$date_from')"))>0):		
+        
+		$messages["eb_discount_date_from"]["status"]=$err_easy;
+		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
+	
+	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_to' OR eb_discount_date_to='$date_to')"))>0):		
+        
+		$messages["eb_discount_date_from"]["status"]=$err_easy;
+		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
     
     if(empty($eb_discount))
 	{
@@ -59,7 +57,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_range='$eb_discount_date_range',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes'";
+		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -67,7 +65,7 @@ if(isset($_POST['Submit']))
 			$alert_box_show="show";
 			$alert_type="success";
 			
-			$eb_discount_date_range = "";
+			$eb_discount_date_from = "";
 			
 		}else{
 			$alert_box_show="show";
@@ -102,8 +100,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE eb_discount_date_range & BREADCRUMB-->
-                                        <h3 class="page-eb_discount_date_range">
+                                        <!-- BEGIN PAGE eb_discount_date_from & BREADCRUMB-->
+                                        <h3 class="page-eb_discount_date_from">
                                                 Eary Bird Rabatt für diesen Hotel einfügen
                                         </h3>
                                         <div class="page-bar">         
@@ -122,7 +120,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=early_bird&id='.$hotels_ID; ?>">Eary Bird Rabatt Liste für diesen Hotel</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE eb_discount_date_range & BREADCRUMB-->
+                                        <!-- END PAGE eb_discount_date_from & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -149,21 +147,21 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
                                    
                                <div class="form-group <?php echo $messages["eb_discount"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="eb_discount">Rabatt <span class="required">*</span></label>
+                              		<label class="control-label col-md-3" for="eb_discount">Rabatt in prozent<span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="number" min="1" step="any" placeholder="" class="form-control" name="eb_discount" value="<?php echo $eb_discount;?>"/>
+                                 		<input type="number" min="1" step="any" placeholder="z.B. 10.5" class="form-control" name="eb_discount" value="<?php echo $eb_discount;?>"/>
                                  		<span for="eb_discount" class="help-block"><?php echo $messages["eb_discount"]["msg"] ?></span>
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["eb_discount_date_range"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="eb_discount_date_range">Rabatt für Datum</label>
+                              <div class="form-group <?php echo $messages["eb_discount_date_from"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="eb_discount_date_from">Rabatt für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
-                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
+                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from" value="<?php echo $date_from; ?>">
                                                             <span class="input-group-addon"> - </span>
-                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> </div>
-                                 		<span for="eb_discount_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_range"]["msg"] ?></span>
+                                                            <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to" value="<?php echo $date_to; ?>"> </div>
+                                 		<span for="eb_discount_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_from"]["msg"] ?></span>
                               		</div>
                            	  </div>   
                                    

@@ -14,27 +14,18 @@ if(mysqli_num_rows($query) > 0)
 {
 	$content     = mysqli_fetch_object($query);
     $hotels_ID = $content->hotels_ID;
-    $eb_discount_date_range       = $content->eb_discount_date_range;
+    $eb_discount_date_from       = $content->eb_discount_date_from;
     $eb_discount       = $content->eb_discount;
 	$eb_status    = $content->eb_status;
     $eb_notes    = $content->eb_notes;
     $eb_update_time    = $content->eb_update_time;
     
-    if(!empty($content->eb_discount_date_range)):
-        
-        $date_from=explode("::", $content->eb_discount_date_range)[0];
-        
-        $date_to=explode("::", $content->eb_discount_date_range)[1];
-    
-    else:
-    
-        $date_from=""; $date_to="";
-    
-    endif;
+    $date_from=$content->eb_discount_date_from;	
+	$date_to=$content->eb_discount_date_to;
 }
 
 $messages = array(
-					'eb_discount_date_range' => array('status' => '', 'msg' => ''),
+					'eb_discount_date_from' => array('status' => '', 'msg' => ''),
                     'eb_discount' => array('status' => '', 'msg' => ''),
                     'eb_status' => array('status' => '', 'msg' => ''),
                     'eb_notes' => array('status' => '', 'msg' => ''),
@@ -44,31 +35,29 @@ if(isset($_POST['Submit']))
 {	
 	extract($_POST);
     
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $eb_discount_date_range=$date_from."::".$date_to;
-    
-        if(mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND eb_discount_date_range='$eb_discount_date_range' AND eb_ID!='$eb_ID'"))>0)
-        {
-            $messages["eb_discount_date_range"]["status"]=$err_easy;
-            $messages["eb_discount_date_range"]["msg"]="Rabatt schon existiert";
-            $err++;		
-        }
-    
-    endif;
-    
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $eb_discount_date_range=$date_from."::".$date_to;
-    
-    elseif(empty($date_from) && empty($date_to)):
+    if(empty($date_from) && empty($date_to)):    
         
-        $messages["eb_discount_date_range"]["status"]=$err_easy;
-        $messages["eb_discount_date_range"]["msg"]="Rabatt Datum ist Pflichtfeld";
-        $err++; 
-        $eb_discount_date_range="";
-    
-    endif;
+            $messages["eb_discount_date_from"]["status"]=$err_easy;
+            $messages["eb_discount_date_from"]["msg"]="Rabatt Datum ist Pflichtfeld";
+            $err++;	
+			
+	endif;
+	
+	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_from' OR eb_discount_date_to='$date_from') AND eb_ID!='$eb_ID'"))>0):		
+        
+		$messages["eb_discount_date_from"]["status"]=$err_easy;
+		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
+	
+	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_to' OR eb_discount_date_to='$date_to') AND eb_ID!='$eb_ID'"))>0):		
+        
+		$messages["eb_discount_date_from"]["status"]=$err_easy;
+		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
     
     if(empty($eb_discount))
 	{
@@ -79,7 +68,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."early_bird SET eb_discount_date_range='$eb_discount_date_range',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes' WHERE eb_ID='$eb_ID'";
+		$sql = "UPDATE ".$db_suffix."early_bird SET eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes' WHERE eb_ID='$eb_ID'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -119,8 +108,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE eb_discount_date_range & BREADCRUMB-->
-                                        <h3 class="page-eb_discount_date_range">
+                                        <!-- BEGIN PAGE eb_discount_date_from & BREADCRUMB-->
+                                        <h3 class="page-eb_discount_date_from">
                                                 Early Bird Rabatt für diesen Hotel aktualisieren
                                         </h3>
                                         <div class="page-bar">         
@@ -139,7 +128,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=early_bird&id='.$hotels_ID; ?>">Early Bird Rabatt Liste für diesen Hotel</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE eb_discount_date_range & BREADCRUMB-->
+                                        <!-- END PAGE eb_discount_date_from & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -173,8 +162,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["eb_discount_date_range"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="eb_discount_date_range">Rabatt für Datum</label>
+                              <div class="form-group <?php echo $messages["eb_discount_date_from"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="eb_discount_date_from">Rabatt für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange">
                                                             
@@ -184,7 +173,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             
                                                             <input value="<?php echo $date_to; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> 
                                         </div>
-                                 		<span for="eb_discount_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_range"]["msg"] ?></span>
+                                 		<span for="eb_discount_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_from"]["msg"] ?></span>
                               		</div>
                            	  </div>   
                                    

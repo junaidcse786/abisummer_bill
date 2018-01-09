@@ -103,7 +103,22 @@ $news_query = mysqli_query($db,$sql);
                            <tr class="odd gradeX">
                               <td><input type="checkbox" class="checkboxes" value="<?php echo $row->eb_ID;?>" /></td>
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editearly_bird&id='.$row->eb_ID;?>"><?php echo $row->eb_discount;?></a></td>                              
-                              <td><?php echo $row->eb_discount_date_range;?></td>   
+                              <td><?php 
+							  
+								if($row->eb_discount_date_from!='0000-00-00' && $row->eb_discount_date_to!='0000-00-00')
+								
+									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_from.'</b> bis <b>'.$row->eb_discount_date_to.'</b></span>';
+									
+								else if($row->eb_discount_date_from!='0000-00-00')
+								
+									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_from.'</b></span>';	
+									
+								else if($row->eb_discount_date_to!='0000-00-00')
+								
+									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_to.'</b></span>';		
+									
+									
+								?></td>    
                               <td> 
 							  <?php if($row->eb_status)
 							  

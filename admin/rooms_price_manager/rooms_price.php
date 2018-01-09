@@ -106,7 +106,26 @@ $news_query = mysqli_query($db,$sql);
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editrooms_price&id='.$row->rp_ID;?>"><?php echo $row->rooms_title;?></a></td>
                               
                               <td><?php echo $row->rp_price;?></td>
-                              <td><?php echo $show = (empty($row->rp_price_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span>';?></td>   
+                              <td><?php 
+							  
+							  if($row->rp_price_date_from=='0000-00-00' && $row->rp_price_date_to=='0000-00-00')
+
+									echo '<span class="label label-md label-success">Regular</span>';
+									
+								else if($row->rp_price_date_from!='0000-00-00' && $row->rp_price_date_to!='0000-00-00')
+								
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_from.'</b> bis <b>'.$row->rp_price_date_to.'</b></span>';
+									
+								else if($row->rp_price_date_from!='0000-00-00')
+								
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_from.'</b></span>';	
+									
+								else if($row->rp_price_date_to!='0000-00-00')
+								
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_to.'</b></span>';		
+									
+									
+								?></td>    
                               <td> 
 							  <?php if($row->rp_status)
 							  

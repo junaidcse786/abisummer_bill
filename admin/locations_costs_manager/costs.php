@@ -107,7 +107,26 @@ $news_query = mysqli_query($db,$sql);
                                
                               <td><?php echo $row->lc_costs;?></td>    
                               
-                              <td><?php echo $show = (empty($row->lc_costs_date_range))? '<span class="label label-md label-success">Regular</span>':'<span class="label label-md label-danger">Besonder</span>';?></td>   
+                              <td><?php 
+							  
+							  if($row->lc_costs_date_from=='0000-00-00' && $row->lc_costs_date_to=='0000-00-00')
+
+									echo '<span class="label label-md label-success">Regular</span>';
+									
+								else if($row->lc_costs_date_from!='0000-00-00' && $row->lc_costs_date_to!='0000-00-00')
+								
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->lc_costs_date_from.'</b> bis <b>'.$row->lc_costs_date_to.'</b></span>';
+									
+								else if($row->lc_costs_date_from!='0000-00-00')
+								
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->lc_costs_date_from.'</b></span>';	
+									
+								else if($row->lc_costs_date_to!='0000-00-00')
+								
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->lc_costs_date_to.'</b></span>';		
+									
+									
+								?></td>     
                               <td> 
 							  <?php if($row->lc_status)
 							  

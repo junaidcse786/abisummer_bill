@@ -13,7 +13,7 @@ $query = mysqli_query($db, $sql);
 if(mysqli_num_rows($query) > 0)
 {
 	$content     = mysqli_fetch_object($query);
-    $lc_costs_date_range       = $content->lc_costs_date_range;
+    $lc_costs_date_from       = $content->lc_costs_date_from;
     $lc_title       = $content->lc_title;
     $lc_costs       = $content->lc_costs;
 	$lc_status    = $content->lc_status;
@@ -21,21 +21,12 @@ if(mysqli_num_rows($query) > 0)
     $lc_update_time    = $content->lc_update_time;
     $locations_ID=$content->locations_ID;
     
-    if(!empty($content->lc_costs_date_range)):
-        
-        $date_from=explode("::", $content->lc_costs_date_range)[0];
-        
-        $date_to=explode("::", $content->lc_costs_date_range)[1];
-    
-    else:
-    
-        $date_from=""; $date_to="";
-    
-    endif;
+    $date_from=$content->lc_costs_date_from;	
+	$date_to=$content->lc_costs_date_to;
 }
 
 $messages = array(
-					'lc_costs_date_range' => array('status' => '', 'msg' => ''),
+					'lc_costs_date_from' => array('status' => '', 'msg' => ''),
                     'lc_title' => array('status' => '', 'msg' => ''),
                     'lc_costs' => array('status' => '', 'msg' => ''),
                     'lc_status' => array('status' => '', 'msg' => ''),
@@ -44,28 +35,34 @@ $messages = array(
 
 if(isset($_POST['Submit']))
 {	
-	extract($_POST);
+	extract($_POST); 
     
     if(empty($date_from) && empty($date_to)):
-        $any = mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID='$locations_ID' AND lc_costs_date_range='' AND lc_ID != '$lc_ID' AND lc_title='$lc_title'");
-        if(mysqli_num_rows($any)>0)
+    
+        if(mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='0000-00-00' AND lc_costs_date_to='0000-00-00') AND lc_ID != '$lc_ID'"))>0)
         {
-            $messages["lc_costs"]["status"]=$err_easy;
-            $messages["lc_costs"]["msg"]="Regularkosten schon existiert";
+            $messages["lc_costs_date_from"]["status"]=$err_easy;
+            $messages["lc_costs_date_from"]["msg"]="Regularkost schon existiert";
             $err++;		
         }
-    
-    endif;
-    
-    if(!empty($date_from) || !empty($date_to)):
-    
-        $lc_costs_date_range=$date_from."::".$date_to;
-    
-    elseif(empty($date_from) && empty($date_to)):
+		
+	endif;
+	
+	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='$date_from' OR lc_costs_date_to='$date_from') AND lc_ID != '$lc_ID'"))>0):		
         
-         $lc_costs_date_range="";
-    
-    endif;
+		$messages["lc_costs_date_from"]["status"]=$err_easy;
+		$messages["lc_costs_date_from"]["msg"]="Besonderkost für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
+	
+	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='$date_to' OR lc_costs_date_to='$date_to') AND lc_ID != '$lc_ID'"))>0):		
+        
+		$messages["lc_costs_date_from"]["status"]=$err_easy;
+		$messages["lc_costs_date_from"]["msg"]="Besonderkost für diesen Datum schon existiert";
+		$err++;		        
+		
+	endif;
     
     if(empty($lc_title))
 	{
@@ -73,7 +70,7 @@ if(isset($_POST['Submit']))
 		$messages["lc_title"]["msg"]="Titel ist Pflichtfeld";
 		$err++;		
 	}
-    else{
+    /* else{
         
         if(mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND lc_title='$lc_title' AND lc_ID != '$lc_ID'"))>0)
         {
@@ -81,7 +78,7 @@ if(isset($_POST['Submit']))
             $messages["lc_title"]["msg"]="Titel schon existiert";
             $err++;		
         }
-    }
+    } */
     
     if(empty($lc_costs))
 	{
@@ -92,7 +89,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."locations_costs SET lc_title='$lc_title',lc_costs_date_range='$lc_costs_date_range',lc_costs='$lc_costs',lc_status='$lc_status',lc_notes='$lc_notes' WHERE lc_ID='$lc_ID'";
+		$sql = "UPDATE ".$db_suffix."locations_costs SET lc_title='$lc_title',lc_costs_date_from='$date_from',lc_costs_date_to='$date_to',lc_costs='$lc_costs',lc_status='$lc_status',lc_notes='$lc_notes' WHERE lc_ID='$lc_ID'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -132,8 +129,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
 
 
-                                        <!-- BEGIN PAGE lc_costs_date_range & BREADCRUMB-->
-                                        <h3 class="page-lc_costs_date_range">
+                                        <!-- BEGIN PAGE lc_costs_date_from & BREADCRUMB-->
+                                        <h3 class="page-lc_costs_date_from">
                                                 Kosten für diese Destination aktualisieren
                                         </h3>
                                         <div class="page-bar">         
@@ -152,7 +149,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                         <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=costs&id='.$locations_ID; ?>">Kosten Liste für diese Destination</a>
                                                 </li>
                                         </ul>
-                                        <!-- END PAGE lc_costs_date_range & BREADCRUMB-->
+                                        <!-- END PAGE lc_costs_date_from & BREADCRUMB-->
                                 </div>
                         <!-- END PAGE HEADER-->
                         
@@ -194,8 +191,8 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["lc_costs_date_range"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="lc_costs_date_range">Besonder Kosten für Datum</label>
+                              <div class="form-group <?php echo $messages["lc_costs_date_from"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="lc_costs_date_from">Besonder Kosten für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange">
                                                             
@@ -205,7 +202,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             
                                                             <input value="<?php echo $date_to; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> 
                                         </div>
-                                 		<span for="lc_costs_date_range" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["lc_costs_date_range"]["msg"] ?></span>
+                                 		<span for="lc_costs_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["lc_costs_date_from"]["msg"] ?></span>
                               		</div>
                            	  </div>   
                                    
