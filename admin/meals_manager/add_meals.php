@@ -5,6 +5,7 @@ $alert_message=""; $alert_box_show="hide"; $alert_type="success";
 $err_easy="has-error";
 
 $meals_title = "";
+$meals_notes = "";
 $meals_status = 1;
 
 $err=0;
@@ -27,7 +28,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."meals SET meals_title='$meals_title',meals_status='$meals_status'";
+		$sql = "INSERT INTO ".$db_suffix."meals SET meals_notes='$meals_notes', meals_title='$meals_title',meals_status='$meals_status'";
 		if(mysqli_query($db,$sql))
 		{		
 			$alert_message="Daten erfolgreich gespeichert";		
@@ -120,6 +121,13 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		<div class="col-md-4">
                                  		<input type="text" placeholder="" class="form-control" name="meals_title" value="<?php echo $meals_title;?>"/>
                                  		<span for="meals_title" class="help-block"><?php echo $messages["meals_title"]["msg"] ?></span>
+                              		</div>
+                           	  </div>
+							  
+							  <div class="form-group">
+                              		<label class="control-label col-md-3" for="eb_notes">Notes</label>
+                              		<div class="col-md-9">
+                                 		<textarea rows="6" class="form-control" name="meals_notes"><?php echo $meals_notes; ?></textarea>
                               		</div>
                            	  </div>
                          	

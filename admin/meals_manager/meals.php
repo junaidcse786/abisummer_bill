@@ -72,6 +72,7 @@ $news_query = mysqli_query($db,$sql);
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Titel</th>
+							  <th>Notes</th>
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
@@ -88,6 +89,7 @@ $news_query = mysqli_query($db,$sql);
                            <tr class="odd gradeX">
                               <td><input type="checkbox" class="checkboxes" value="<?php echo $row->meals_ID;?>" /></td>
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editmeals&id='.$row->meals_ID;?>"><?php echo $row->meals_title;?></a></td>
+							  <td><?php echo $row->meals_notes;?></td>
                               
                               <td>
 							  <?php if($row->meals_status)

@@ -210,8 +210,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                 
                                                       ?>
 
-                                                     </select>
-                                                     <span for="exercise_topic" class="help-block">Choose from existing topic<br/>You can assign more than one topic to an exercise by combining them with a comma</span>
+                                                     </select>                                                    
 
                                             <?php } ?>
                                  		<span for="lc_title" class="help-block"><?php echo $messages["lc_title"]["msg"] ?></span>
@@ -226,7 +225,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["lc_costs_date_from"]["status"] ?>">
+                              <!-- <div class="form-group <?php echo $messages["lc_costs_date_from"]["status"] ?>">
                               		<label class="control-label col-md-3" for="lc_costs_date_from">Besonder Kosten für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange">
@@ -239,7 +238,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                         </div>
                                  		<span for="lc_costs_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["lc_costs_date_from"]["msg"] ?></span>
                               		</div>
-                           	  </div>   
+                           	  </div> -->   
                                    
                               <div class="form-group  <?php echo $messages["lc_notes"]["status"] ?>">
                               		<label class="control-label col-md-3" for="lc_notes">Notes</label>

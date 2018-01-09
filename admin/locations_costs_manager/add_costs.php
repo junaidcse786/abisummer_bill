@@ -208,7 +208,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                       ?>
 
                                                      </select>
-                                                     <span for="exercise_topic" class="help-block">Choose from existing topic<br/>You can assign more than one topic to an exercise by combining them with a comma</span>
+                                                     
 
                                             <?php } ?> 
                               		</div>
@@ -224,7 +224,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                                    
-                              <div class="form-group <?php echo $messages["lc_costs_date_from"]["status"] ?>">
+                              <!-- <div class="form-group <?php echo $messages["lc_costs_date_from"]["status"] ?>">
                               		<label class="control-label col-md-3" for="lc_costs_date_from">Besonder preis für Datum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
@@ -233,7 +233,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                             <input type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to" value="<?php echo $date_to; ?>"> </div>
                                  		<span for="lc_costs_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["lc_costs_date_from"]["msg"] ?></span>
                               		</div>
-                           	  </div>   
+                           	  </div> -->   
                                    
                               <div class="form-group  <?php echo $messages["lc_notes"]["status"] ?>">
                               		<label class="control-label col-md-3" for="lc_notes">Notes</label>

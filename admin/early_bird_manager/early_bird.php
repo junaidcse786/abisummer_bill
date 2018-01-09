@@ -86,7 +86,8 @@ $news_query = mysqli_query($db,$sql);
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Rabatt</th>
-                              <th>Dauerhaft</th>   
+                              <th>Dauerhaft</th>
+							  <th>Notes</th>							  
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
@@ -105,7 +106,7 @@ $news_query = mysqli_query($db,$sql);
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editearly_bird&id='.$row->eb_ID;?>"><?php echo $row->eb_discount;?></a></td>                              
                               <td><?php 
 							  
-								if($row->eb_discount_date_from!='0000-00-00' && $row->eb_discount_date_to!='0000-00-00')
+								if($row->eb_discount_date_from!=$row->eb_discount_date_to)
 								
 									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_from.'</b> bis <b>'.$row->eb_discount_date_to.'</b></span>';
 									
@@ -113,12 +114,8 @@ $news_query = mysqli_query($db,$sql);
 								
 									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_from.'</b></span>';	
 									
-								else if($row->eb_discount_date_to!='0000-00-00')
-								
-									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_to.'</b></span>';		
-									
-									
 								?></td>    
+							  <td><?php echo $row->eb_notes;?></td>	
                               <td> 
 							  <?php if($row->eb_status)
 							  

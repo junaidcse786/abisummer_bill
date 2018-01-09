@@ -57,6 +57,14 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
+		if(!empty($date_from) && empty($date_to))
+            
+            $date_to=$date_from;
+        
+        if(!empty($date_to) && empty($date_from))
+            
+            $date_from=$date_to;
+		
 		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes'";
         
 		if(mysqli_query($db,$sql))

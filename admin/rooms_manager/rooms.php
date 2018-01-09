@@ -73,6 +73,7 @@ $news_query = mysqli_query($db,$sql);
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Titel</th>
                               <th>Personenzahl</th>
+							  <th>Notes</th>
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
@@ -91,6 +92,7 @@ $news_query = mysqli_query($db,$sql);
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editrooms&id='.$row->rooms_ID;?>"><?php echo $row->rooms_title;?></a></td>
                               
                               <td><?php echo $row->rooms_persons_to_fit;?></td>
+							  <td><?php echo $row->rooms_notes;?></td>
                               <td> 
 							  <?php if($row->rooms_status)
 							  

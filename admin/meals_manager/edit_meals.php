@@ -8,6 +8,7 @@ if(mysqli_num_rows($query) > 0)
 {
 	$content     = mysqli_fetch_object($query);
 	$meals_title       = $content->meals_title;
+	$meals_notes       = $content->meals_notes;
 	$meals_status    = $content->meals_status;
     $meals_update_time    = $content->meals_update_time;
 }
@@ -36,7 +37,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."meals SET meals_title='$meals_title',meals_status='$meals_status' WHERE meals_ID = ".$meals_ID;
+		$sql = "UPDATE ".$db_suffix."meals SET meals_notes='$meals_notes', meals_title='$meals_title',meals_status='$meals_status' WHERE meals_ID = ".$meals_ID;
         
        if(mysqli_query($db,$sql))
 		{		
@@ -130,6 +131,13 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		<div class="col-md-4">
                                  		<input type="text" placeholder="" class="form-control" name="meals_title" value="<?php echo $meals_title;?>"/>
                                  		<span for="meals_title" class="help-block"><?php echo $messages["meals_title"]["msg"] ?></span>
+                              		</div>
+                           	  </div>
+							  
+							  <div class="form-group">
+                              		<label class="control-label col-md-3" for="eb_notes">Notes</label>
+                              		<div class="col-md-9">
+                                 		<textarea rows="6" class="form-control" name="meals_notes"><?php echo $meals_notes; ?></textarea>
                               		</div>
                            	  </div>
                          	

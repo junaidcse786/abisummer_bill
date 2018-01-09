@@ -68,6 +68,14 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
+		if(!empty($date_from) && empty($date_to))
+            
+            $date_to=$date_from;
+        
+        if(!empty($date_to) && empty($date_from))
+            
+            $date_from=$date_to;
+		
 		$sql = "UPDATE ".$db_suffix."early_bird SET eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes' WHERE eb_ID='$eb_ID'";
         
 		if(mysqli_query($db,$sql))

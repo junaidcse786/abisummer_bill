@@ -1,6 +1,6 @@
 <?php 
 
-$total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_costs=0;
+$total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
 if(isset($_POST["Submit"])){
     
@@ -25,9 +25,9 @@ if(isset($_POST["Submit"])){
             $content     = mysqli_fetch_object($query);
             $journey_price       = $content->journey_price; 
             
-            if(!empty($journey_num_person))
+            if(!empty($num_traveler))
                 
-                $journey_cost=$journey_price*$journey_num_person;
+                $journey_cost=$journey_price*$num_traveler;
             
             else
                 
@@ -76,9 +76,9 @@ if(isset($_POST["Submit"])){
                     $price_to_select = $content->mp_price;
                 }
                     
-                if(!empty($meals_num_person))
+                if(!empty($num_traveler))
 
-                    $meals_cost+=($price_to_select*$meals_num_person); 
+                    $meals_cost+=($price_to_select*$num_traveler); 
                 
                 else
                     
@@ -89,9 +89,9 @@ if(isset($_POST["Submit"])){
             
             $meals_cost=$meals_regular_price;
         
-            if(!empty($meals_num_person))
+            if(!empty($num_traveler))
 
-                $meals_cost=$meals_regular_price*$meals_num_person;
+                $meals_cost=$meals_regular_price*$num_traveler;
 
             $meals_cost *= $num_nights;
         }
@@ -169,85 +169,47 @@ if(isset($_POST["Submit"])){
             }
         }
     }
+	
+	/*********EIRLY BIRD*************/
+	
+	
+	
+	
+	
+	/*********EIRLY BIRD*************/
+	
+
     
     /*********OTHER COSTS*************/
+	
+	/* $total_cost=$rooms_cost+$meals_cost+$journey_cost;
     
-    $costs_title=array();
+    $sql = "select * from ".$db_suffix."locations_costs WHERE lc_status=1 AND locations_ID='$locations_ID'";				
     
-    $sql = "select distinct lc_title from ".$db_suffix."locations_costs WHERE lc_status=1";				
+    $query = mysqli_query($db, $sql);	
     
-    $query = mysqli_query($db, $sql);
-    
-    while($row = mysqli_fetch_object($query))
-        
-        $costs_title[] = $row->lc_title;
-    
-    foreach($costs_title as $lc_title){
-        
-        $sql = "select lc_costs from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND lc_title='$lc_title' AND lc_costs_date_from='0000-00-00' AND lc_costs_date_to='0000-00-00' AND lc_status=1";				
-        $query = mysqli_query($db, $sql);
-        if(mysqli_num_rows($query) > 0)
-        {
-            $content     = mysqli_fetch_object($query);
-            $costs_regular_price = $content->lc_costs;
-        }        
-        
-        $sql = "select lc_costs from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID='$hotels_ID' AND lc_costs_date_from!='0000-00-00' AND lc_costs_date_to!='0000-00-00' AND lc_status=1";				
-        $query = mysqli_query($db, $sql);
-        if(mysqli_num_rows($query) > 0)
-        {
-                
-                $price_to_select=$costs_regular_price;                
-                
-                $sql = "select lc_costs from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID=$hotels_ID AND lc_costs_date_from<=CURDATE() AND lc_costs_date_to>=CURDATE() AND lc_status=1";
-                
-                $query = mysqli_query($db, $sql);
-                
-                if(mysqli_num_rows($query) > 1){
-                    
-                    $sql = "select lc_costs from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID=$hotels_ID AND lc_costs_date_from=CURDATE() AND lc_costs_date_to=CURDATE() AND lc_status=1 LIMIT 1";
-                
-                    $query = mysqli_query($db, $sql);
-                    
-                    $content     = mysqli_fetch_object($query);
-                    
-                    $price_to_select = $content->lc_costs;
-                }
-                else if(mysqli_num_rows($query) == 1){
-                    
-                    $content     = mysqli_fetch_object($query);
-                    
-                    $price_to_select = $content->lc_costs;
-                }
+    while($row = mysqli_fetch_object($query)){ 
             
-            
-                if (strpos($price_to_select, "€") === false){
-                    
-                    if (strpos($mystring, "%") === false)
-                        
-                        continue;
-                    
-                    else
-                        
-                        $price_to_select = trim(explode("%", $price_to_select)[0]);                     
-                }
-                
-                else 
-                    
-                    $price_to_select = trim(explode("€", $price_to_select)[0]);
-                        
-        }
-        else{
-            
-            $meals_cost=$costs_regular_price;
-        
-            if(!empty($meals_num_person))
+		if (strpos($row->lc_costs, "€") === false){
+			
+			if (strpos($row->lc_costs, "%") === false)
+				
+				continue;
+				
+			else{
+			
+				$price_to_select = trim(explode("%", $row->lc_costs)[0]);
+				$other_cost += $total_cost*
+			}				                     
+		}
+		
+		else{
+		
+			$price_to_select = trim(explode("€", $row->lc_costs)[0]);                
 
-                $meals_cost=$meals_regular_price*$meals_num_person;
-
-            $meals_cost *= $num_nights;
-        }         
-    }
+		
+		} 	
+    } */
     
     /*********OTHER COSTS*************/
 
@@ -310,7 +272,7 @@ echo "<br/>Rooms Cost: ".$rooms_cost;
                               		<div class="col-md-3">
                                                             <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
                                             
-                                        <input required type="number" step="1" min="1" placeholder="Wie viele Nächte?" class="form-control input-medium" name="num_nights"/>
+                                        <input required type="number" step="1" min="1" placeholder="Wie viele Nächte?" class="form-control input-medium" name="num_nights"/><br/>
                                         
                                         <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler"/>
                                         
@@ -349,8 +311,8 @@ echo "<br/>Rooms Cost: ".$rooms_cost;
                                   	
                                     <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="journey_ID" name="journey_ID">
                                     <option value=""></option>
-									</select> <br/><br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_num_person"/>
+									</select> <br/><!-- <br/>
+									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_num_person"/> -->
                                      <span for="journey_ID" class="help-block"></span>                                     
                                   </div>
                               </div>
@@ -387,8 +349,8 @@ echo "<br/>Rooms Cost: ".$rooms_cost;
                                   	
                                     <select class="form-control input-medium meals_ID" name="meals_ID">
                                     <option value=""></option>
-									</select> <br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="meals_num_person"/>
+									</select> <!-- <br/>
+									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="meals_num_person"/> -->
                                      <span for="meals_ID" class="help-block"></span>                                     
                                   </div>
                               </div>
