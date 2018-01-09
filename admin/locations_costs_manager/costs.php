@@ -66,7 +66,7 @@ $news_query = mysqli_query($db,$sql);
                   <div class="portlet-title">
                      <div class="caption"><i class="fa fa-table"></i>Kosten</div>
                      <div class="actions">
-                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addcosts&id='.$locations_ID; ?>" class="btn blue"><i class="fa fa-plus"></i> Kosten für diesen Hotel einfügen</a>
+                        <a href="<?php echo SITE_URL_ADMIN.'?mKey='.$mKey.'&pKey=addcosts&id='.$locations_ID; ?>" class="btn blue"><i class="fa fa-plus"></i> Kosten für diese Destination einfügen</a>
                         <div class="btn-group">
                            <a class="btn green" href="#" data-toggle="dropdown">
                            <i class="fa fa-cogs"></i> Tools
