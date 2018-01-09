@@ -1,7 +1,263 @@
 <?php 
 
+$total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_costs=0;
 
+if(isset($_POST["Submit"])){
+    
+    extract($_POST);
+    
+    print_r($_POST);
+    
+    echo "<br/>";
+    
+    $start_date = new DateTime($date_from);
+    
+    $end_date = new DateTime($date_from);
 
+    $end_date->modify('+'.($num_nights-1).' day');
+    
+    if(!empty($journey_ID)){
+        
+        $sql = "select journey_price from ".$db_suffix."journey where journey_ID = $journey_ID AND journey_status=1 limit 1";				
+        $query = mysqli_query($db, $sql);
+        if(mysqli_num_rows($query) > 0)
+        {
+            $content     = mysqli_fetch_object($query);
+            $journey_price       = $content->journey_price; 
+            
+            if(!empty($journey_num_person))
+                
+                $journey_cost=$journey_price*$journey_num_person;
+            
+            else
+                
+                $journey_cost=$journey_price;
+        }
+    }
+    
+    if(!empty($meals_ID)){        
+        
+        $sql = "select mp_price from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID='$hotels_ID' AND mp_price_date_from='0000-00-00' AND mp_price_date_to='0000-00-00' AND mp_status=1";				
+        $query = mysqli_query($db, $sql);
+        if(mysqli_num_rows($query) > 0)
+        {
+            $content     = mysqli_fetch_object($query);
+            $meals_regular_price = $content->mp_price;
+        }        
+        
+        $sql = "select mp_price from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID='$hotels_ID' AND mp_price_date_from!='0000-00-00' AND mp_price_date_to!='0000-00-00' AND mp_status=1";				
+        $query = mysqli_query($db, $sql);
+        if(mysqli_num_rows($query) > 0)
+        {
+            for($i = $start_date; $i <= $end_date; $i->modify('+1 day')){
+                
+                $price_to_select=$meals_regular_price;
+                
+                $trial_date = $i->format("Y-m-d");
+                
+                $sql = "select mp_price from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID=$hotels_ID AND mp_price_date_from<='$trial_date' AND mp_price_date_to>='$trial_date' AND mp_status=1";
+                
+                $query = mysqli_query($db, $sql);
+                
+                if(mysqli_num_rows($query) > 1){
+                    
+                    $sql = "select mp_price from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID=$hotels_ID AND mp_price_date_from='$trial_date' AND mp_price_date_to='$trial_date' AND mp_status=1 LIMIT 1";
+                
+                    $query = mysqli_query($db, $sql);
+                    
+                    $content     = mysqli_fetch_object($query);
+                    
+                    $price_to_select = $content->mp_price;
+                }
+                else if(mysqli_num_rows($query) == 1){
+                    
+                    $content     = mysqli_fetch_object($query);
+                    
+                    $price_to_select = $content->mp_price;
+                }
+                    
+                if(!empty($meals_num_person))
+
+                    $meals_cost+=($price_to_select*$meals_num_person); 
+                
+                else
+                    
+                    $meals_cost+=$price_to_select;
+            }            
+        }
+        else{
+            
+            $meals_cost=$meals_regular_price;
+        
+            if(!empty($meals_num_person))
+
+                $meals_cost=$meals_regular_price*$meals_num_person;
+
+            $meals_cost *= $num_nights;
+        }
+    }
+    
+    if(count($rooms_ID)>0){
+        
+        foreach($rooms_ID as $key => $room_ID){
+            
+            $cost_of_this_room=0;
+        
+            $sql = "select rp_price from ".$db_suffix."rooms_price where rooms_ID = $room_ID AND hotels_ID='$hotels_ID' AND rp_price_date_from='0000-00-00' AND rp_price_date_to='0000-00-00' AND rp_status=1";				
+            $query = mysqli_query($db, $sql);
+            if(mysqli_num_rows($query) > 0)
+            {
+                $content     = mysqli_fetch_object($query);
+                $rooms_regular_price = $content->rp_price;
+            }        
+
+            $sql = "select rp_price from ".$db_suffix."rooms_price where rooms_ID = $room_ID AND hotels_ID='$hotels_ID' AND rp_price_date_from!='0000-00-00' AND rp_price_date_to!='0000-00-00' AND rp_status=1";				
+            $query = mysqli_query($db, $sql);
+            if(mysqli_num_rows($query) > 0)
+            {            
+                $start_date = new DateTime($date_from);
+    
+                $end_date = new DateTime($date_from);
+
+                $end_date->modify('+'.($num_nights-1).' day');
+                
+                for($j = $start_date; $j <= $end_date; $j->modify('+1 day')){
+
+                    $price_to_select=$rooms_regular_price;
+
+                    $trial_date = $j->format("Y-m-d");
+
+                    $sql = "select rp_price from ".$db_suffix."rooms_price where rooms_ID = $room_ID AND hotels_ID=$hotels_ID AND rp_price_date_from<='$trial_date' AND rp_price_date_to>='$trial_date' AND rp_status=1";
+
+                    $query = mysqli_query($db, $sql);
+
+                    if(mysqli_num_rows($query) > 1){
+
+                        $sql = "select rp_price from ".$db_suffix."rooms_price where rooms_ID = $room_ID AND hotels_ID=$hotels_ID AND rp_price_date_from='$trial_date' AND rp_price_date_to='$trial_date' AND rp_status=1 LIMIT 1";
+
+                        $query = mysqli_query($db, $sql);
+
+                        $content     = mysqli_fetch_object($query);
+
+                        $price_to_select = $content->rp_price;
+                    }
+                    else if(mysqli_num_rows($query) == 1){
+
+                        $content     = mysqli_fetch_object($query);
+
+                        $price_to_select = $content->rp_price;
+                    }                    
+                
+                    if(!empty($num_rooms[$key]))
+
+                        $rooms_cost+=($price_to_select*$num_rooms[$key]); 
+
+                    else
+
+                        $rooms_cost+=$price_to_select;
+                }            
+            }
+            else{
+
+                $cost_of_this_room=$rooms_regular_price;
+
+                if(!empty($num_rooms[$key]))
+
+                    $cost_of_this_room=$rooms_regular_price*$num_rooms[$key];
+
+                $rooms_cost += ($cost_of_this_room * $num_nights);
+            }
+        }
+    }
+    
+    /*********OTHER COSTS*************/
+    
+    $costs_title=array();
+    
+    $sql = "select distinct lc_title from ".$db_suffix."locations_costs WHERE lc_status=1";				
+    
+    $query = mysqli_query($db, $sql);
+    
+    while($row = mysqli_fetch_object($query))
+        
+        $costs_title[] = $row->lc_title;
+    
+    foreach($costs_title as $lc_title){
+        
+        $sql = "select lc_costs from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND lc_title='$lc_title' AND lc_costs_date_from='0000-00-00' AND lc_costs_date_to='0000-00-00' AND lc_status=1";				
+        $query = mysqli_query($db, $sql);
+        if(mysqli_num_rows($query) > 0)
+        {
+            $content     = mysqli_fetch_object($query);
+            $costs_regular_price = $content->lc_costs;
+        }        
+        
+        $sql = "select lc_costs from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID='$hotels_ID' AND lc_costs_date_from!='0000-00-00' AND lc_costs_date_to!='0000-00-00' AND lc_status=1";				
+        $query = mysqli_query($db, $sql);
+        if(mysqli_num_rows($query) > 0)
+        {
+                
+                $price_to_select=$costs_regular_price;                
+                
+                $sql = "select lc_costs from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID=$hotels_ID AND lc_costs_date_from<=CURDATE() AND lc_costs_date_to>=CURDATE() AND lc_status=1";
+                
+                $query = mysqli_query($db, $sql);
+                
+                if(mysqli_num_rows($query) > 1){
+                    
+                    $sql = "select lc_costs from ".$db_suffix."meals_price where meals_ID = $meals_ID AND hotels_ID=$hotels_ID AND lc_costs_date_from=CURDATE() AND lc_costs_date_to=CURDATE() AND lc_status=1 LIMIT 1";
+                
+                    $query = mysqli_query($db, $sql);
+                    
+                    $content     = mysqli_fetch_object($query);
+                    
+                    $price_to_select = $content->lc_costs;
+                }
+                else if(mysqli_num_rows($query) == 1){
+                    
+                    $content     = mysqli_fetch_object($query);
+                    
+                    $price_to_select = $content->lc_costs;
+                }
+            
+            
+                if (strpos($price_to_select, "€") === false){
+                    
+                    if (strpos($mystring, "%") === false)
+                        
+                        continue;
+                    
+                    else
+                        
+                        $price_to_select = trim(explode("%", $price_to_select)[0]);                     
+                }
+                
+                else 
+                    
+                    $price_to_select = trim(explode("€", $price_to_select)[0]);
+                        
+        }
+        else{
+            
+            $meals_cost=$costs_regular_price;
+        
+            if(!empty($meals_num_person))
+
+                $meals_cost=$meals_regular_price*$meals_num_person;
+
+            $meals_cost *= $num_nights;
+        }         
+    }
+    
+    /*********OTHER COSTS*************/
+
+}
+
+echo "<br/>Reise Cost: ".$journey_cost;
+
+echo "<br/>Meals Cost: ".$meals_cost;
+
+echo "<br/>Rooms Cost: ".$rooms_cost;
 
 
 ?>
@@ -50,10 +306,23 @@
                                    
                                
 							    <div class="form-group">
+                              		<label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
+                              		<div class="col-md-3">
+                                                            <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
+                                            
+                                        <input required type="number" step="1" min="1" placeholder="Wie viele Nächte?" class="form-control input-medium" name="num_nights"/>
+                                        
+                                        <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler"/>
+                                        
+                                 		<span for="lc_costs_date_from" class="help-block"></span>
+                              		</div>
+                           	  </div>
+                                   
+                                <div class="form-group">
                                   <label for="locations_ID" class="control-label col-md-3">Destination</label>
                                   <div class="col-md-8">
                                   	
-                                    <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="locations_ID" name="locations_ID">
+                                    <select required class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="locations_ID" name="locations_ID">
                                     <option value=""></option>
 									
 									<?php 
@@ -81,7 +350,7 @@
                                     <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="journey_ID" name="journey_ID">
                                     <option value=""></option>
 									</select> <br/><br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_no"/>
+									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_num_person"/>
                                      <span for="journey_ID" class="help-block"></span>                                     
                                   </div>
                               </div>
@@ -90,7 +359,7 @@
                                   <label for="hotels_ID" class="control-label col-md-3">Hotel</label>
                                   <div class="col-md-8">
                                   	
-                                    <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="hotels_ID" name="hotels_ID">
+                                    <select required class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="hotels_ID" name="hotels_ID">
                                     <option value=""></option>
 									</select>
                                      <span for="hotels_ID" class="help-block"></span>                                     
@@ -103,8 +372,8 @@
                                   	
                                     <select class="form-control input-medium rooms_ID" name="rooms_ID[]"> 
                                     <option value=""></option>
-									</select> <br/><br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="rooms_no"/>
+									</select> <br/>
+									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="num_rooms[]"/>
                                     <span for="rooms_ID" class="help-block"></span>                                     
                                   </div>
 								  <div class="col-md-offset-1 col-md-1">
@@ -116,10 +385,10 @@
                                   <label for="meals_ID" class="control-label col-md-3">Mealtyp</label>
                                   <div class="col-md-1">
                                   	
-                                    <select class="form-control meals_ID" name="meals_ID">
+                                    <select class="form-control input-medium meals_ID" name="meals_ID">
                                     <option value=""></option>
-									</select> <br/><br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="meals_no"/>
+									</select> <br/>
+									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="meals_num_person"/>
                                      <span for="meals_ID" class="help-block"></span>                                     
                                   </div>
                               </div>

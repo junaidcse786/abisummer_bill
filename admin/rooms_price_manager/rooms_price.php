@@ -112,18 +112,14 @@ $news_query = mysqli_query($db,$sql);
 
 									echo '<span class="label label-md label-success">Regular</span>';
 									
-								else if($row->rp_price_date_from!='0000-00-00' && $row->rp_price_date_to!='0000-00-00')
+								else if($row->rp_price_date_from!=$row->rp_price_date_to)
 								
 									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_from.'</b> bis <b>'.$row->rp_price_date_to.'</b></span>';
 									
-								else if($row->rp_price_date_from!='0000-00-00')
+								else 
 								
-									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_from.'</b></span>';	
-									
-								else if($row->rp_price_date_to!='0000-00-00')
+									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_from.'</b></span>';
 								
-									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->rp_price_date_to.'</b></span>';		
-									
 									
 								?></td>    
                               <td> 

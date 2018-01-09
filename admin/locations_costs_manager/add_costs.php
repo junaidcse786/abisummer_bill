@@ -32,7 +32,7 @@ if(isset($_POST['Submit']))
 	
     if(empty($date_from) && empty($date_to)):
     
-        if(mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='0000-00-00' AND lc_costs_date_to='0000-00-00')"))>0)
+        if(mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='0000-00-00' AND lc_costs_date_to='0000-00-00') AND lc_title='$lc_title'"))>0)
         {
             $messages["lc_costs_date_from"]["status"]=$err_easy;
             $messages["lc_costs_date_from"]["msg"]="Regularkost schon existiert";
@@ -41,7 +41,7 @@ if(isset($_POST['Submit']))
 		
 	endif;
 	
-	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='$date_from' OR lc_costs_date_to='$date_from')"))>0):		
+	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='$date_from' OR lc_costs_date_to='$date_from') AND lc_title='$lc_title'"))>0):		
         
 		$messages["lc_costs_date_from"]["status"]=$err_easy;
 		$messages["lc_costs_date_from"]["msg"]="Besonderkost für diesen Datum schon existiert";
@@ -49,7 +49,7 @@ if(isset($_POST['Submit']))
 		
 	endif;
 	
-	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='$date_to' OR lc_costs_date_to='$date_to')"))>0):		
+	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT lc_ID from ".$db_suffix."locations_costs where locations_ID = $locations_ID AND (lc_costs_date_from='$date_to' OR lc_costs_date_to='$date_to') AND lc_title='$lc_title'"))>0):		
         
 		$messages["lc_costs_date_from"]["status"]=$err_easy;
 		$messages["lc_costs_date_from"]["msg"]="Besonderkost für diesen Datum schon existiert";
@@ -82,7 +82,15 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."locations_costs SET lc_title='$lc_title',locations_ID='$locations_ID',lc_costs_date_from='$date_from',lc_costs_date_to='$date_to',lc_costs='$lc_costs',lc_status='$lc_status',lc_notes='$lc_notes'";
+		if(!empty($date_from) && empty($date_to))
+            
+            $date_to=$date_from;
+        
+        if(!empty($date_to) && empty($date_from))
+            
+            $date_from=$date_to;
+        
+        $sql = "INSERT INTO ".$db_suffix."locations_costs SET lc_title='$lc_title',locations_ID='$locations_ID',lc_costs_date_from='$date_from',lc_costs_date_to='$date_to',lc_costs='$lc_costs',lc_status='$lc_status',lc_notes='$lc_notes'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -176,6 +184,33 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		<div class="col-md-4">
                                  		<input type="text" placeholder="" class="form-control" name="lc_title" value="<?php echo $lc_title;?>"/>
                                  		<span for="lc_title" class="help-block"><?php echo $messages["lc_title"]["msg"] ?></span>
+                                        <?php  
+							  
+                                            $sql_parent_menu = "SELECT DISTINCT lc_title FROM ".$db_suffix."locations_costs where lc_status='1'";	
+                                            $parent_query = mysqli_query($db, $sql_parent_menu);
+
+                                            if(mysqli_num_rows($parent_query)>0)
+
+                                            {								
+
+                                              ?>
+                                              <br />
+
+                                                     <select class="form-control input-medium" id="lc_title_select" name="lc_title_select">
+                                                     <option value=""></option>
+
+                                                     <?php 
+                                                
+                                                        while($parent_obj = mysqli_fetch_object($parent_query))
+
+                                                            echo '<option value="'.$parent_obj->lc_title.'">'.$parent_obj->lc_title.'</option>';
+                                                
+                                                      ?>
+
+                                                     </select>
+                                                     <span for="exercise_topic" class="help-block">Choose from existing topic<br/>You can assign more than one topic to an exercise by combining them with a comma</span>
+
+                                            <?php } ?> 
                               		</div>
                            	  </div>       
                                    
@@ -282,6 +317,15 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
  
         
         <!-- END JAVASCRIPTS -->
+<script>
+		 
+$( "#lc_title_select" ).change(function() {
+    $('input[name="lc_title"]').val($(this).val());
+});
+                
+        
+</script>
+
 </body>
 <!-- END BODY -->
 </html>

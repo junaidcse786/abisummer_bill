@@ -64,7 +64,15 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."rooms_price SET hotels_ID='$hotels_ID',rooms_ID='$rooms_ID',rp_price_date_from='$date_from',rp_price_date_to='$date_to',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes'";
+		if(!empty($date_from) && empty($date_to))
+            
+            $date_to=$date_from;
+        
+        if(!empty($date_to) && empty($date_from))
+            
+            $date_from=$date_to;
+        
+        $sql = "INSERT INTO ".$db_suffix."rooms_price SET hotels_ID='$hotels_ID',rooms_ID='$rooms_ID',rp_price_date_from='$date_from',rp_price_date_to='$date_to',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes'";
         
 		if(mysqli_query($db,$sql))
 		{		

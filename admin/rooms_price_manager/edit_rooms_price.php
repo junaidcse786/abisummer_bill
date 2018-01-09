@@ -72,7 +72,15 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."rooms_price SET rooms_ID='$rooms_ID',rp_price_date_from='$date_from',rp_price_date_to='$date_to',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes' WHERE rp_ID='$rp_ID'";
+		if(!empty($date_from) && empty($date_to))
+            
+            $date_to=$date_from;
+        
+        if(!empty($date_to) && empty($date_from))
+            
+            $date_from=$date_to;
+        
+        $sql = "UPDATE ".$db_suffix."rooms_price SET rooms_ID='$rooms_ID',rp_price_date_from='$date_from',rp_price_date_to='$date_to',rp_price='$rp_price',rp_status='$rp_status',rp_notes='$rp_notes' WHERE rp_ID='$rp_ID'";
         
 		if(mysqli_query($db,$sql))
 		{		
