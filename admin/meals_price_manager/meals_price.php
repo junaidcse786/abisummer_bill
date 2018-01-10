@@ -87,7 +87,8 @@ $news_query = mysqli_query($db,$sql);
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Mealtyp</th>
                               <th>Preis</th>
-                              <th>Preistyp?</th>   
+                              <th>Preistyp?</th> 
+                              <th>Notes</th>   
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
@@ -125,7 +126,8 @@ $news_query = mysqli_query($db,$sql);
 									echo '<span class="label label-md label-danger">Besonder</span> <span class="label label-sm label-warning"><b>'.$row->mp_price_date_to.'</b></span>';
 									
 									
-								?></td>   
+								?></td>
+                               <td><?php echo $row->mp_notes;?></td>
                               <td> 
 							  <?php if($row->mp_status)
 							  
