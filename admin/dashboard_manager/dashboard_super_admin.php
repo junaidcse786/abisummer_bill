@@ -2,6 +2,8 @@
 
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
+$costs_array=array();
+
 if(isset($_POST["Submit"])){
     
     extract($_POST);
@@ -32,6 +34,8 @@ if(isset($_POST["Submit"])){
             else
                 
                 $journey_cost=$journey_price;
+            
+            $costs_array["journey"] = array("per_person" => $journey_price, "total" => $journey_cost);
         }
     }
     
@@ -82,8 +86,8 @@ if(isset($_POST["Submit"])){
                 
                 else
                     
-                    $meals_cost+=$price_to_select;
-            }            
+                    $meals_cost+=$price_to_select;                
+            }
         }
         else{
             
@@ -95,13 +99,27 @@ if(isset($_POST["Submit"])){
 
             $meals_cost *= $num_nights;
         }
+        
+        $costs_array["meals"] = array("per_person" => $meals_cost/$num_traveler, "total" => $meals_cost);
     }
+    
+    $rooms_cost_details=array();
     
     if(count($rooms_ID)>0){
         
         foreach($rooms_ID as $key => $room_ID){
             
             $cost_of_this_room=0;
+            
+            $sql = "select rooms_title, rooms_persons_to_fit from ".$db_suffix."rooms where rooms_ID = $room_ID";				
+            $query = mysqli_query($db, $sql);
+            if(mysqli_num_rows($query) > 0)
+            {
+                $content     = mysqli_fetch_object($query);
+                $rooms_title=$content->rooms_title;
+                $rooms_persons_to_fit=$content->rooms_persons_to_fit;
+            }
+            
         
             $sql = "select rp_price from ".$db_suffix."rooms_price where rooms_ID = $room_ID AND hotels_ID='$hotels_ID' AND rp_price_date_from='0000-00-00' AND rp_price_date_to='0000-00-00' AND rp_status=1";				
             $query = mysqli_query($db, $sql);
@@ -120,6 +138,8 @@ if(isset($_POST["Submit"])){
                 $end_date = new DateTime($date_from);
 
                 $end_date->modify('+'.($num_nights-1).' day');
+                
+                $temp_cost_this_room=0;
                 
                 for($j = $start_date; $j <= $end_date; $j->modify('+1 day')){
 
@@ -155,7 +175,11 @@ if(isset($_POST["Submit"])){
                     else
 
                         $rooms_cost+=$price_to_select;
-                }            
+                    
+                    $temp_cost_this_room+=$price_to_select;
+                }
+                
+               $rooms_cost_details[]=array( "rooms_title"=>$rooms_title, "costs_this_room_the_whole_time"=>$temp_cost_this_room, "rooms_persons_to_fit" => $rooms_persons_to_fit); 
             }
             else{
 
@@ -166,8 +190,12 @@ if(isset($_POST["Submit"])){
                     $cost_of_this_room=$rooms_regular_price*$num_rooms[$key];
 
                 $rooms_cost += ($cost_of_this_room * $num_nights);
+                
+                $rooms_cost_details[]=array( "rooms_title"=>$rooms_title, "costs_this_room_the_whole_time"=>$cost_of_this_room * $num_nights, "rooms_persons_to_fit" => $rooms_persons_to_fit);
             }
         }
+        
+       $costs_array["rooms"] = array("per_person" => $rooms_cost/$num_traveler, "total" => $rooms_cost); 
     }
 	
 	/*********EIRLY BIRD*************/
@@ -212,14 +240,17 @@ if(isset($_POST["Submit"])){
     } */
     
     /*********OTHER COSTS*************/
-
+    
+    echo "<br/><br/>";
+    
+    print_r($costs_array);
+    
+    echo "<br/><br/>";
+    
+    print_r($rooms_cost_details);
 }
 
-echo "<br/>Reise Cost: ".$journey_cost;
 
-echo "<br/>Meals Cost: ".$meals_cost;
-
-echo "<br/>Rooms Cost: ".$rooms_cost;
 
 
 ?>
@@ -372,13 +403,85 @@ echo "<br/>Rooms Cost: ".$rooms_cost;
                <!-- END EXAMPLE TABLE PORTLET-->
             </div>
          </div>
-				
-                
-                
-			
-            
 
-			
+        <div class="row">
+            <div class="col-md-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+               <div class="portlet box green">
+                  <div class="portlet-title">
+                     <div class="caption"><i class="fa fa-reorder"></i>Preis</div>
+                  </div>
+                  <div class="portlet-body">
+                      
+                      <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat purple-plum">
+                                    <div class="visual">
+                                        <i class="fa fa-globe"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                             <?php $num=0;?> Calella
+                                        </div>
+                                        <div class="desc">
+                                             Reisedatum: 21.12.2018 <br/>                                             
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat green-seagreen">
+                                    <div class="visual">
+                                        <i class="fa fa-plane"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                             <?php echo $num; ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             Reisekosten
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat yellow-gold">
+                                    <div class="visual">
+                                        <i class="fa fa-cutlery"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                             <?php echo $num; ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             Mealkosten
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat red-intense">
+                                    <div class="visual">
+                                        <i class="fa fa-comments"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                             <?php echo $num; ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             Zimmerkosten
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                  
+                  </div>
+               </div>
+               <!-- END EXAMPLE TABLE PORTLET-->
+            </div>
+         </div>
+		
 	</div>
 </div>    
 

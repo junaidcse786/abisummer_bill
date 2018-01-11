@@ -186,35 +186,16 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               <div class="form-group <?php echo $messages["lc_title"]["status"] ?>">
                               		<label class="control-label col-md-3" for="lc_title">Titel <span class="required">*</span></label>
                               		<div class="col-md-4">
-                                 		<input type="text" placeholder="" class="form-control" name="lc_title" value="<?php echo $lc_title;?>"/>
-                                        <?php  
-							  
-                                            $sql_parent_menu = "SELECT DISTINCT lc_title FROM ".$db_suffix."locations_costs where lc_status='1'";	
-                                            $parent_query = mysqli_query($db, $sql_parent_menu);
-
-                                            if(mysqli_num_rows($parent_query)>0)
-
-                                            {								
-
-                                              ?>
-                                              <br />
-
-                                                     <select class="form-control input-medium" id="lc_title_select" name="lc_title_select">
-                                                     <option value=""></option>
-
-                                                     <?php 
-                                                
-                                                        while($parent_obj = mysqli_fetch_object($parent_query))
-
-                                                            echo '<option value="'.$parent_obj->lc_title.'">'.$parent_obj->lc_title.'</option>';
-                                                
-                                                      ?>
-
-                                                     </select>                                                    
-
-                                            <?php } ?>
+                                 		<select class="form-control input-medium" name="lc_title">
+                                            
+                                            <option value="Büro Puffer">Büro Puffer</option>
+                                            <option value="MwSt">MwSt</option>
+                                            <option value="Promoter Provision">Promoter Provision</option>
+                                            
+                                        </select>
+                                            
                                  		<span for="lc_title" class="help-block"><?php echo $messages["lc_title"]["msg"] ?></span>
-                              		</div>
+                                    </div>
                            	  </div>                            
                               
                               <div class="form-group <?php echo $messages["lc_costs"]["status"] ?>">

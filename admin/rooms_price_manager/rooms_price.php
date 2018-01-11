@@ -123,7 +123,7 @@ $news_query = mysqli_query($db,$sql);
 								
 									
 								?></td>
-                              <td><?php echo $row->mp_notes;?></td>   
+                              <td><?php echo $row->rp_notes;?></td>   
                               <td> 
 							  <?php if($row->rp_status)
 							  
