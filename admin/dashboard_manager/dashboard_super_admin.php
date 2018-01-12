@@ -511,7 +511,7 @@ if(isset($_POST["Submit"])){
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                 <div class="dashboard-stat green">
                                     <div class="visual">
-                                        <i class="fa fa-building"></i>
+                                        <i class="fa fa-bus"></i>
                                     </div>
                                     <div class="details">
                                         <div class="number">
@@ -578,7 +578,7 @@ if(isset($_POST["Submit"])){
                             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                                 <div class="dashboard-stat blue-ebonyclay">
                                     <div class="visual">
-                                        <i class="fa fa-building"></i>
+                                        <i class="fa fa-bus"></i>
                                     </div>
                                     <div class="details">
                                         <div class="number">
@@ -655,7 +655,7 @@ if(isset($_POST["Submit"])){
                  <div class="portlet box yellow">
                         <div class="portlet-title">
                             <div class="caption">
-                                <i class="fa fa-cogs"></i>Preis Details (<b>Ohne Early Bird</b>) </div>
+                                <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird</b>) </div>
                         </div>
                         <div class="portlet-body">
                             <div class="table-responsive">
@@ -699,18 +699,25 @@ if(isset($_POST["Submit"])){
 
              $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_to>=CURDATE()";	
              $parent_query = mysqli_query($db, $sql_parent_menu);
-
+            $counter=1;
             while($row = mysqli_fetch_object($parent_query)):
 
-        ?>
+            if($counter%2==1)
+                
+                echo '<div class="row">';
 
-        
-        <div class="row">
-             <div class="col-md-12">
+        ?>        
+             <div class="col-md-6">
                  <div class="portlet box grey-cascade">
                         <div class="portlet-title">
                             <div class="caption">
-                                <i class="fa fa-cogs"></i>Preis Details - Early Bird <b><?php echo $row->eb_discount_date_from.' bis '.$row->eb_discount_date_to. ' => '.$row->eb_discount.'%'  ?></b> </div>
+                                <i class="fa fa-euro"></i>Preis Details - Early Bird 
+                            </div>
+                            <div class="actions">
+                                <a href="#" class="btn blue"><i class="fa fa-calender"></i> <?php echo $row->eb_discount_date_from.' bis '.$row->eb_discount_date_to;  ?></a>
+                                
+                                <a href="#" class="btn red"><i class="fa fa-percentage"></i> <?php echo $row->eb_discount.'%';  ?></a>
+                             </div>
                         </div>
                         <div class="portlet-body">
                             <div class="table-responsive">
@@ -735,7 +742,7 @@ if(isset($_POST["Submit"])){
                                             <td> <?php echo $key; ?> </td>
                                             <td> <?php echo $rooms["rooms_persons_to_fit"]; ?> </td>
                                             <td> <?php echo $rooms["costs_this_room_the_whole_time"] -$rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100; ?>&euro; </td>
-                                            <td> <?php echo ceil(($rooms["costs_this_room_the_whole_time"] - - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100)/$rooms["rooms_persons_to_fit"]); ?>&euro; </td>
+                                            <td> <?php echo ceil(($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100)/$rooms["rooms_persons_to_fit"]); ?>&euro; </td>
                                         </tr>
                                         
                                     <?php endforeach; ?>  
@@ -745,13 +752,19 @@ if(isset($_POST["Submit"])){
                             </div>
                         </div>
                     </div>
-                 
              </div>
-         </div>
 
+        <?php
 
+            $counter++;
 
-        <?php endwhile; ?>
+            if($counter%2==1) echo '</div>';
+
+            endwhile; 
+
+            if($counter%2==1) echo '</div>';
+
+        ?>
 
     <?php endif; ?>
 		
