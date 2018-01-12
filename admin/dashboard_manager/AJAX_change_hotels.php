@@ -22,7 +22,7 @@ if(isset($_POST["locations_ID"])){
 		
 			$stars.="*";
 		
-		echo '<option value="'.$row->hotels_ID.'">'.$row->hotels_name.' '.$stars.'</option>';
+		echo '<option value="'.$row->hotels_ID.':::'.$row->hotels_name.'">'.$row->hotels_name.' '.$stars.'</option>';
 		
 	}
 }

@@ -188,9 +188,9 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		<div class="col-md-4">
                                  		<select class="form-control input-medium" name="lc_title">
                                             
-                                            <option value="Büro Puffer">Büro Puffer</option>
-                                            <option value="MwSt">MwSt</option>
-                                            <option value="Promoter Provision">Promoter Provision</option>
+                                            <option <?php if($lc_title=='Office Profit') echo 'selected';  ?> value="Office Profit">Office Profit</option>
+                                            <option <?php if($lc_title=='MwSt') echo 'selected';  ?> value="MwSt">MwSt</option>
+                                            <option <?php if($lc_title=='Promoter Provision') echo 'selected';  ?> value="Promoter Provision">Promoter Provision</option>
                                             
                                         </select>
                                             

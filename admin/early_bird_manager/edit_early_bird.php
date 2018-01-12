@@ -175,11 +175,11 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange">
                                                             
-                                                            <input value="<?php echo $date_from; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
+                                                            <input value="<?php echo $date_from; ?>" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from">
                                             
                                                             <span class="input-group-addon"> - </span>
                                             
-                                                            <input value="<?php echo $date_to; ?>" type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> 
+                                                            <input value="<?php echo $date_to; ?>" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to"> 
                                         </div>
                                  		<span for="eb_discount_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_from"]["msg"] ?></span>
                               		</div>
