@@ -336,22 +336,35 @@ if(isset($_POST["Submit"])){
         $office_profit = $other_costs_list["Office Profit"]["costs"]*$num_traveler;
     
     
-    if($other_costs_list["Promoter Provision"]["type"]=="percent")
-        
-        $promoter_provision = ( ($total_costs + $office_profit) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
-    
-    else
-        
-        $promoter_provision = $other_costs_list["Promoter Provision"]["costs"]*$num_traveler;
-    
-    
     if($other_costs_list["MwSt"]["type"]=="percent")
         
-        $MwSt = ( ($promoter_provision + $office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
+        $MwSt = $office_profit * $other_costs_list["MwSt"]["costs"]  /100 ;
     
     else
         
         $MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler;
+    
+    
+    for($excel_loop=1;$excel_loop<100;$excel_loop++){
+    
+    
+        if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+            $promoter_provision = ( ($total_costs + $office_profit + $MwSt) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
+
+        else
+
+            $promoter_provision = $other_costs_list["Promoter Provision"]["costs"]*$num_traveler;
+
+
+        if($other_costs_list["MwSt"]["type"]=="percent")
+
+            $MwSt = ( ($promoter_provision + $office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
+
+        else
+
+            $MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler;
+    }
     
     
     /*********OTHER COSTS*************/
@@ -856,51 +869,72 @@ if(isset($_POST["Submit"])){
                                     $i=1;    
                                     foreach($rooms_cost_details as $key => $rooms): 
 
-									$discounted_rooms_cost = $rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100;
-									
-									$discounted_meals_cost = $meals_cost - $meals_cost*$row->eb_discount/100;
-									
-									$discounted_total_costs = $discounted_meals_cost + $discounted_rooms_cost + $journey_cost;
-    
-									if($other_costs_list["Office Profit"]["type"]=="percent")
-										
-										$discounted_office_profit = ( $discounted_total_costs * $other_costs_list["Office Profit"]["costs"] ) /100 ;
-									
-									else
-										
-										$discounted_office_profit = $other_costs_list["Office Profit"]["costs"]*$num_traveler;
+									$discounted_this_rooms_cost = $rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100;
 									
 									
-									if($other_costs_list["Promoter Provision"]["type"]=="percent")
-										
-										$discounted_promoter_provision = ( ($discounted_total_costs + $discounted_office_profit) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
 									
-									else
-										
-										$discounted_promoter_provision = $other_costs_list["Promoter Provision"]["costs"]*$num_traveler;
-									
-									
-									if($other_costs_list["MwSt"]["type"]=="percent")
-										
-										$discounted_MwSt = ( ($discounted_promoter_provision + $discounted_office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
-									
-									else
-										
-										$discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler;							
-									
-									$discounted_actual_total_price = $discounted_total_costs + $discounted_office_profit + $discounted_promoter_provision + $MwSt;
-                                        
-                                    ?>  
+									?>  
                                         <tr>
                                             <td> <?php echo $i++; ?> </td>
                                             <td> <?php echo $key; ?> </td>
                                             <td> <?php echo ' x '.$rooms["rooms_ordered"]; ?> </td>
                                             <td> <?php echo $rooms["rooms_persons_to_fit"]; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_rooms_cost, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_rooms_cost/$rooms["rooms_persons_to_fit"], 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format($discounted_this_rooms_cost, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format($discounted_this_rooms_cost/$rooms["rooms_persons_to_fit"], 2, ',', '.'); ?>&euro; </td>
                                         </tr>
                                         
-                                    <?php endforeach; ?>
+                                    <?php endforeach; 
+                                        
+                                        $discounted_rooms_cost = $rooms_cost - $rooms_cost*$row->eb_discount/100;
+                                       
+                                        $discounted_meals_cost = $meals_cost - $meals_cost*$row->eb_discount/100;
+                                        
+                                        $discounted_total_costs = $discounted_meals_cost + $discounted_rooms_cost + $journey_cost;
+    
+                                        if($other_costs_list["Office Profit"]["type"]=="percent")
+
+                                            $discounted_office_profit = ( $discounted_total_costs * $other_costs_list["Office Profit"]["costs"] ) /100 ;
+
+                                        else
+
+                                            $discounted_office_profit = $other_costs_list["Office Profit"]["costs"]*$num_traveler;
+
+
+                                        if($other_costs_list["MwSt"]["type"]=="percent")
+
+                                            $discounted_MwSt = $discounted_office_profit * $other_costs_list["MwSt"]["costs"] /100 ;
+
+                                        else
+
+                                            $discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler;	
+
+
+                                        for($excel_loop=1;$excel_loop<=100;$excel_loop++){
+
+                                            if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+                                                $discounted_promoter_provision = ($discounted_total_costs + $discounted_office_profit+ $discounted_MwSt) * $other_costs_list["Promoter Provision"]["costs"] / 100 ;
+
+                                            else
+
+                                                $discounted_promoter_provision = $other_costs_list["Promoter Provision"]["costs"]*$num_traveler;
+
+
+                                            if($other_costs_list["MwSt"]["type"]=="percent")
+
+                                                $discounted_MwSt = ($discounted_promoter_provision + $discounted_office_profit) * $other_costs_list["MwSt"]["costs"] / 100 ;
+
+                                            else
+
+                                                $discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler; 
+
+                                        }
+
+                                        $discounted_actual_total_price = $discounted_total_costs + $discounted_office_profit + $discounted_promoter_provision + $discounted_MwSt;
+                                        
+                                        
+                                        
+                                        ?>
 
 										<tr>
                                             <td> </td>
