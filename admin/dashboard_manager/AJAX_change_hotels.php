@@ -2,10 +2,6 @@
  
 require_once('../../config/dbconnect.php');
 
-if(!isset($_SESSION["admin_panel"]))	
-
-	header('Location: '.SITE_URL_ADMIN.'login.php');
-
 if(isset($_POST["locations_ID"])){
 
 	$locations_ID = $_POST["locations_ID"];
