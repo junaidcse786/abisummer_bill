@@ -75,6 +75,7 @@ $news_query = mysqli_query($db,$sql);
                               <th>Titel</th>
                               <th>Preis</th>
                               <th>Destination</th>
+                              <th>Notes</th>   
                               <th >Status</th>
                                <th >eingefügt am</th>
                               <!--<th >&nbsp;</th>    -->                          
@@ -93,7 +94,8 @@ $news_query = mysqli_query($db,$sql);
                               <td><a href="<?php echo '?mKey='.$mKey.'&pKey=editjourney&id='.$row->journey_ID;?>"><?php echo $row->journey_title;?></a></td>
                               
                               <td><?php echo $row->journey_price;?></td>
-                              <td><?php echo $row->locations_name;?></td>   
+                              <td><?php echo $row->locations_name;?></td>
+                              <td><?php echo $row->journey_notes;?></td>
                               <td> 
 							  <?php if($row->journey_status)
 							  

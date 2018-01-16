@@ -1,5 +1,7 @@
 <?php 
 
+require_once('../config/dbconnect.php');	
+	
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
 setlocale(LC_MONETARY, 'de_DE');
@@ -391,6 +393,79 @@ if(isset($_POST["Submit"])){
 
 ?>
 
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+     <?php require_once('header.php'); ?>   
+</head>
+<!-- END HEAD -->
+
+<!-- BEGIN BODY -->
+<!-- DOC: Apply "page-header-fixed-mobile" and "page-footer-fixed-mobile" class to body element to force fixed header or footer in mobile devices -->
+<!-- DOC: Apply "page-sidebar-closed" class to the body and "page-sidebar-menu-closed" class to the sidebar menu element to hide the sidebar by default -->
+<!-- DOC: Apply "page-sidebar-hide" class to the body to make the sidebar completely hidden on toggle -->
+<!-- DOC: Apply "page-sidebar-closed-hide-logo" class to the body element to make the logo hidden on sidebar toggle -->
+<!-- DOC: Apply "page-sidebar-hide" class to body element to completely hide the sidebar on sidebar toggle -->
+<!-- DOC: Apply "page-sidebar-fixed" class to have fixed sidebar -->
+<!-- DOC: Apply "page-footer-fixed" class to the body element to have fixed footer -->
+<!-- DOC: Apply "page-sidebar-reversed" class to put the sidebar on the right side -->
+<!-- DOC: Apply "page-full-width" class to the body element to have full width page without the sidebar menu -->
+
+
+<!-- BEGIN BODY -->
+<body class="page-header-fixed page-quick-sidebar-over-content <?php if($_SESSION["role_id"]==15) echo 'page-sidebar-closed'; ?>">
+
+		<!-- BEGIN HEADER --> 
+		
+        <div class="page-header navbar navbar-fixed-top">
+	<!-- BEGIN HEADER INNER -->
+	<div class="page-header-inner">
+            <!-- BEGIN LOGO -->
+            <div class="page-logo">
+                <a href="http://abisummer.de">
+                <img src="http://rechner.webloungeonline.com/images/rsz_1abisummer-logo-internet.png" alt="logo" class="logo-default">
+                </a>
+                <div class="menu-toggler sidebar-toggler hide">
+                </div>
+            </div>
+        </div>
+        <!-- END HEADER INNER -->
+    </div>
+        
+        <!-- END HEADER -->
+        
+        <div class="clearfix"></div>
+        
+        <!-- BEGIN CONTAINER --> 
+          
+        <div class="page-container">
+        
+                <!-- BEGIN SIDEBAR -->
+                
+                        
+                    <div class="page-sidebar-wrapper">
+                        <div class="page-sidebar navbar-collapse collapse">
+                        </div>
+                    </div>    
+                        
+                
+                <!-- END SIDEBAR -->
+                
+                <!-- BEGIN PAGE -->
+                
+                <div class="page-content-wrapper">
+				
+						<div class="page-content">
+                
+                        <!-- BEGIN PAGE content-->
+                        
+                        
 <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.css" />
 
 <!-- BEGIN PAGE header-->
@@ -399,19 +474,18 @@ if(isset($_POST["Submit"])){
 			<?php
 				$alert_message=""; $alert_box_show="hide"; $alert_type="success";
 
-				echo 'Dashboard <small>System Stats</small>';	
-			
-			
+				//echo 'Preis Checken <small>System Stats</small>';	
+                echo 'Preis Checken';				
 			?>
             </h3>
-            <div class="page-bar">
+            <!--<div class="page-bar">
 				<ul class="page-breadcrumb">
 					<li>
 						<i class="fa fa-home"></i>
 						<a href="<?php echo SITE_URL_ADMIN; ?>">Home</a>
 					</li>
 				</ul>
-			</div>
+			</div>-->
 <!-- END PAGE HEADER-->
 
     <?php if(!isset($_POST["Submit"])): ?>
@@ -602,75 +676,6 @@ if(isset($_POST["Submit"])){
                             </div>
                       </div>
                       
-                      <!--<br/>-->
-                      
-                      <div class="row hide">                          
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat red-pink">
-                                    <div class="visual">
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                             <?php echo $actual_total_price; ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             Gesamtepreis                                              
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat red-thunderbird">
-                                    <div class="visual">
-                                        <i class="fa fa-road"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                            <?php echo ceil($actual_total_price/$num_traveler); ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             Pro Reisender zu zahlen
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat yellow-casablanca">
-                                    <div class="visual">
-                                        <i class="fa fa-briefcase"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                            <?php echo $MwSt; ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             MwSt (inkl.)
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat blue-ebonyclay">
-                                    <div class="visual">
-                                        <i class="fa fa-bus"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                            <?php echo $promoter_provision; ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             Promoter Provision (inkl.)
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          
-                      </div>
-                      
-                      
                       <br/>
                       
                       <div class="row">
@@ -781,33 +786,6 @@ if(isset($_POST["Submit"])){
                                             <td> Reisekosten </td>
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> Office Profit </td>
-                                            <td style="text-align:right;"> <?php echo number_format($office_profit, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($office_profit/$num_traveler, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> Promoter Provision </td>
-                                            <td style="text-align:right;"> <?php echo number_format($promoter_provision, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($promoter_provision/$num_traveler, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> MwSt </td>
-                                            <td style="text-align:right;"> <?php echo number_format($MwSt, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($MwSt/$num_traveler, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
 										
 										<tr>
@@ -952,33 +930,6 @@ if(isset($_POST["Submit"])){
                                             <td> Reisekosten </td>
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> Office Profit </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_office_profit, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_office_profit/$num_traveler, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> Promoter Provision </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_promoter_provision, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_promoter_provision/$num_traveler, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> </td>
-                                            <td> MwSt </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_MwSt, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_MwSt/$num_traveler, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
 										
 										<tr>
@@ -1138,3 +1089,5 @@ if(isset($_POST["Submit"])){
 </body>
 <!-- END BODY -->
 </html>      
+                        
+                        
