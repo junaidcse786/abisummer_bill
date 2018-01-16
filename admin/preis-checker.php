@@ -689,7 +689,7 @@ if(isset($_POST["Submit"])){
                                              <?php echo number_format($costs_array["journey"]["total"], 2, ',', '.'); ?>&euro;
                                         </div>
                                         <div class="desc">
-                                             Reisekosten <?php if($journey_title) echo '('.$journey_title.')'; ?>
+                                             Gesamte Reisekosten <!--<?php if($journey_title) echo '('.$journey_title.')'; ?>-->
                                         </div>
                                     </div>
                                 </div>
@@ -704,7 +704,7 @@ if(isset($_POST["Submit"])){
                                              <?php echo number_format($costs_array["meals"]["total"], 2, ',', '.'); ?>&euro;
                                         </div>
                                         <div class="desc">
-                                             Mealkosten <?php if($meals_title) echo '('.$meals_title.')'; ?>
+                                             Gesamte Verplfegung <!--<?php if($meals_title) echo '('.$meals_title.')'; ?>-->
                                         </div>
                                     </div>
                                 </div>
@@ -719,7 +719,7 @@ if(isset($_POST["Submit"])){
                                              <?php echo number_format($costs_array["rooms"]["total"], 2, ',', '.'); ?>&euro;
                                         </div>
                                         <div class="desc">
-                                             Zimmerkosten
+                                             Gesamte Zimmerkosten
                                         </div>
                                     </div>
                                 </div>
@@ -774,7 +774,7 @@ if(isset($_POST["Submit"])){
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> Mealkosten </td>
+                                            <td> Verpflegung </td>
                                             <td style="text-align:right;"> <?php echo number_format($meals_cost, 2, ',', '.'); ?>&euro; </td>
                                             <td style="text-align:right;"> <?php echo number_format($meals_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
@@ -792,7 +792,7 @@ if(isset($_POST["Submit"])){
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> <b>Insgesammt</b> </td>
+                                            <td> <b>Gesamtpreis</b> </td>
                                             <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
                                             <td style="text-align:right;"> <b><?php echo number_format($actual_total_price/$num_traveler, 2, ',', '.'); ?>&euro;</b> </td>
                                         </tr>
@@ -918,7 +918,7 @@ if(isset($_POST["Submit"])){
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> Mealkosten </td>
+                                            <td> Verpflegung </td>
                                             <td style="text-align:right;"> <?php echo number_format($discounted_meals_cost, 2, ',', '.'); ?>&euro; </td>
                                             <td style="text-align:right;"> <?php echo number_format($discounted_meals_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
@@ -936,7 +936,7 @@ if(isset($_POST["Submit"])){
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> <b>Insgesammt</b> </td>
+                                            <td> <b>Gesamtpreis</b> </td>
                                             <td style="text-align:right;"> <b><?php echo number_format($discounted_actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
                                             <td style="text-align:right;"> <b><?php echo number_format($discounted_actual_total_price/$num_traveler, 2, ',', '.'); ?>&euro;</b> </td>
                                         </tr>
