@@ -47,7 +47,7 @@ if(isset($_POST['Submit']))
 		$err++;		
 	}
     
-    if(empty($journey_price))
+    if(!isset($journey_price))
 	{
 		$messages["journey_price"]["status"]=$err_easy;
 		$messages["journey_price"]["msg"]="Preis ist Pflichtfeld";

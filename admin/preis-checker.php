@@ -474,8 +474,9 @@ if(isset($_POST["Submit"])){
 			<?php
 				$alert_message=""; $alert_box_show="hide"; $alert_type="success";
 
-				//echo 'Preis Checken <small>System Stats</small>';	
-                echo 'Preis Checken';				
+				echo 'Preischecker';	
+			
+			
 			?>
             </h3>
             <!--<div class="page-bar">
@@ -549,7 +550,7 @@ if(isset($_POST["Submit"])){
                               </div>
 							  
 							  <div class="form-group">
-                                  <label for="journey_ID" class="control-label col-md-3">Reisetyp</label>
+                                  <label for="journey_ID" class="control-label col-md-3">Art der Anreise</label>
                                   <div class="col-md-1">
                                   	
                                     <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="journey_ID" name="journey_ID">
@@ -578,16 +579,17 @@ if(isset($_POST["Submit"])){
                                     <select class="form-control input-medium rooms_ID" name="rooms_ID[]"> 
                                     <option value=""></option>
 									</select> <br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="num_rooms[]"/>
+									<input type="number" step="1" min="1" placeholder="Wie viele Zimmer?" class="form-control input-medium" name="num_rooms[]"/>
                                     <span for="rooms_ID" class="help-block"></span>                                     
                                   </div>
 								  <div class="col-md-offset-1 col-md-1">
-									<i class="fa fa-plus clone-it"/></i>
+									<i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;        
+                                    <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
 								  </div>
                               </div>
 							  
 							  <div class="form-group">
-                                  <label for="meals_ID" class="control-label col-md-3">Mealtyp</label>
+                                  <label for="meals_ID" class="control-label col-md-3">Art der Verpflegung</label>
                                   <div class="col-md-1">
                                   	
                                     <select class="form-control input-medium meals_ID" name="meals_ID">
@@ -676,6 +678,75 @@ if(isset($_POST["Submit"])){
                             </div>
                       </div>
                       
+                      <!--<br/>-->
+                      
+                      <!--<div class="row hide">                          
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat red-pink">
+                                    <div class="visual">
+                                        <i class="fa fa-plus"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                             <?php echo $actual_total_price; ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             Gesamtepreis                                              
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat red-thunderbird">
+                                    <div class="visual">
+                                        <i class="fa fa-road"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                            <?php echo ceil($actual_total_price/$num_traveler); ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             Pro Reisender zu zahlen
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat yellow-casablanca">
+                                    <div class="visual">
+                                        <i class="fa fa-briefcase"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                            <?php echo $MwSt; ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             MwSt (inkl.)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                <div class="dashboard-stat blue-ebonyclay">
+                                    <div class="visual">
+                                        <i class="fa fa-bus"></i>
+                                    </div>
+                                    <div class="details">
+                                        <div class="number">
+                                            <?php echo $promoter_provision; ?>&euro;
+                                        </div>
+                                        <div class="desc">
+                                             Promoter Provision (inkl.)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                      </div>-->
+                      
+                      
                       <br/>
                       
                       <div class="row">
@@ -686,10 +757,10 @@ if(isset($_POST["Submit"])){
                                     </div>
                                     <div class="details">
                                         <div class="number">
-                                             <?php echo number_format($costs_array["journey"]["total"], 2, ',', '.'); ?>&euro;
+                                             <?php if($journey_cost>0) echo number_format($costs_array["journey"]["total"]+$MwSt, 2, ',', '.'); else echo number_format($costs_array["journey"]["total"], 2, ',', '.'); ?>&euro;
                                         </div>
                                         <div class="desc">
-                                             Gesamte Reisekosten <!--<?php if($journey_title) echo '('.$journey_title.')'; ?>-->
+                                             Gesamte Anreisekosten <!--<?php if($journey_title) echo '('.$journey_title.')'; ?>-->
                                         </div>
                                     </div>
                                 </div>
@@ -701,10 +772,10 @@ if(isset($_POST["Submit"])){
                                     </div>
                                     <div class="details">
                                         <div class="number">
-                                             <?php echo number_format($costs_array["meals"]["total"], 2, ',', '.'); ?>&euro;
+                                             <?php if($journey_cost>0) echo number_format($costs_array["meals"]["total"]+$promoter_provision, 2, ',', '.'); else echo number_format($costs_array["meals"]["total"]+$promoter_provision+$MwSt, 2, ',', '.');?>&euro;
                                         </div>
                                         <div class="desc">
-                                             Gesamte Verplfegung <!--<?php if($meals_title) echo '('.$meals_title.')'; ?>-->
+                                             Gesamte Verpflegung<!-- <?php if($meals_title) echo '('.$meals_title.')'; ?>-->
                                         </div>
                                     </div>
                                 </div>
@@ -746,14 +817,17 @@ if(isset($_POST["Submit"])){
                                         <tr>
                                             <th> # </th>
                                             <th> Leistungsbereich </th>
-                                            <th> Wie viel? </th>
+                                            <th> Wie viel Zimmer? </th>
                                             <th> Personen </th>
                                             <th style="text-align:right;"> Summe Gesamt </th>
                                             <th style="text-align:right;"> Summer pro Person </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <?php 
+                                    <?php
+                                        
+                                    $dummy_office_profit= $office_profit / count($rooms_cost_details);
+                                        
                                     
                                     $i=1;   
                                     foreach($rooms_cost_details as $key => $rooms):   
@@ -764,8 +838,8 @@ if(isset($_POST["Submit"])){
                                             <td> <?php echo $key; ?> </td>
                                             <td> <?php echo '  x  '.$rooms["rooms_ordered"]; ?> </td>
                                             <td> <?php echo $rooms["rooms_persons_to_fit"]; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($rooms["costs_this_room_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($rooms["costs_this_room_the_whole_time"]/$rooms["rooms_persons_to_fit"], 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format($rooms["costs_this_room_the_whole_time"]+$dummy_office_profit, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($rooms["costs_this_room_the_whole_time"]+$dummy_office_profit)/$rooms["rooms_persons_to_fit"], 2, ',', '.'); ?>&euro; </td>
                                         </tr>
                                         
                                     <?php endforeach; ?>
@@ -774,18 +848,36 @@ if(isset($_POST["Submit"])){
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> Verpflegung </td>
-                                            <td style="text-align:right;"> <?php echo number_format($meals_cost, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($meals_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            <td> Art der Verpflegung (<b><?php echo $meals_title; ?></b>) </td>
+                                            <?php if($journey_cost>0): ?>
+                                            
+                                            <td style="text-align:right;"> <?php echo number_format($meals_cost+$promoter_provision, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($meals_cost+$promoter_provision)/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            
+                                            <?php else: ?>
+                                            
+                                            <td style="text-align:right;"> <?php echo number_format($meals_cost+$promoter_provision+$MwSt, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($meals_cost+$promoter_provision+$MwSt)/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            
+                                            <?php endif; ?>
                                         </tr>
 										
 										<tr>
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> Reisekosten </td>
+                                            <td> Anreisekosten (<b><?php echo $journey_title; ?></b>) </td>
+                                            <?php if($journey_cost>0): ?>
+                                            
+                                            <td style="text-align:right;"> <?php echo number_format($journey_cost+$MwSt, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($journey_cost+$MwSt), 2, ',', '.'); ?>&euro; </td>
+                                            
+                                            <?php else: ?>                                            
+                                            
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($journey_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($journey_cost), 2, ',', '.'); ?>&euro; </td>                                            
+                                            
+                                            <?php endif; ?> 
                                         </tr>
 										
 										<tr>
@@ -808,7 +900,7 @@ if(isset($_POST["Submit"])){
 
         <?php 
 
-             $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_to>=CURDATE()";	
+             $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_to>=CURDATE() AND eb_discount_date_from<='$date_from'";	
              $parent_query = mysqli_query($db, $sql_parent_menu);
             $counter=1;
             while($row = mysqli_fetch_object($parent_query)):
@@ -837,7 +929,7 @@ if(isset($_POST["Submit"])){
                                         <tr>
                                             <th> # </th>
                                             <th> Leistungsbereich </th>
-                                            <th> Wie viel? </th>
+                                            <th> Wie viel Zimmer? </th>
                                             <th> Personen </th>
                                             <th style="text-align:right;"> Summe Gesamt </th>
                                             <th style="text-align:right;"> Summer pro Person </th>
@@ -918,18 +1010,48 @@ if(isset($_POST["Submit"])){
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> Verpflegung </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_meals_cost, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_meals_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            <td> Art der Verpflegung (<b><?php echo $meals_title; ?></b>) </td>
+                                            
+                                            <?php if($journey_cost>0): ?>
+                                            
+                                            <td style="text-align:right;"> <?php echo number_format($discounted_meals_cost+$discounted_promoter_provision, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($discounted_meals_cost+$discounted_promoter_provision)/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            
+                                            <?php else: ?>
+                                            
+                                            <td style="text-align:right;"> <?php echo number_format($discounted_meals_cost+$discounted_promoter_provision+$discounted_MwSt, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($discounted_meals_cost+$discounted_promoter_provision+$discounted_MwSt)/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            
+                                            <?php endif; ?>                                            
                                         </tr>
 										
 										<tr>
                                             <td> </td>
                                             <td> </td>
                                             <td> </td>
-                                            <td> Reisekosten </td>
+                                            <td> Anreisekosten (<b><?php echo $journey_title; ?></b>) </td>
+                                            
+                                            <?php if($journey_cost>0): ?>
+                                            
+                                            <td style="text-align:right;"> <?php echo number_format($journey_cost+$discounted_MwSt, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($journey_cost+$discounted_MwSt), 2, ',', '.'); ?>&euro; </td>
+                                            
+                                            <?php else: ?>                                            
+                                            
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
-                                            <td style="text-align:right;"> <?php echo number_format($journey_cost/$num_traveler, 2, ',', '.'); ?>&euro; </td>
+                                            <td style="text-align:right;"> <?php echo number_format(($journey_cost), 2, ',', '.'); ?>&euro; </td>                                            
+                                            
+                                            <?php endif; ?>  
+                                            
+                                        </tr>
+										
+										<tr>
+                                            <td> </td>
+                                            <td> </td>
+                                            <td> </td>
+                                            <td> <b>Gesamtpreis (Ohne Rabatt)</b> </td>
+                                            <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
+                                            <td style="text-align:right;"> <b><?php echo number_format($actual_total_price/$num_traveler, 2, ',', '.'); ?>&euro;</b> </td>
                                         </tr>
 										
 										<tr>
@@ -1073,12 +1195,20 @@ if(isset($_POST["Submit"])){
 	});
 	
 	$('.clone-it').live('click',function() { 
-
-		var $cloned_div = $(this).parent().parent('.form-group');
+        
+        var $cloned_div = $(this).parent().parent('.form-group');
 		
 		var $html_content=$cloned_div.clone();
 		
-		$cloned_div.after($html_content);
+		$cloned_div.before($html_content);
+        
+        $cloned_div.find('.remove-it').removeClass('hide');
+	
+	});
+    
+    $('.remove-it').live('click',function() { 
+
+		$(this).parent().parent('.form-group').remove();		
 	
 	});
 	
@@ -1088,6 +1218,6 @@ if(isset($_POST["Submit"])){
 		
 </body>
 <!-- END BODY -->
-</html>      
+</html>   
                         
                         
