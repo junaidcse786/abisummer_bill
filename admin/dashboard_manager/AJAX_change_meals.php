@@ -14,7 +14,7 @@ if(isset($_POST["hotels_ID"])){
 	
 	while($row = mysqli_fetch_object($news_query))
 		
-		echo '<option value="'.$row->meals_ID.':::'.$row->meals_title.'">'.$row->meals_title.'</option>';
+		echo '<option value="'.$row->meals_ID.'">'.$row->meals_title.'</option>';
 }
 
 ?>
