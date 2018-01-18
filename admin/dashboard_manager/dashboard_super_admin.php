@@ -58,13 +58,9 @@ if(isset($_POST["Submit"])){
     
     $meals_cost_details=array();
     
-    if(count($meals_ID)>0){
+    if(count($meals_ID)>0 && !empty($meals_ID[0])){
         
-        foreach($meals_ID as $key => $meal_ID){
-            
-            if(empty($meal_ID))
-                
-                continue;
+        foreach($meals_ID as $key => $meal_ID){           
             
             $cost_of_this_meal=0;
             
@@ -771,7 +767,7 @@ if(isset($_POST["Submit"])){
 
 										<tr>
                                             <td> </td>                                            
-                                            <td> Anreisekosten (<b><?php echo $journey_title; ?></b>) </td>
+                                            <td> Anreisekosten <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
 										
@@ -901,7 +897,7 @@ if(isset($_POST["Submit"])){
 									?>  
                                         <tr>
                                             <td> <?php echo $i++; ?> </td>
-                                            <td> <?php echo $key.' x '.$rooms["rooms_ordered"].'</b>'; ?> </td>
+                                            <td> <?php echo $key.'<b> x '.$rooms["rooms_ordered"].'</b>'; ?> </td>
                                             <td style="text-align:right;"> <?php echo number_format($discounted_this_rooms_cost, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
                                         
@@ -915,7 +911,7 @@ if(isset($_POST["Submit"])){
 									?>  
                                         <tr>
                                             <td> <?php echo $i++; ?> </td>
-                                            <td> <?php echo $key.' x '.$meals["meals_ordered"].'</b>'; ?> </td>
+                                            <td> <?php echo $key.'<b> x '.$meals["meals_ordered"].'</b>'; ?> </td>
                                             <td style="text-align:right;"> <?php echo number_format($discounted_this_meals_cost, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
                                         
@@ -974,7 +970,7 @@ if(isset($_POST["Submit"])){
                                         
 										<tr>
                                             <td> </td>
-                                            <td> Anreisekosten (<b><?php echo $journey_title; ?></b>) </td>
+                                            <td> Anreisekosten <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?> </td>
                                             <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                         </tr>
 										
