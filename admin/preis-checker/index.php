@@ -1,8 +1,6 @@
 <?php 
 
-require_once('../config/dbconnect.php');
-
-$colors_picked=array();
+require_once('../../config/dbconnect.php');	
 	
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
@@ -447,7 +445,7 @@ if(isset($_POST["Submit"])){
 <html lang="en">
 
 <head>
-    <?php require_once('header.php'); ?>
+    <?php require_once('../header.php'); ?>
 </head>
 
 <body class="page-header-fixed page-quick-sidebar-over-content <?php if($_SESSION[" role_id "]==15) echo 'page-sidebar-closed'; ?>">
@@ -908,14 +906,11 @@ if(isset($_POST["Submit"])){
                                         foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
                                     
                                             $indiv_total_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
-                                                    
-                                        $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
-                                        $colors_picked[]=$colors_picked_temp;            
 
                                     ?>
 
                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
+                                                        <div class="dashboard-stat <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
                                                             <div class="visual">
                                                                 <i class="fa fa-euro"></i>
                                                             </div>
@@ -1123,8 +1118,6 @@ if(isset($_POST["Submit"])){
                                             $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"];
                                         }
                                     }
-                                                    
-                                    $color_picker_counter=0;
 
                                     foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
                                     
@@ -1132,7 +1125,7 @@ if(isset($_POST["Submit"])){
 
                                     ?>
                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                                        <div class="dashboard-stat <?php echo $colors_picked[$color_picker_counter++]; ?>">
+                                                        <div class="dashboard-stat <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
                                                             <div class="visual">
                                                                 <i class="fa fa-euro"></i>
                                                             </div>
@@ -1178,7 +1171,7 @@ if(isset($_POST["Submit"])){
 
 
 
-    <?php require_once('scripts.php'); ?>
+    <?php require_once('../scripts.php'); ?>
 
     <!-- END JAVASCRIPTS -->
     <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.min.js"></script>

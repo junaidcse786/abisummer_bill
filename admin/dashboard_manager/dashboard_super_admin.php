@@ -4,6 +4,10 @@ $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
 setlocale(LC_MONETARY, 'de_DE');
 
+$colors_to_pick_array=array("purple-plum", "blue", "yellow", "blue-hoki", "blue-ebonyclay", "green-seagreen", "green-haze", "grey-gallery", "red-pink");
+
+$colors_picked=array();
+
 
 if(isset($_POST["Submit"])){
     
@@ -439,78 +443,78 @@ if(isset($_POST["Submit"])){
 <link rel="stylesheet" type="text/css" href="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.css" />
 
 <style>
-    .dashboard-stat-special .dashboard-stat{
+    .dashboard-stat-special .dashboard-stat {
         padding: 10px 0px 35px 0px;
     }
-    .dashboard-stat{
+
+    .dashboard-stat {
         padding: 5px 0px 15px 0px;
     }
-    .desc{
+
+    .desc {
         padding-top: 8px;
     }
+
 </style>
 
-<!-- BEGIN PAGE header-->
+<h3 class="page-title">
+    <?php
+    $alert_message=""; $alert_box_show="hide"; $alert_type="success";
 
-			<h3 class="page-title">
-			<?php
-				$alert_message=""; $alert_box_show="hide"; $alert_type="success";
+    echo 'Dashboard <small>System Stats</small>';
 
-				echo 'Dashboard <small>System Stats</small>';	
-			
-			
-			?>
-            </h3>
-            <div class="page-bar">
-				<ul class="page-breadcrumb">
-					<li>
-						<i class="fa fa-home"></i>
-						<a href="<?php echo SITE_URL_ADMIN; ?>">Home</a>
-					</li>
-				</ul>
-			</div>
+?>
+</h3>
+<div class="page-bar">
+    <ul class="page-breadcrumb">
+        <li>
+            <i class="fa fa-home"></i>
+            <a href="<?php echo SITE_URL_ADMIN; ?>">Home</a>
+        </li>
+    </ul>
+</div>
 <!-- END PAGE HEADER-->
 
-    <?php if(!isset($_POST["Submit"])): ?>
+<?php if(!isset($_POST["Submit"])): ?>
 
-		<div class="row">
-            <div class="col-md-12">
-            <!-- BEGIN EXAMPLE TABLE PORTLET-->
-               <div class="portlet box grey-cascade">
-                  <div class="portlet-title">
-                     <div class="caption"><i class="fa fa-reorder"></i>Preis checken</div>
-                  </div>
-                  <div class="portlet-body form">
-                  
-                      <div class="form-body">
-                      
-                          <div class="alert alert-<?php echo $alert_type; ?> <?php echo $alert_box_show; ?>">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-                            <?php echo $alert_message; ?>
-                          </div>
-                          
-                               
-                               <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
-                                   
-                               
-							    <div class="form-group">
-                              		<label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
-                              		<div class="col-md-3">
-                                                            <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
-                                            
-                                        <input required type="number" step="1" min="1" placeholder="Wie viele Nächte?" class="form-control input-medium" name="num_nights"/><br/>
-                                        
-                                        <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler"/>
-                                        
-                                 		<span for="lc_costs_date_from" class="help-block"></span>
-                              		</div>
-                           	  </div>
-                                   
-                                <div class="form-group">
-                                  <label for="locations_ID" class="control-label col-md-3">Destination</label>
-                                  <div class="col-md-8">
-                                  	
-                                    <select required class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="locations_ID" name="locations_ID">
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box grey-cascade">
+            <div class="portlet-title">
+                <div class="caption"><i class="fa fa-reorder"></i>Preis checken</div>
+            </div>
+            <div class="portlet-body form">
+
+                <div class="form-body">
+
+                    <div class="alert alert-<?php echo $alert_type; ?> <?php echo $alert_box_show; ?>">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                        <?php echo $alert_message; ?>
+                    </div>
+
+
+                    <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
+                            <div class="col-md-3">
+                                <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
+
+                                <input required type="number" step="1" min="1" placeholder="Wie viele Nächte?" class="form-control input-medium" name="num_nights" /><br/>
+
+                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
+
+                                <span for="lc_costs_date_from" class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="locations_ID" class="control-label col-md-3">Destination</label>
+                            <div class="col-md-8">
+
+                                <select required class="form-control input-medium select2me" data-placeholder="Auswaehlen" tabindex="0" id="locations_ID" name="locations_ID">
                                     <option value=""></option>
 									
 									<?php 
@@ -525,284 +529,322 @@ if(isset($_POST["Submit"])){
 									?>
 									
                                      </select>
-									 
-                                     <span for="locations_ID" class="help-block"></span>
-                                     
-                                  </div>
-                              </div>
-							  
-							  <div class="form-group">
-                                  <label for="journey_ID" class="control-label col-md-3">Art der Anreise</label>
-                                  <div class="col-md-1">
-                                  	
-                                    <select class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="journey_ID" name="journey_ID">
-                                    <option value=""></option>
-									</select> <br/><!-- <br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_num_person"/> -->
-                                     <span for="journey_ID" class="help-block"></span>                                     
-                                  </div>
-                              </div>
-							  
-							  <div class="form-group">
-                                  <label for="hotels_ID" class="control-label col-md-3">Hotel</label>
-                                  <div class="col-md-8">
-                                  	
-                                    <select required class="form-control input-medium select2me"  data-placeholder="Auswaehlen" tabindex="0" id="hotels_ID" name="hotels_ID">
-                                    <option value=""></option>
-									</select>
-                                     <span for="hotels_ID" class="help-block"></span>                                     
-                                  </div>
-                              </div>
-							  
-							  <div class="form-group">
-                                  <label for="rooms_ID" class="control-label col-md-3">Zimmertyp</label>
-                                  <div class="col-md-1">
-                                  	
-                                    <select class="form-control input-medium rooms_ID" name="rooms_ID[]"> 
+
+                                <span for="locations_ID" class="help-block"></span>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="journey_ID" class="control-label col-md-3">Art der Anreise</label>
+                            <div class="col-md-1">
+
+                                <select class="form-control input-medium select2me" data-placeholder="Auswaehlen" tabindex="0" id="journey_ID" name="journey_ID">
                                     <option value=""></option>
 									</select> <br/>
-									<input type="number" step="1" min="1" placeholder="Wie viele Zimmer?" class="form-control input-medium" name="num_rooms[]"/>
-                                    <span for="rooms_ID" class="help-block"></span>                                     
-                                  </div>
-								  <div class="col-md-offset-1 col-md-1">
-									<i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;        
-                                    <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
-								  </div>
-                              </div>
-							  
-							  <div class="form-group">
-                                  <label for="meals_ID" class="control-label col-md-3">Art der Verpflegung</label>
-                                  <div class="col-md-1">
-                                  	
-                                    <select class="form-control input-medium meals_ID" name="meals_ID[]">
-                                    <option value=""></option>
-									</select>  <br/>
-									<input type="number" step="1" min="1" placeholder="Wie viele Person?" class="form-control input-medium" name="num_meals[]"/> 
-                                     <span for="meals_ID" class="help-block"></span>                                     
-                                  </div>
-                                  <div class="col-md-offset-1 col-md-1">
-									<i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;        
-                                    <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
-								  </div>
-                              </div>
-                               
-                            
-                            <div class="form-actions fluid">
-                               <div class="col-md-offset-3 col-md-9">
-                                  <button type="submit" name="Submit" class="btn green">Submit</button>
-                                  <button type="reset" class="btn default">Abbrechen</button>                              
-                               </div>
-                        	</div>
-                            
-                            </form>
-                      
-                      </div>
-                      
-                  </div>
-               </div>
-               <!-- END EXAMPLE TABLE PORTLET-->
-            </div>
-         </div>
-
-    <?php else: ?>
-
-        <div class="row">
-            <div class="col-md-12">
-            <!-- BEGIN EXAMPLE TABLE PORTLET-->
-               <div class="portlet box green-seagreen">
-                  <div class="portlet-title">
-                     <div class="caption"><i class="fa fa-reorder"></i>Info Box</div>
-                  </div>
-                  <div class="portlet-body">
-                      
-                      <div class="row">                          
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat purple-plum">
-                                    <div class="visual">
-                                        <i class="fa fa-globe"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                             <?php echo $locations_name; ?>
-                                        </div>
-                                        <div class="desc">
-                                             Reisenderzahl: <?php echo $num_traveler; ?>                                              
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- <br/>
+									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_num_person"/> -->
+                                <span for="journey_ID" class="help-block"></span>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat blue">
-                                    <div class="visual">
-                                        <i class="fa fa-building"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                            <?php echo $date_from; ?>
-                                        </div>
-                                        <div class="desc">
-                                             Hotel: <?php echo $hotels_name; ?>  <br/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                <div class="dashboard-stat green">
-                                    <div class="visual">
-                                        <i class="fa fa-bus"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                            <?php echo $num_nights; ?> Nächte
-                                        </div>
-                                        <div class="desc">
-                                             Check-out: <?php echo $end_date->format("Y-m-d"); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                      </div>
-                      
-                      <br/>
-                      
-                      <div class="row">
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 col-md-offset-1">
-                                <div class="dashboard-stat green-seagreen">
-                                    <div class="visual">
-                                        <i class="fa fa-plane"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                             <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             Gesamte Anreisekosten
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 col-md-offset-1">
-                                <div class="dashboard-stat yellow-gold">
-                                    <div class="visual">
-                                        <i class="fa fa-cutlery"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                             <?php echo number_format($meals_cost, 2, ',', '.'); ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             Gesamte Verpflegung
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 col-md-offset-1">
-                                <div class="dashboard-stat red-intense">
-                                    <div class="visual">
-                                        <i class="fa fa-bed"></i>
-                                    </div>
-                                    <div class="details">
-                                        <div class="number">
-                                             <?php echo number_format($rooms_cost, 2, ',', '.'); ?>&euro;
-                                        </div>
-                                        <div class="desc">
-                                             Gesamte Zimmerkosten
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> 
-                  </div>
-                   
-               </div>
-               <!-- END EXAMPLE TABLE PORTLET-->
-            </div>
-         </div>
-
-         <div class="row">
-             <div class="col-md-12">
-                 <div class="portlet box yellow">
-                        <div class="portlet-title">
-                            <div class="caption">
-                                <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird Buchen</b>) </div>
                         </div>
-                        <div class="portlet-body">
-                            <div class="row">
-                                <div class="col-md-5">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th> # </th>
-                                            <th> Leistungsbereich </th>
-                                            <th style="text-align:right;"> Summe Gesamt </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+
+                        <div class="form-group">
+                            <label for="hotels_ID" class="control-label col-md-3">Hotel</label>
+                            <div class="col-md-8">
+
+                                <select required class="form-control input-medium select2me" data-placeholder="Auswaehlen" tabindex="0" id="hotels_ID" name="hotels_ID">
+                                    <option value=""></option>
+									</select>
+                                <span for="hotels_ID" class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rooms_ID" class="control-label col-md-3">Zimmertyp</label>
+                            <div class="col-md-1">
+
+                                <select class="form-control input-medium rooms_ID" name="rooms_ID[]"> 
+                                    <option value=""></option>
+									</select> <br/>
+                                <input type="number" step="1" min="1" placeholder="Wie viele Zimmer?" class="form-control input-medium" name="num_rooms[]" />
+                                <span for="rooms_ID" class="help-block"></span>
+                            </div>
+                            <div class="col-md-offset-1 col-md-1">
+                                <i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;
+                                <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="meals_ID" class="control-label col-md-3">Art der Verpflegung</label>
+                            <div class="col-md-1">
+
+                                <select class="form-control input-medium meals_ID" name="meals_ID[]">
+                                    <option value=""></option>
+									</select> <br/>
+                                <input type="number" step="1" min="1" placeholder="Wie viele Person?" class="form-control input-medium" name="num_meals[]" />
+                                <span for="meals_ID" class="help-block"></span>
+                            </div>
+                            <div class="col-md-offset-1 col-md-1">
+                                <i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;
+                                <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
+                            </div>
+                        </div>
+
+
+                        <div class="form-actions fluid">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="submit" name="Submit" class="btn green">Submit</button>
+                                <button type="reset" class="btn default">Abbrechen</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- END EXAMPLE TABLE PORTLET-->
+    </div>
+</div>
+
+<?php else: ?>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box green-seagreen">
+            <div class="portlet-title">
+                <div class="caption"><i class="fa fa-reorder"></i>Info Box</div>
+            </div>
+            <div class="portlet-body">
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat purple-plum">
+                            <div class="visual">
+                                <i class="fa fa-globe"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo $locations_name; ?>
+                                </div>
+                                <div class="desc">
+                                    Reisenderzahl:
+                                    <?php echo $num_traveler; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat blue">
+                            <div class="visual">
+                                <i class="fa fa-building"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo $date_from; ?>
+                                </div>
+                                <div class="desc">
+                                    Hotel:
+                                    <?php echo $hotels_name; ?> <br/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat green">
+                            <div class="visual">
+                                <i class="fa fa-bus"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo $num_nights; ?> Nächte
+                                </div>
+                                <div class="desc">
+                                    Check-out:
+                                    <?php echo $end_date->format("Y-m-d"); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat red-thunderbird">
+                            <div class="visual">
+                                <i class="fa fa-plus"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;
+                                </div>
+                                <div class="desc">
+                                    Gesamte Reisekosten
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat green-seagreen">
+                            <div class="visual">
+                                <i class="fa fa-plane"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro;
+                                </div>
+                                <div class="desc">
+                                    Gesamte Anreisekosten
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat yellow-gold">
+                            <div class="visual">
+                                <i class="fa fa-cutlery"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo number_format($meals_cost, 2, ',', '.'); ?>&euro;
+                                </div>
+                                <div class="desc">
+                                    Gesamte Verpflegung
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="dashboard-stat red-intense">
+                            <div class="visual">
+                                <i class="fa fa-bed"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    <?php echo number_format($rooms_cost, 2, ',', '.'); ?>&euro;
+                                </div>
+                                <div class="desc">
+                                    Gesamte Zimmerkosten
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- END EXAMPLE TABLE PORTLET-->
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet box yellow">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird Buchen</b>) </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th> # </th>
+                                        <th> Leistungsbereich </th>
+                                        <th style="text-align:right;"> Summe Gesamt </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                     <?php 
                                     
                                     $i=1;   
                                     foreach($rooms_cost_details as $key => $rooms):   
                                         
-                                    ?>  
-                                        <tr>
-                                            <td> <?php echo $i++; ?> </td>
-                                            <td> <?php echo $key.'<b>  x  '.$rooms["rooms_ordered"].'</b>'; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($rooms["costs_this_room_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-                                        
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $i++; ?> </td>
+                                        <td>
+                                            <?php echo $key.'<b>  x  '.$rooms["rooms_ordered"].'</b>'; ?> </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($rooms["costs_this_room_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
                                     <?php endforeach; 
                                         
                                     foreach($meals_cost_details as $key => $meals):   
                                         
-                                    ?>  
-                                        <tr>
-                                            <td> <?php echo $i++; ?> </td>
-                                            <td> <?php echo $key.'<b>  x  '.$meals["meals_ordered"].'</b>'; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($meals["costs_this_meal_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-                                        
-                                    <?php endforeach; ?>    
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $i++; ?> </td>
+                                        <td>
+                                            <?php echo $key.'<b>  x  '.$meals["meals_ordered"].'</b>'; ?> </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($meals["costs_this_meal_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
 
-										<tr>
-                                            <td> </td>                                            
-                                            <td> Anreisekosten <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
-                                            <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> Office Profit </td>
-                                            <td style="text-align:right;"> <?php echo number_format($office_profit, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> Promoter Provision </td>
-                                            <td style="text-align:right;"> <?php echo number_format($promoter_provision, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> MwSt </td>
-                                            <td style="text-align:right;"> <?php echo number_format($MwSt, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> <b>Gesamtpreis</b> </td>
-                                            <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                                    </div>
-                                 </div>
-                                <div class="col-md-7">                            
+                                    <?php endforeach; ?>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> Anreisekosten
+                                            <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
+                                            <td style="text-align:right;">
+                                                <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> Office Profit </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($office_profit, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> Promoter Provision </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($promoter_provision, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> MwSt </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($MwSt, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> <b>Gesamtpreis</b> </td>
+                                        <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+
+                        <div class="portlet box red-soft">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-euro"></i> Gesamtpreis für jede Reisendertyp </div>
+                            </div>
+                            <div class="portlet-body">
+
+                                <div class="row">
+
                                     <?php 
-                                    
-                                    $loop_counter_temp=1;
                                     
                                     $indiv_journey_cost = $journey_cost / $num_traveler;
                                     
@@ -810,97 +852,110 @@ if(isset($_POST["Submit"])){
 
                                     $indiv_office_profit = $office_profit / $num_traveler;
 
-                                    $indiv_MwSt = $MwSt / $num_traveler;
+                                    $indiv_MwSt = $MwSt / $num_traveler;                                    
                                     
-                                    $colors_to_pick_array=array("purple-plum", "blue", "red", "yellow", "blue-hoki", "blue-ebonyclay", "green-seagreen", "green-haze", "grey-gallery");
+                                    $indiv_cost_array=array();
 
-                                    foreach($rooms_cost_details as $key1 => $rooms):                                                       
-
-                                        foreach($meals_cost_details as $key2 => $meals):
+                                    foreach($rooms_cost_details as $key1 => $rooms){
                                     
-                                            $indiv_meals_cost = $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"]; 
+                                        $indiv_cost_array[$key1] = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"];
+                                        
+                                        foreach($meals_cost_details as $key2 => $meals){
+                                            
+                                            unset($indiv_cost_array[$key1]);
+                                            
+                                            $indiv_cost_array[$key1." + ". $key2] = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"];
+                                        }
+                                    }
+                                        
+                                        foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
                                     
-                                            $indiv_rooms_cost= $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"];
+                                            $indiv_total_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
                                     
-                                            $indiv_total_price = $indiv_meals_cost + $indiv_rooms_cost + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
-
+                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
+                                    
+                                    $colors_picked[]=$colors_picked_temp;
+                                    
                                     ?>
 
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                        <div class="dashboard-stat <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
+                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
                                             <div class="visual">
                                                 <i class="fa fa-euro"></i>
                                             </div>
                                             <div class="details">
                                                 <div class="number">
-                                                     <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
+                                                    <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
                                                 </div>
                                                 <div class="desc">
-                                                    <b><?php echo $key1." + ".$key2; ?></b> <br/>
-                                                    
-                                                    Pro Reisender zu zahlen
-                                                                                                  
+                                                    <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <?php if($loop_counter_temp%3==0) echo "<br/>"; $loop_counter_temp++; endforeach; endforeach; ?>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                 
-             </div>
-         </div>
+                </div>
+            </div>
+        </div>
 
-        <?php 
+    </div>
+</div>
+
+<?php 
 
              $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_to>=CURDATE() AND eb_discount_date_from<='$date_from'";	
              $parent_query = mysqli_query($db, $sql_parent_menu);
             $counter=1;
             while($row = mysqli_fetch_object($parent_query)):
 
-        ?>        
-            <div class="row"> 
-                <div class="col-md-12">
-                 <div class="portlet box grey-cascade">
-                        <div class="portlet-title">
-                            <div class="caption">
-                                <i class="fa fa-euro"></i>Preis Details - Early Bird Buchen 
-                            </div>
-                            <div class="actions">
-                                <a href="#" class="btn blue"><i class="fa fa-calender"></i> <?php echo $row->eb_discount_date_from.' bis '.$row->eb_discount_date_to;  ?></a>
-                                
-                                <a href="#" class="btn red"><i class="fa fa-percentage"></i> <?php echo $row->eb_discount.'%';  ?></a>
-                             </div>
-                        </div>
-                        <div class="portlet-body">
-                            <div class="row"> 
-                                <div class="col-md-5">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th> # </th>
-                                            <th> Leistungsbereich </th>
-                                            <th style="text-align:right;"> Summe Gesamt </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+        ?>
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet box <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-euro"></i>Preis Details - Early Bird Buchen
+                </div>
+                <div class="actions">
+                    <a href="#" class="btn blue"><i class="fa fa-calender"></i> <?php echo $row->eb_discount_date_from.' bis '.$row->eb_discount_date_to;  ?></a>
+
+                    <a href="#" class="btn red"><i class="fa fa-percentage"></i> <?php echo $row->eb_discount.'%';  ?></a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th> # </th>
+                                        <th> Leistungsbereich </th>
+                                        <th style="text-align:right;"> Summe Gesamt </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                     <?php 
                                     $i=1;    
                                     foreach($rooms_cost_details as $key => $rooms): 
 
 									$discounted_this_rooms_cost = $rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100;									
 									
-									?>  
-                                        <tr>
-                                            <td> <?php echo $i++; ?> </td>
-                                            <td> <?php echo $key.'<b> x '.$rooms["rooms_ordered"].'</b>'; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_this_rooms_cost, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-                                        
+									?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $i++; ?> </td>
+                                        <td>
+                                            <?php echo $key.'<b> x '.$rooms["rooms_ordered"].'</b>'; ?> </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($discounted_this_rooms_cost, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
                                     <?php endforeach; 
                                         
                                     
@@ -908,13 +963,16 @@ if(isset($_POST["Submit"])){
 
 									$discounted_this_meals_cost = $meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100;									
 									
-									?>  
-                                        <tr>
-                                            <td> <?php echo $i++; ?> </td>
-                                            <td> <?php echo $key.'<b> x '.$meals["meals_ordered"].'</b>'; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_this_meals_cost, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-                                        
+									?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $i++; ?> </td>
+                                        <td>
+                                            <?php echo $key.'<b> x '.$meals["meals_ordered"].'</b>'; ?> </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($discounted_this_meals_cost, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
                                     <?php endforeach;
                                         
                                         
@@ -967,101 +1025,121 @@ if(isset($_POST["Submit"])){
                                         $discounted_actual_total_price = $discounted_total_costs + $discounted_office_profit + $discounted_promoter_provision + $discounted_MwSt;
                                         
                                         ?>
-                                        
-										<tr>
-                                            <td> </td>
-                                            <td> Anreisekosten <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?> </td>
-                                            <td style="text-align:right;"> <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> Office Profit </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_office_profit, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> Promoter Provision </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_promoter_provision, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> MwSt </td>
-                                            <td style="text-align:right;"> <?php echo number_format($discounted_MwSt, 2, ',', '.'); ?>&euro; </td>
-                                        </tr>
-                                        
-                                        <tr>
-                                            <td> </td>
-                                            <td> <b>Gesamtpreis (Ohne Rabatt)</b> </td>
-                                            <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
-                                        </tr>
-										
-										<tr>
-                                            <td> </td>
-                                            <td> <b>Gesamtpreis</b> </td>
-                                            <td style="text-align:right;"> <b><?php echo number_format($discounted_actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> Anreisekosten
+                                            <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?> </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> Office Profit </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($discounted_office_profit, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> Promoter Provision </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($discounted_promoter_provision, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> MwSt </td>
+                                        <td style="text-align:right;">
+                                            <?php echo number_format($discounted_MwSt, 2, ',', '.'); ?>&euro; </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> <b>Gesamtpreis (Ohne Rabatt)</b> </td>
+                                        <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> </td>
+                                        <td> <b>Gesamtpreis</b> </td>
+                                        <td style="text-align:right;"> <b><?php echo number_format($discounted_actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
                         </div>
-                            <div class="col-md-7">                            
+                    </div>
+                    <div class="col-md-7">
+                        <div class="portlet box red-soft">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-euro"></i> Gesamtpreis für jede Reisendertyp
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <div class="row">
                                     <?php 
-                                    
-                                    $loop_counter_temp=1;
                                     
                                     $indiv_discounted_promoter_provision = $discounted_promoter_provision / $num_traveler;
 
                                     $indiv_discounted_office_profit = $discounted_office_profit / $num_traveler;
 
                                     $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
-                                    
-                                    $colors_to_pick_array=array("purple-plum", "blue", "red", "yellow", "blue-hoki", "blue-ebonyclay", "green-seagreen", "green-haze", "grey-gallery");
+                                
+                                    $indiv_cost_array=array();
 
-                                    foreach($rooms_cost_details as $key1 => $rooms):                                                       
+                                    foreach($rooms_cost_details as $key1 => $rooms){
+                                    
+                                        $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"];
+                                        
+                                        foreach($meals_cost_details as $key2 => $meals){
+                                            
+                                            unset($indiv_cost_array[$key1]);
+                                            
+                                            $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"];
+                                        }
+                                    }
+                                    
+                                    $color_picker_counter=0;
 
-                                        foreach($meals_cost_details as $key2 => $meals):                                
+                                    foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
                                     
-                                            $indiv_meals_cost = ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"]; 
-                                    
-                                            $indiv_rooms_cost= ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"];
-                                    
-                                            $indiv_total_discounted_price = $indiv_meals_cost + $indiv_rooms_cost + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                            $indiv_total_discounted_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
 
                                     ?>
-
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                        <div class="dashboard-stat <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
+                                        <div class="dashboard-stat <?php echo $colors_picked[$color_picker_counter++]; ?>">
                                             <div class="visual">
                                                 <i class="fa fa-euro"></i>
                                             </div>
                                             <div class="details">
                                                 <div class="number">
-                                                     <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
+                                                    <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
                                                 </div>
                                                 <div class="desc">
-                                                    <b><?php echo $key1." + ".$key2; ?></b> <br/>
-                                                    
-                                                    Pro Reisender zu zahlen
-                                                                                                  
+                                                    <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <?php if($loop_counter_temp%3==0) echo "<br/>"; $loop_counter_temp++; endforeach; endforeach; ?>
-                                </div>        
-                         </div>
-                        </div>
+                                    <?php endforeach; ?>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
-             </div>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
+</div>
 
-        <?php
+<?php
 
             $counter++;
 
@@ -1070,139 +1148,144 @@ if(isset($_POST["Submit"])){
         ?>
 
     <?php endif; ?>
-		
-	</div>
-</div>    
 
-<!-- END PAGE CONTAINER -->
+    </div>
+    </div>
 
-        
-        
-		<?php require_once('scripts.php'); ?>
-        
-        <!-- END JAVASCRIPTS -->
-<script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.min.js"></script>
+    <!-- END PAGE CONTAINER -->
 
-<script>
 
-	$('#locations_ID').change(function() { 
 
-		var locations_ID = $('#locations_ID').val();
-		
-		//console.log(message);
+    <?php require_once('scripts.php'); ?>
 
-		if(locations_ID!=''){
+    <!-- END JAVASCRIPTS -->
+    <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.min.js"></script>
 
-			$.ajax({
-					   type: "POST",
-					   url:  '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_journey.php',
-					   dataType: "text",
-					   data: {locations_ID: locations_ID},
-					   success: function(data){ 
-					   
-							$("#journey_ID").val(null).trigger("change");
-							$('#journey_ID option').remove(); 
-							$('#journey_ID').append('<option value=""></option>'+data); 					   
-					   },
-			}); 
-			
-			$.ajax({
-					   type: "POST",
-					   url:  '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_hotels.php',
-					   dataType: "text",
-					   data: {locations_ID: locations_ID},
-					   success: function(data){ 
-					   
-							$("#hotels_ID").val(null).trigger("change");
-							$('#hotels_ID option').remove();													
-							$('#hotels_ID').append('<option value=""></option>'+data); 					   
-					   },
-			});
-			
-			$(".rooms_ID").val(null).trigger("change");
-			$(".rooms_ID option").remove();
-			$(".meals_ID").val(null).trigger("change");
-			$(".meals_ID option").remove();
-		}
-		else{
-			
-			$("#journey_ID").val(null).trigger("change");
-			$("#journey_ID option").remove();
-			$("#hotels_ID").val(null).trigger("change");
-			$("#hotels_ID option").remove();
-			$(".rooms_ID").val(null).trigger("change");
-			$(".rooms_ID option").remove();
-			$(".meals_ID").val(null).trigger("change");
-			$(".meals_ID option").remove();
-		
-		}	
-	});
-	
-	$('#hotels_ID').change(function() { 
+    <script>
+        $('#locations_ID').change(function() {
 
-		var hotels_ID = $('#hotels_ID').val();
+            var locations_ID = $('#locations_ID').val();
 
-		if(hotels_ID!=''){
+            //console.log(message);
 
-			$.ajax({
-					   type: "POST",
-					   url:  '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_rooms.php',
-					   dataType: "text",
-					   data: {hotels_ID: hotels_ID},
-					   success: function(data){ 
-					   
-							$( ".rooms_ID" ).each(function() {
-							    $(this).val(null).trigger("change");
-								$(this).append(data); 
-							});				   
-					   },
-			}); 
-			
-			$.ajax({
-					   type: "POST",
-					   url:  '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_meals.php',
-					   dataType: "text",
-					   data: {hotels_ID: hotels_ID},
-					   success: function(data){ 
-					   
-							$( ".meals_ID" ).each(function() {
-							    $(this).val(null).trigger("change");
-								$(this).append(data); 
-							}); 					   
-					   },
-			});
-		}
-		else{
-			$(".rooms_ID").val(null).trigger("change");
-			$(".rooms_ID option").remove();
-			$(".meals_ID").val(null).trigger("change");
-			$(".meals_ID option").remove();
-		
-		}	
-	});
-	
-	$('.clone-it').live('click',function() { 
-        
-        var $cloned_div = $(this).parent().parent('.form-group');
-		
-		var $html_content=$cloned_div.clone();
-		
-		$cloned_div.before($html_content);
-        
-        $cloned_div.find('.remove-it').removeClass('hide');
-	
-	});
-    
-    $('.remove-it').live('click',function() { 
+            if (locations_ID != '') {
 
-		$(this).parent().parent('.form-group').remove();		
-	
-	});
-	
-	
-</script>
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_journey.php',
+                    dataType: "text",
+                    data: {
+                        locations_ID: locations_ID
+                    },
+                    success: function(data) {
 
-		
-</body>
-<!-- END BODY -->
-</html>      
+                        $("#journey_ID").val(null).trigger("change");
+                        $('#journey_ID option').remove();
+                        $('#journey_ID').append('<option value=""></option>' + data);
+                    },
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_hotels.php',
+                    dataType: "text",
+                    data: {
+                        locations_ID: locations_ID
+                    },
+                    success: function(data) {
+
+                        $("#hotels_ID").val(null).trigger("change");
+                        $('#hotels_ID option').remove();
+                        $('#hotels_ID').append('<option value=""></option>' + data);
+                    },
+                });
+
+                $(".rooms_ID").val(null).trigger("change");
+                $(".rooms_ID option").remove();
+                $(".meals_ID").val(null).trigger("change");
+                $(".meals_ID option").remove();
+            } else {
+
+                $("#journey_ID").val(null).trigger("change");
+                $("#journey_ID option").remove();
+                $("#hotels_ID").val(null).trigger("change");
+                $("#hotels_ID option").remove();
+                $(".rooms_ID").val(null).trigger("change");
+                $(".rooms_ID option").remove();
+                $(".meals_ID").val(null).trigger("change");
+                $(".meals_ID option").remove();
+
+            }
+        });
+
+        $('#hotels_ID').change(function() {
+
+            var hotels_ID = $('#hotels_ID').val();
+
+            if (hotels_ID != '') {
+
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_rooms.php',
+                    dataType: "text",
+                    data: {
+                        hotels_ID: hotels_ID
+                    },
+                    success: function(data) {
+
+                        $(".rooms_ID").each(function() {
+                            $(this).val(null).trigger("change");
+                            $(this).append(data);
+                        });
+                    },
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_meals.php',
+                    dataType: "text",
+                    data: {
+                        hotels_ID: hotels_ID
+                    },
+                    success: function(data) {
+
+                        $(".meals_ID").each(function() {
+                            $(this).val(null).trigger("change");
+                            $(this).append(data);
+                        });
+                    },
+                });
+            } else {
+                $(".rooms_ID").val(null).trigger("change");
+                $(".rooms_ID option").remove();
+                $(".meals_ID").val(null).trigger("change");
+                $(".meals_ID option").remove();
+
+            }
+        });
+
+        $('.clone-it').live('click', function() {
+
+            var $cloned_div = $(this).parent().parent('.form-group');
+
+            var $html_content = $cloned_div.clone();
+
+            $cloned_div.before($html_content);
+
+            $cloned_div.find('.remove-it').removeClass('hide');
+
+        });
+
+        $('.remove-it').live('click', function() {
+
+            $(this).parent().parent('.form-group').remove();
+
+        });
+
+    </script>
+
+
+    </body>
+    <!-- END BODY -->
+
+    </html>
