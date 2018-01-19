@@ -1,13 +1,12 @@
 <?php 
 
-require_once('../../config/dbconnect.php');	
+require_once('../../config/dbconnect.php');
 	
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
 setlocale(LC_MONETARY, 'de_DE');
 
-$colors_to_pick_array=array("purple-plum", "blue", "yellow", "blue-hoki", "blue-ebonyclay", "green-seagreen", "green-haze", "grey-gallery", "red-pink");
-
+$colors_to_pick_array=array("blue-ebonyclay", "grey-gallery");
 
 if(isset($_POST["Submit"])){
     
@@ -890,6 +889,8 @@ if(isset($_POST["Submit"])){
                                     $indiv_MwSt = $MwSt / $num_traveler;                                    
                                     
                                     $indiv_cost_array=array();
+                                                    
+                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
 
                                     foreach($rooms_cost_details as $key1 => $rooms){
                                     
@@ -905,12 +906,11 @@ if(isset($_POST["Submit"])){
                                         
                                         foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
                                     
-                                            $indiv_total_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
-
+                                            $indiv_total_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;  
                                     ?>
 
                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                                        <div class="dashboard-stat <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
+                                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
                                                             <div class="visual">
                                                                 <i class="fa fa-euro"></i>
                                                             </div>
@@ -1106,6 +1106,8 @@ if(isset($_POST["Submit"])){
                                     $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
                                 
                                     $indiv_cost_array=array();
+                                                    
+                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
 
                                     foreach($rooms_cost_details as $key1 => $rooms){
                                     
@@ -1118,20 +1120,20 @@ if(isset($_POST["Submit"])){
                                             $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"];
                                         }
                                     }
-
+                                                    
                                     foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
                                     
                                             $indiv_total_discounted_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
 
                                     ?>
                                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                                        <div class="dashboard-stat <?php echo $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)] ?>">
+                                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
                                                             <div class="visual">
                                                                 <i class="fa fa-euro"></i>
                                                             </div>
                                                             <div class="details">
                                                                 <div class="number">
-                                                                    <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
+                                                                    <?php echo number_format($indiv_total_discounted_price, 2, ',', '.'); ?>&euro;
                                                                 </div>
                                                                 <div class="desc">
                                                                     <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
