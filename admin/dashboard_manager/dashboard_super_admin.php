@@ -885,7 +885,7 @@ if(isset($_POST["Submit"])){
                                                     <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
                                                 </div>
                                                 <div class="desc">
-                                                    <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
+                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
 
                                                 </div>
                                             </div>
@@ -1116,7 +1116,7 @@ if(isset($_POST["Submit"])){
                                                     <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
                                                 </div>
                                                 <div class="desc">
-                                                    <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
+                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
 
                                                 </div>
                                             </div>
@@ -1133,7 +1133,6 @@ if(isset($_POST["Submit"])){
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <?php

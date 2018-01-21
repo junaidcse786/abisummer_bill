@@ -775,7 +775,7 @@ if(isset($_POST["Submit"])){
                                             </div>
                                             <div class="details">
                                                 <div class="number">
-                                                    <?php echo number_format($rooms_cost, 2, ',', '.'); ?>&euro;
+                                                    <?php echo number_format($rooms_cost+$office_profit, 2, ',', '.'); ?>&euro;
                                                 </div>
                                                 <div class="desc">
                                                     Gesamte Zimmerkosten
@@ -919,7 +919,7 @@ if(isset($_POST["Submit"])){
                                                                     <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
                                                                 </div>
                                                                 <div class="desc">
-                                                                    <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
+                                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
 
                                                                 </div>
                                                             </div>
@@ -1136,7 +1136,7 @@ if(isset($_POST["Submit"])){
                                                                     <?php echo number_format($indiv_total_discounted_price, 2, ',', '.'); ?>&euro;
                                                                 </div>
                                                                 <div class="desc">
-                                                                    <b><?php echo $key; ?></b> <br/> Gesamtpreis pro Reisender
+                                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
 
                                                                 </div>
                                                             </div>
@@ -1154,7 +1154,6 @@ if(isset($_POST["Submit"])){
                         </div>
                     </div>
                 </div>
-            </div>
 
             <?php
 
