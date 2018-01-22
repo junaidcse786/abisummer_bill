@@ -550,7 +550,7 @@ if(isset($_POST["Submit"])){
                                             <div class="col-md-3">
                                                 <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
 
-                                                <input required type="number" step="1" min="1" placeholder="Wie viele Nächte?" class="form-control input-medium" name="num_nights" /><br/>
+                                                <input required type="number" step="1" min="1" placeholder="Wie viele N&auml;chte?" class="form-control input-medium" name="num_nights" /><br/>
 
                                                 <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
 
@@ -709,7 +709,7 @@ if(isset($_POST["Submit"])){
                                             </div>
                                             <div class="details">
                                                 <div class="number">
-                                                    <?php echo $num_nights; ?> Nächte
+                                                    <?php echo $num_nights; ?> N&auml;chte
                                                 </div>
                                                 <div class="desc">
                                                     Check-out:
@@ -872,7 +872,7 @@ if(isset($_POST["Submit"])){
                                         <div class="portlet box red-soft">
                                             <div class="portlet-title">
                                                 <div class="caption">
-                                                    <i class="fa fa-euro"></i> Gesamtpreis für jede Reisendertyp </div>
+                                                    <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp </div>
                                             </div>
                                             <div class="portlet-body">
 
@@ -1092,7 +1092,7 @@ if(isset($_POST["Submit"])){
                                         <div class="portlet box red-soft">
                                             <div class="portlet-title">
                                                 <div class="caption">
-                                                    <i class="fa fa-euro"></i> Gesamtpreis für jede Reisendertyp
+                                                    <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp
                                                 </div>
                                             </div>
                                             <div class="portlet-body">
