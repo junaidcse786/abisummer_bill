@@ -4,6 +4,8 @@ require_once('config/dbconnect.php');
 	
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
+$other_costs_list=array();
+
 setlocale(LC_MONETARY, 'de_DE');
 
 $colors_to_pick_array=array("blue-ebonyclay", "grey-gallery");
@@ -29,7 +31,6 @@ if(isset($_POST["Submit"])){
     else
         
         $journey_title="";
-       
     
     
     $start_date = new DateTime($date_from);
@@ -37,7 +38,6 @@ if(isset($_POST["Submit"])){
     $end_date = new DateTime($date_from);
 
     $end_date->modify('+'.($num_nights-1).' day');
-    
     
     
     if(!empty($journey_ID)){
@@ -357,8 +357,6 @@ if(isset($_POST["Submit"])){
 	
 	/*********OTHER COSTS*************/
     
-    $other_costs_list=array();
-	
     
     $sql = "select lc_title, lc_costs from ".$db_suffix."locations_costs WHERE lc_status=1 AND locations_ID='$locations_ID' AND lc_status=1";			
     
@@ -366,26 +364,20 @@ if(isset($_POST["Submit"])){
     
     while($row = mysqli_fetch_object($query)){
         
-        if (strpos($row->lc_costs, "€") === false){
-			
-			if (strpos($row->lc_costs, "%") === false)
+        if (strpos($row->lc_costs, "%") === false)
 				
-				continue;
+				$other_costs_list[$row->lc_title] = array ( "costs" => trim(explode("?", $row->lc_costs)[0]), "type" => "euro");
 				
-			else
+        else
 			
 				$other_costs_list[$row->lc_title] = array ( "costs" => trim(explode("%", $row->lc_costs)[0]), "type" => "percent");
-		}		
-		else
-            
-            $other_costs_list[$row->lc_title] = array ( "costs" => trim(explode("€", $row->lc_costs)[0]), "type" => "euro");
-    }
+    }	
     
     $total_costs = $meals_cost + $rooms_cost + $journey_cost;
     
     if($other_costs_list["Office Profit"]["type"]=="percent")
         
-        $office_profit = ( $total_costs * $other_costs_list["Office Profit"]["costs"] ) /100 ;
+        $office_profit = ( $total_costs * $other_costs_list["Office Profit"]["costs"] ) / 100 ;
     
     else
         
@@ -447,7 +439,7 @@ if(isset($_POST["Submit"])){
     <?php require_once('admin/header.php'); ?>
 </head>
 
-<body class="page-header-fixed page-quick-sidebar-over-content <?php if($_SESSION[" role_id "]==15) echo 'page-sidebar-closed'; ?>">
+<body class="page-header-fixed page-quick-sidebar-over-content">
 
     <!-- BEGIN HEADER -->
 
@@ -511,22 +503,28 @@ if(isset($_POST["Submit"])){
 
                 </style>
 
-                <!-- BEGIN PAGE header-->
-
                 <h3 class="page-title">
                     <?php
-				$alert_message=""; $alert_box_show="hide"; $alert_type="success";
+                        $alert_message=""; $alert_box_show="hide"; $alert_type="success";
 
-				echo 'Preischecker';	
-			
-			
-			?>
+                        echo 'Preischecker <small>Reisekosten checken</small>';
+
+?>
                 </h3>
+                <!--<div class="page-bar">
+                    <ul class="page-breadcrumb">
+                        <li>
+                            <i class="fa fa-home"></i>
+                            <a href="<?php echo SITE_URL_ADMIN; ?>">Home</a>
+                        </li>
+                    </ul>
+                </div>-->
+                <!-- END PAGE HEADER-->
 
                 <?php if(!isset($_POST["Submit"])): ?>
 
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <!-- BEGIN EXAMPLE TABLE PORTLET-->
                         <div class="portlet box grey-cascade">
                             <div class="portlet-title">
@@ -617,7 +615,7 @@ if(isset($_POST["Submit"])){
                                                 <input type="number" step="1" min="1" placeholder="Wie viele Zimmer?" class="form-control input-medium" name="num_rooms[]" />
                                                 <span for="rooms_ID" class="help-block"></span>
                                             </div>
-                                            <div class="col-md-offset-1 col-md-1">
+                                            <div class="col-md-offset-2 col-md-1">
                                                 <i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;
                                                 <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
                                             </div>
@@ -633,12 +631,66 @@ if(isset($_POST["Submit"])){
                                                 <input type="number" step="1" min="1" placeholder="Wie viele Person?" class="form-control input-medium" name="num_meals[]" />
                                                 <span for="meals_ID" class="help-block"></span>
                                             </div>
-                                            <div class="col-md-offset-1 col-md-1">
+                                            <div class="col-md-offset-2 col-md-1">
                                                 <i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;
                                                 <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
                                             </div>
                                         </div>
 
+
+                                        <div class="form-actions fluid">
+                                            <div class="col-md-offset-3 col-md-9">
+                                                <button type="submit" name="Submit" class="btn green">Submit</button>
+                                                <button type="reset" class="btn default">Abbrechen</button>
+                                            </div>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- END EXAMPLE TABLE PORTLET-->
+                    </div>
+                    <div class="col-md-4">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet box grey-cascade">
+                            <div class="portlet-title">
+                                <div class="caption"><i class="fa fa-reorder"></i>Buchungsinfo checken</div>
+                            </div>
+                            <div class="portlet-body form">
+
+                                <div class="form-body">
+
+                                    <div class="alert alert-<?php echo $alert_type; ?> <?php echo $alert_box_show; ?>">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                                        <?php echo $alert_message; ?>
+                                    </div>
+
+
+                                    <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3" for="lc_costs_date_from">Buchungscode</label>
+                                            <div class="col-md-3">
+                                                
+                                                <input required type="text" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" class="form-control input-medium" name="bookings_code" />
+                                                
+                                                <span for="lc_costs_date_from" class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3" for="lc_costs_date_from">Nachname</label>
+                                            <div class="col-md-3">
+                                                
+                                                <input required type="text" placeholder="" class="form-control input-medium" name="travelers_last_name" />
+                                                
+                                                <span for="lc_costs_date_from" class="help-block"></span>
+                                            </div>
+                                        </div>
 
                                         <div class="form-actions fluid">
                                             <div class="col-md-offset-3 col-md-9">
@@ -796,7 +848,8 @@ if(isset($_POST["Submit"])){
                         <div class="portlet box yellow">
                             <div class="portlet-title">
                                 <div class="caption">
-                                    <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird Buchen</b>) </div>
+                                    <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird Buchen</b>)
+                                </div>
                             </div>
                             <div class="portlet-body">
                                 <div class="row">
@@ -811,121 +864,126 @@ if(isset($_POST["Submit"])){
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php
-                                                    
+                                                    <?php 
+                                    
                                     $i=1;   
                                     foreach($rooms_cost_details as $key => $rooms):   
                                         
                                     ?>
-                                                        <tr>
-                                                            <td>
-                                                                <?php echo $i++; ?> </td>
-                                                            <td>
-                                                                <?php echo $key.'<b>  x  '.$rooms["rooms_ordered"].'</b>'; ?> </td>
-                                                            <td style="text-align:right;">
-                                                                <?php echo number_format($rooms["costs_this_room_the_whole_time"]+$office_profit/count($rooms_cost_details), 2, ',', '.'); ?>&euro; </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $i++; ?> </td>
+                                                        <td>
+                                                            <?php echo $key.'<b>  x  '.$rooms["rooms_ordered"].'</b>'; ?> </td>
+                                                        <td style="text-align:right;">
+                                                            <?php echo number_format($rooms["costs_this_room_the_whole_time"]+$office_profit/count($rooms_cost_details), 2, ',', '.'); ?>&euro; </td>
+                                                    </tr>
 
-                                                        <?php endforeach; 
+                                                    <?php endforeach; 
                                         
                                     foreach($meals_cost_details as $key => $meals):   
                                         
                                     ?>
-                                                        <tr>
-                                                            <td>
-                                                                <?php echo $i++; ?> </td>
-                                                            <td>
-                                                                <?php echo $key.'<b>  x  '.$meals["meals_ordered"].'</b>'; ?> </td>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $i++; ?> </td>
+                                                        <td>
+                                                            <?php echo $key.'<b>  x  '.$meals["meals_ordered"].'</b>'; ?> </td>
+                                                        <td style="text-align:right;">
+                                                            <?php echo number_format($meals["costs_this_meal_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
+                                                    </tr>
+
+                                                    <?php endforeach; ?>
+
+                                                    <tr>
+                                                        <td> </td>
+                                                        <td> Anreisekosten
+                                                            <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
                                                             <td style="text-align:right;">
-                                                                <?php echo number_format($meals["costs_this_meal_the_whole_time"], 2, ',', '.'); ?>&euro; </td>
-                                                        </tr>
+                                                                <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
+                                                    </tr>
 
-                                                        <?php endforeach; ?>
+                                                    <tr>
+                                                        <td> </td>
+                                                        <td> MwSt + Service Charge </td>
+                                                        <td style="text-align:right;">
+                                                            <?php echo number_format($promoter_provision+$MwSt, 2, ',', '.'); ?>&euro; </td>
+                                                    </tr>
 
-                                                        <tr>
-                                                            <td> </td>
-                                                            <td> Anreisekosten
-                                                                <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
-                                                                <td style="text-align:right;">
-                                                                    <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td> </td>
-                                                            <td> Service charge + MwSt </td>
-                                                            <td style="text-align:right;">
-                                                                <?php echo number_format($promoter_provision + $MwSt, 2, ',', '.'); ?>&euro; </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td> </td>
-                                                            <td> <b>Gesamtpreis</b> </td>
-                                                            <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td> </td>
+                                                        <td> <b>Gesamtpreis</b> </td>
+                                                        <td style="text-align:right;"> <b><?php echo number_format($actual_total_price, 2, ',', '.'); ?>&euro;</b> </td>
+                                                    </tr>
 
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div class="col-md-7">
-
                                         <div class="portlet box red-soft">
                                             <div class="portlet-title">
                                                 <div class="caption">
-                                                    <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp </div>
+                                                    <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp
+                                                </div>
+                                                <div class="actions">
+                                                    <?php 
+                                    
+                                        $indiv_journey_cost = $journey_cost / $num_traveler;
+
+                                        $indiv_promoter_provision = $promoter_provision / $num_traveler;
+
+                                        $indiv_office_profit = $office_profit / $num_traveler;
+
+                                        $indiv_MwSt = $MwSt / $num_traveler;                                    
+
+                                        $indiv_cost_array=array();
+
+                                        $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
+
+                                        foreach($rooms_cost_details as $key1 => $rooms){
+
+                                            $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"]) + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+
+                                            foreach($meals_cost_details as $key2 => $meals){
+
+                                                unset($indiv_cost_array[$key1]);
+
+                                                $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"]) + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+                                            }
+                                        }
+                                    
+                                    ?>
+                                                </div>
                                             </div>
                                             <div class="portlet-body">
 
                                                 <div class="row">
 
-                                                    <?php 
-                                    
-                                    $indiv_journey_cost = $journey_cost / $num_traveler;
-                                    
-                                    $indiv_promoter_provision = $promoter_provision / $num_traveler;
-
-                                    $indiv_office_profit = $office_profit / $num_traveler;
-
-                                    $indiv_MwSt = $MwSt / $num_traveler;                                    
-                                    
-                                    $indiv_cost_array=array();
-                                                    
-                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
-
-                                    foreach($rooms_cost_details as $key1 => $rooms){
-                                    
-                                        $indiv_cost_array[$key1] = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"];
+                                                    <?php
                                         
-                                        foreach($meals_cost_details as $key2 => $meals){
-                                            
-                                            unset($indiv_cost_array[$key1]);
-                                            
-                                            $indiv_cost_array[$key1." + ". $key2] = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"];
-                                        }
-                                    }
-                                        
-                                        foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
+                                        foreach($indiv_cost_array as $key => $indiv_total_price):
                                     
-                                            $indiv_total_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;  
                                     ?>
 
-                                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
-                                                            <div class="visual">
-                                                                <i class="fa fa-euro"></i>
-                                                            </div>
-                                                            <div class="details">
-                                                                <div class="number">
-                                                                    <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
+                                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
+                                                            <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
+                                                                <div class="visual">
+                                                                    <i class="fa fa-euro"></i>
                                                                 </div>
-                                                                <div class="desc">
-                                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
+                                                                <div class="details">
+                                                                    <div class="number">
+                                                                        <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
+                                                                    </div>
+                                                                    <div class="desc">
+                                                                        <b><?php echo $key; ?></b>
+                                                                        <!--<br/> Gesamtpreis pro Reisender-->
 
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <?php endforeach; ?>
+                                                        <?php endforeach; ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -943,6 +1001,54 @@ if(isset($_POST["Submit"])){
              $parent_query = mysqli_query($db, $sql_parent_menu);
             $counter=1;
             while($row = mysqli_fetch_object($parent_query)):
+                
+                $discounted_rooms_cost = $rooms_cost - $rooms_cost*$row->eb_discount/100;
+                                       
+                $discounted_meals_cost = $meals_cost - $meals_cost*$row->eb_discount/100;
+
+                $discounted_total_costs = $discounted_meals_cost + $discounted_rooms_cost + $journey_cost;
+
+                if($other_costs_list["Office Profit"]["type"]=="percent")
+
+                    $discounted_office_profit = ( $discounted_total_costs * $other_costs_list["Office Profit"]["costs"] ) /100 ;
+
+                else
+
+                    $discounted_office_profit = $other_costs_list["Office Profit"]["costs"]*$num_traveler;
+
+
+                if($other_costs_list["MwSt"]["type"]=="percent")
+
+                    $discounted_MwSt = $discounted_office_profit * $other_costs_list["MwSt"]["costs"] /100 ;
+
+                else
+
+                    $discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler;	
+
+                $discounted_promoter_provision=0;
+
+                for($excel_loop=1;$excel_loop<=20;$excel_loop++){
+
+                    if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+                        $discounted_promoter_provision = ($discounted_promoter_provision + $discounted_total_costs + $discounted_office_profit+ $discounted_MwSt) * $other_costs_list["Promoter Provision"]["costs"] / 100 ;
+
+                    else
+
+                        $discounted_promoter_provision = $other_costs_list["Promoter Provision"]["costs"]*$num_traveler;
+
+
+                    if($other_costs_list["MwSt"]["type"]=="percent")
+
+                        $discounted_MwSt = ($discounted_promoter_provision + $discounted_office_profit) * $other_costs_list["MwSt"]["costs"] / 100 ;
+
+                    else
+
+                        $discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler; 
+
+                }
+
+                $discounted_actual_total_price = $discounted_total_costs + $discounted_office_profit + $discounted_promoter_provision + $discounted_MwSt;
 
         ?>
                 <div class="row">
@@ -972,29 +1078,30 @@ if(isset($_POST["Submit"])){
                                                 </thead>
                                                 <tbody>
                                                     <?php 
-                                    $i=1;    
-                                    foreach($rooms_cost_details as $key => $rooms): 
+                                                    
+                                                        $i=1;    
+                                                        foreach($rooms_cost_details as $key => $rooms): 
 
-									$discounted_this_rooms_cost = $rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100;									
-									
-									?>
+                                                        $discounted_this_rooms_cost = $rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100;
+
+                                                    ?>
                                                     <tr>
                                                         <td>
                                                             <?php echo $i++; ?> </td>
                                                         <td>
                                                             <?php echo $key.'<b> x '.$rooms["rooms_ordered"].'</b>'; ?> </td>
                                                         <td style="text-align:right;">
-                                                            <?php echo number_format($discounted_this_rooms_cost + $office_profit/count($rooms_cost_details), 2, ',', '.'); ?>&euro; </td>
+                                                            <?php echo number_format($discounted_this_rooms_cost+$discounted_office_profit/count($rooms_cost_details), 2, ',', '.'); ?>&euro; </td>
                                                     </tr>
 
                                                     <?php endforeach; 
                                         
                                     
-                                    foreach($meals_cost_details as $key => $meals): 
+                                                        foreach($meals_cost_details as $key => $meals): 
 
-									$discounted_this_meals_cost = $meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100;									
-									
-									?>
+                                                        $discounted_this_meals_cost = $meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100;									
+
+                                                    ?>
                                                     <tr>
                                                         <td>
                                                             <?php echo $i++; ?> </td>
@@ -1004,58 +1111,7 @@ if(isset($_POST["Submit"])){
                                                             <?php echo number_format($discounted_this_meals_cost, 2, ',', '.'); ?>&euro; </td>
                                                     </tr>
 
-                                                    <?php endforeach;
-                                        
-                                        
-                                        $discounted_rooms_cost = $rooms_cost - $rooms_cost*$row->eb_discount/100;
-                                       
-                                        $discounted_meals_cost = $meals_cost - $meals_cost*$row->eb_discount/100;
-                                        
-                                        $discounted_total_costs = $discounted_meals_cost + $discounted_rooms_cost + $journey_cost;
-    
-                                        if($other_costs_list["Office Profit"]["type"]=="percent")
-
-                                            $discounted_office_profit = ( $discounted_total_costs * $other_costs_list["Office Profit"]["costs"] ) /100 ;
-
-                                        else
-
-                                            $discounted_office_profit = $other_costs_list["Office Profit"]["costs"]*$num_traveler;
-
-
-                                        if($other_costs_list["MwSt"]["type"]=="percent")
-
-                                            $discounted_MwSt = $discounted_office_profit * $other_costs_list["MwSt"]["costs"] /100 ;
-
-                                        else
-
-                                            $discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler;	
-
-                                        $discounted_promoter_provision=0;
-                                        
-                                        for($excel_loop=1;$excel_loop<=20;$excel_loop++){
-
-                                            if($other_costs_list["Promoter Provision"]["type"]=="percent")
-
-                                                $discounted_promoter_provision = ($discounted_promoter_provision + $discounted_total_costs + $discounted_office_profit+ $discounted_MwSt) * $other_costs_list["Promoter Provision"]["costs"] / 100 ;
-
-                                            else
-
-                                                $discounted_promoter_provision = $other_costs_list["Promoter Provision"]["costs"]*$num_traveler;
-
-
-                                            if($other_costs_list["MwSt"]["type"]=="percent")
-
-                                                $discounted_MwSt = ($discounted_promoter_provision + $discounted_office_profit) * $other_costs_list["MwSt"]["costs"] / 100 ;
-
-                                            else
-
-                                                $discounted_MwSt = $other_costs_list["MwSt"]["costs"]*$num_traveler; 
-
-                                        }
-
-                                        $discounted_actual_total_price = $discounted_total_costs + $discounted_office_profit + $discounted_promoter_provision + $discounted_MwSt;
-                                        
-                                        ?>
+                                                    <?php endforeach; ?>
 
                                                     <tr>
                                                         <td> </td>
@@ -1067,9 +1123,9 @@ if(isset($_POST["Submit"])){
 
                                                     <tr>
                                                         <td> </td>
-                                                        <td> Service charge + MwSt </td>
+                                                        <td> MwSt + Service Charge </td>
                                                         <td style="text-align:right;">
-                                                            <?php echo number_format($discounted_promoter_provision + $discounted_MwSt, 2, ',', '.'); ?>&euro; </td>
+                                                            <?php echo number_format($discounted_MwSt + $discounted_promoter_provision, 2, ',', '.'); ?>&euro; </td>
                                                     </tr>
 
                                                     <tr>
@@ -1094,56 +1150,62 @@ if(isset($_POST["Submit"])){
                                                 <div class="caption">
                                                     <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp
                                                 </div>
+                                                <div class="actions">
+
+                                                    <?php 
+                                    
+                                                        $indiv_discounted_promoter_provision = $discounted_promoter_provision / $num_traveler;
+
+                                                        $indiv_discounted_office_profit = $discounted_office_profit / $num_traveler;
+
+                                                        $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
+
+                                                        $indiv_cost_array=array();
+
+                                                        $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
+
+                                                        foreach($rooms_cost_details as $key1 => $rooms){
+
+                                                            $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+
+                                                            foreach($meals_cost_details as $key2 => $meals){
+
+                                                                unset($indiv_cost_array[$key1]);
+
+                                                                $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"] + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                                            }
+                                                        } 
+
+                                                    ?>
+
+                                                </div>
                                             </div>
                                             <div class="portlet-body">
                                                 <div class="row">
-                                                    <?php 
-                                    
-                                    $indiv_discounted_promoter_provision = $discounted_promoter_provision / $num_traveler;
+                                                    <?php
 
-                                    $indiv_discounted_office_profit = $discounted_office_profit / $num_traveler;
-
-                                    $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
-                                
-                                    $indiv_cost_array=array();
-                                                    
-                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
-
-                                    foreach($rooms_cost_details as $key1 => $rooms){
-                                    
-                                        $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"];
-                                        
-                                        foreach($meals_cost_details as $key2 => $meals){
-                                            
-                                            unset($indiv_cost_array[$key1]);
-                                            
-                                            $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"];
-                                        }
-                                    }
-                                                    
-                                    foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
-                                    
-                                            $indiv_total_discounted_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                    foreach($indiv_cost_array as $key => $indiv_total_discounted_price):
 
                                     ?>
-                                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
-                                                            <div class="visual">
-                                                                <i class="fa fa-euro"></i>
-                                                            </div>
-                                                            <div class="details">
-                                                                <div class="number">
-                                                                    <?php echo number_format($indiv_total_discounted_price, 2, ',', '.'); ?>&euro;
+                                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
+                                                            <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
+                                                                <div class="visual">
+                                                                    <i class="fa fa-euro"></i>
                                                                 </div>
-                                                                <div class="desc">
-                                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
+                                                                <div class="details">
+                                                                    <div class="number">
+                                                                        <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
+                                                                    </div>
+                                                                    <div class="desc">
+                                                                        <b><?php echo $key; ?></b>
+                                                                        <!--<br/> Gesamtpreis pro Reisender-->
 
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <?php endforeach; ?>
+                                                        <?php endforeach; ?>
 
                                                 </div>
                                             </div>
@@ -1154,7 +1216,8 @@ if(isset($_POST["Submit"])){
                         </div>
                     </div>
                 </div>
-            <?php
+
+                <?php
 
             $counter++;
 
@@ -1162,142 +1225,142 @@ if(isset($_POST["Submit"])){
 
         ?>
 
-                <?php endif; ?>
+                    <?php endif; ?>
 
+            </div>
         </div>
-    </div>
 
-    <!-- END PAGE CONTAINER -->
+        <!-- END PAGE CONTAINER -->
 
+        <?php require_once('admin/footer.php'); ?>
 
+        <?php require_once('admin/scripts.php'); ?>
 
-    <?php require_once('admin/scripts.php'); ?>
+        <!-- END JAVASCRIPTS -->
+        <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.min.js"></script>
 
-    <!-- END JAVASCRIPTS -->
-    <script type="text/javascript" src="<?php echo SITE_URL_ADMIN; ?>assets/global/plugins/select2/select2.min.js"></script>
+        <script>
+            $('#locations_ID').change(function() {
 
-    <script>
-        $('#locations_ID').change(function() {
+                var locations_ID = $('#locations_ID').val();
 
-            var locations_ID = $('#locations_ID').val();
+                //console.log(message);
 
-            //console.log(message);
+                if (locations_ID != '') {
 
-            if (locations_ID != '') {
+                    $.ajax({
+                        type: "POST",
+                        url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_journey.php',
+                        dataType: "text",
+                        data: {
+                            locations_ID: locations_ID
+                        },
+                        success: function(data) {
 
-                $.ajax({
-                    type: "POST",
-                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_journey.php',
-                    dataType: "text",
-                    data: {
-                        locations_ID: locations_ID
-                    },
-                    success: function(data) {
+                            $("#journey_ID").val(null).trigger("change");
+                            $('#journey_ID option').remove();
+                            $('#journey_ID').append('<option value=""></option>' + data);
+                        },
+                    });
 
-                        $("#journey_ID").val(null).trigger("change");
-                        $('#journey_ID option').remove();
-                        $('#journey_ID').append('<option value=""></option>' + data);
-                    },
-                });
+                    $.ajax({
+                        type: "POST",
+                        url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_hotels.php',
+                        dataType: "text",
+                        data: {
+                            locations_ID: locations_ID
+                        },
+                        success: function(data) {
 
-                $.ajax({
-                    type: "POST",
-                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_hotels.php',
-                    dataType: "text",
-                    data: {
-                        locations_ID: locations_ID
-                    },
-                    success: function(data) {
+                            $("#hotels_ID").val(null).trigger("change");
+                            $('#hotels_ID option').remove();
+                            $('#hotels_ID').append('<option value=""></option>' + data);
+                        },
+                    });
 
-                        $("#hotels_ID").val(null).trigger("change");
-                        $('#hotels_ID option').remove();
-                        $('#hotels_ID').append('<option value=""></option>' + data);
-                    },
-                });
+                    $(".rooms_ID").val(null).trigger("change");
+                    $(".rooms_ID option").remove();
+                    $(".meals_ID").val(null).trigger("change");
+                    $(".meals_ID option").remove();
+                } else {
 
-                $(".rooms_ID").val(null).trigger("change");
-                $(".rooms_ID option").remove();
-                $(".meals_ID").val(null).trigger("change");
-                $(".meals_ID option").remove();
-            } else {
+                    $("#journey_ID").val(null).trigger("change");
+                    $("#journey_ID option").remove();
+                    $("#hotels_ID").val(null).trigger("change");
+                    $("#hotels_ID option").remove();
+                    $(".rooms_ID").val(null).trigger("change");
+                    $(".rooms_ID option").remove();
+                    $(".meals_ID").val(null).trigger("change");
+                    $(".meals_ID option").remove();
 
-                $("#journey_ID").val(null).trigger("change");
-                $("#journey_ID option").remove();
-                $("#hotels_ID").val(null).trigger("change");
-                $("#hotels_ID option").remove();
-                $(".rooms_ID").val(null).trigger("change");
-                $(".rooms_ID option").remove();
-                $(".meals_ID").val(null).trigger("change");
-                $(".meals_ID option").remove();
+                }
+            });
 
-            }
-        });
+            $('#hotels_ID').change(function() {
 
-        $('#hotels_ID').change(function() {
+                var hotels_ID = $('#hotels_ID').val();
 
-            var hotels_ID = $('#hotels_ID').val();
+                if (hotels_ID != '') {
 
-            if (hotels_ID != '') {
+                    $.ajax({
+                        type: "POST",
+                        url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_rooms.php',
+                        dataType: "text",
+                        data: {
+                            hotels_ID: hotels_ID
+                        },
+                        success: function(data) {
 
-                $.ajax({
-                    type: "POST",
-                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_rooms.php',
-                    dataType: "text",
-                    data: {
-                        hotels_ID: hotels_ID
-                    },
-                    success: function(data) {
+                            $(".rooms_ID").each(function() {
+                                $(this).val(null).trigger("change");
+                                $(this).append(data);
+                            });
+                        },
+                    });
 
-                        $(".rooms_ID").each(function() {
-                            $(this).val(null).trigger("change");
-                            $(this).append(data);
-                        });
-                    },
-                });
+                    $.ajax({
+                        type: "POST",
+                        url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_meals.php',
+                        dataType: "text",
+                        data: {
+                            hotels_ID: hotels_ID
+                        },
+                        success: function(data) {
 
-                $.ajax({
-                    type: "POST",
-                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_meals.php',
-                    dataType: "text",
-                    data: {
-                        hotels_ID: hotels_ID
-                    },
-                    success: function(data) {
+                            $(".meals_ID").each(function() {
+                                $(this).val(null).trigger("change");
+                                $(this).append(data);
+                            });
+                        },
+                    });
+                } else {
+                    $(".rooms_ID").val(null).trigger("change");
+                    $(".rooms_ID option").remove();
+                    $(".meals_ID").val(null).trigger("change");
+                    $(".meals_ID option").remove();
 
-                        $(".meals_ID").each(function() {
-                            $(this).val(null).trigger("change");
-                            $(this).append(data);
-                        });
-                    },
-                });
-            } else {
-                $(".rooms_ID").val(null).trigger("change");
-                $(".rooms_ID option").remove();
-                $(".meals_ID").val(null).trigger("change");
-                $(".meals_ID option").remove();
+                }
+            });
 
-            }
-        });
+            $('.clone-it').live('click', function() {
 
-        $('.clone-it').live('click', function() {
+                var $cloned_div = $(this).parent().parent('.form-group');
 
-            var $cloned_div = $(this).parent().parent('.form-group');
+                var $html_content = $cloned_div.clone();
 
-            var $html_content = $cloned_div.clone();
+                $cloned_div.before($html_content);
 
-            $cloned_div.before($html_content);
+                $cloned_div.find('.remove-it').removeClass('hide');
 
-            $cloned_div.find('.remove-it').removeClass('hide');
+            });
 
-        });
+            $('.remove-it').live('click', function() {
 
-        $('.remove-it').live('click', function() {
+                $(this).parent().parent('.form-group').remove();
 
-            $(this).parent().parent('.form-group').remove();
+            });
 
-        });
-
-    </script>
+        </script>
 
 
 </body>

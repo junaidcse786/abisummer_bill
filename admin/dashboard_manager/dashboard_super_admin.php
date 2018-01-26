@@ -1,12 +1,22 @@
 <?php 
 
+function generateRandomString($length = 20) {
+    $characters = '23456789ABCDEFGHJKMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 1; $i <= $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+        if($i%5==0 && $i != $length)
+            $randomString .= "-";
+    }
+    return $randomString;
+}
+
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
 setlocale(LC_MONETARY, 'de_DE');
 
 $colors_to_pick_array=array("blue-ebonyclay", "grey-gallery");
-
-$colors_picked=array();
 
 
 if(isset($_POST["Submit"])){
@@ -366,20 +376,14 @@ if(isset($_POST["Submit"])){
     $query = mysqli_query($db, $sql);	
     
     while($row = mysqli_fetch_object($query)){
-        
-        if (strpos($row->lc_costs, "€") === false){
 			
-			if (strpos($row->lc_costs, "%") === false)
-				
-				continue;
-				
-			else
-			
-				$other_costs_list[$row->lc_title] = array ( "costs" => trim(explode("%", $row->lc_costs)[0]), "type" => "percent");
-		}		
-		else
-            
+        if (strpos($row->lc_costs, "%") === false)
+
             $other_costs_list[$row->lc_title] = array ( "costs" => trim(explode("€", $row->lc_costs)[0]), "type" => "euro");
+
+        else
+
+            $other_costs_list[$row->lc_title] = array ( "costs" => trim(explode("%", $row->lc_costs)[0]), "type" => "percent");
     }
     
     $total_costs = $meals_cost + $rooms_cost + $journey_cost;
@@ -436,6 +440,23 @@ if(isset($_POST["Submit"])){
     $end_date = new DateTime($date_from);
 
     $end_date->modify('+'.$num_nights.' day');
+}
+
+if(isset($_POST["Submit_booking"])){
+    
+    extract($_POST);
+    
+    do
+        
+        $bookings_code=generateRandomString();        
+        
+    while(mysqli_num_rows(mysqli_query($db, "SELECT bookings_ID from ".$db_suffix."bookings where bookings_code='$bookings_code'"))>0); 
+    
+    $sql_parent_menu = "INSERT into ".$db_suffix."bookings SET hotels_name='$hotels_name', locations_name='$locations_name', bookings_check_in_date='$bookings_check_in_date', bookings_check_out_date='$bookings_check_out_date', bookings_summary='".$bookings_summary."', bookings_code='$bookings_code', bookings_num_traveler='$bookings_num_traveler'";    
+    
+    $parent_query = mysqli_query($db, $sql_parent_menu);
+    
+    echo '<script>alert("Buchung erfolgreich eingefügt"); window.location="'.SITE_URL_ADMIN.'?mKey=locations&pKey=bookings";</script>';
 }
 
 ?>
@@ -748,7 +769,8 @@ if(isset($_POST["Submit"])){
         <div class="portlet box yellow">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird Buchen</b>) </div>
+                    <i class="fa fa-euro"></i>Preis Details (<b>Ohne Early Bird Buchen</b>)
+                </div>
             </div>
             <div class="portlet-body">
                 <div class="row">
@@ -834,64 +856,112 @@ if(isset($_POST["Submit"])){
                         </div>
                     </div>
                     <div class="col-md-7">
-
                         <div class="portlet box red-soft">
                             <div class="portlet-title">
                                 <div class="caption">
-                                    <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp </div>
+                                    <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp
+                                </div>
+                                <div class="actions">
+                                    <?php 
+                                    
+                                        $indiv_journey_cost = $journey_cost / $num_traveler;
+
+                                        $indiv_promoter_provision = $promoter_provision / $num_traveler;
+
+                                        $indiv_office_profit = $office_profit / $num_traveler;
+
+                                        $indiv_MwSt = $MwSt / $num_traveler;                                    
+
+                                        $indiv_cost_array=array();
+
+                                        $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
+
+                                        foreach($rooms_cost_details as $key1 => $rooms){
+
+                                            $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"]) + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+
+                                            foreach($meals_cost_details as $key2 => $meals){
+
+                                                unset($indiv_cost_array[$key1]);
+
+                                                $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"]) + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+                                            }
+                                        }
+                                    
+                                        $json_array=array(
+                                                            "journey_title"=>$journey_title,
+                                            
+                                                            "journey_cost"=>$journey_cost,
+                                            
+                                                            "meals_cost"=>$meals_cost,
+                                            
+                                                            "rooms_cost"=>$rooms_cost,
+                                            
+                                                            "rooms_cost_details"=>$rooms_cost_details,
+                                            
+                                                            "meals_cost_details"=>$meals_cost_details,
+                                                            
+                                                            "indiv_cost_array"=>$indiv_cost_array,
+                                            
+                                                            "office_profit"=>$office_profit,
+                                            
+                                                            "promoter_provision"=>$promoter_provision,
+                                            
+                                                            "MwSt"=>$MwSt,                                            
+                                        );
+                                    
+                                        array_walk_recursive($json_array, function (&$value) {
+                                            $value = htmlentities($value);
+                                        });
+                                    
+                                    ?>
+                                    <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" method="post">
+
+                                        <input type="hidden" name="locations_name" value="<?php echo $locations_name; ?>" />
+
+                                        <input type="hidden" name="bookings_num_traveler" value="<?php echo $num_traveler; ?>" />
+
+                                        <input type="hidden" name="hotels_name" value="<?php echo $hotels_name; ?>" />
+
+                                        <input type="hidden" name="bookings_check_in_date" value="<?php echo $date_from; ?>" />
+
+                                        <input type="hidden" name="bookings_check_out_date" value="<?php echo $end_date->format(" Y-m-d "); ?>" />
+
+                                        <input type="hidden" name="bookings_summary" value='<?php echo json_encode($json_array, JSON_UNESCAPED_UNICODE); ?>' />
+
+                                        <button name="Submit_booking" type="submit" class="btn green-haze"><i class="fa fa-calendar"></i> Buchen</button>
+
+                                    </form>
+                                </div>
                             </div>
                             <div class="portlet-body">
 
                                 <div class="row">
 
-                                    <?php 
-                                    
-                                    $indiv_journey_cost = $journey_cost / $num_traveler;
-                                    
-                                    $indiv_promoter_provision = $promoter_provision / $num_traveler;
-
-                                    $indiv_office_profit = $office_profit / $num_traveler;
-
-                                    $indiv_MwSt = $MwSt / $num_traveler;                                    
-                                    
-                                    $indiv_cost_array=array();
-                                    
-                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
-
-                                    foreach($rooms_cost_details as $key1 => $rooms){
-                                    
-                                        $indiv_cost_array[$key1] = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"];
+                                    <?php
                                         
-                                        foreach($meals_cost_details as $key2 => $meals){
-                                            
-                                            unset($indiv_cost_array[$key1]);
-                                            
-                                            $indiv_cost_array[$key1." + ". $key2] = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"];
-                                        }
-                                    }
-                                        
-                                        foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
+                                        foreach($indiv_cost_array as $key => $indiv_total_price):
                                     
-                                            $indiv_total_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit; 
                                     ?>
 
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
-                                            <div class="visual">
-                                                <i class="fa fa-euro"></i>
-                                            </div>
-                                            <div class="details">
-                                                <div class="number">
-                                                    <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
+                                            <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
+                                                <div class="visual">
+                                                    <i class="fa fa-euro"></i>
                                                 </div>
-                                                <div class="desc">
-                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
+                                                <div class="details">
+                                                    <div class="number">
+                                                        <?php echo number_format($indiv_total_price, 2, ',', '.');; ?>&euro;
+                                                    </div>
+                                                    <div class="desc">
+                                                        <b><?php echo $key; ?></b>
+                                                        <!--<br/> Gesamtpreis pro Reisender-->
 
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <?php endforeach; ?>
+                                        <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>
@@ -1074,56 +1144,110 @@ if(isset($_POST["Submit"])){
                                 <div class="caption">
                                     <i class="fa fa-euro"></i> Gesamtpreis f&uuml;r jede Reisendertyp
                                 </div>
+                                <div class="actions">
+
+                                    <?php 
+                                    
+                                        $indiv_discounted_promoter_provision = $discounted_promoter_provision / $num_traveler;
+
+                                        $indiv_discounted_office_profit = $discounted_office_profit / $num_traveler;
+
+                                        $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
+
+                                        $indiv_cost_array=array();
+
+                                        $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
+
+                                        foreach($rooms_cost_details as $key1 => $rooms){
+
+                                            $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+
+                                            foreach($meals_cost_details as $key2 => $meals){
+
+                                                unset($indiv_cost_array[$key1]);
+
+                                                $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"] + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                            }
+                                        }
+                                    
+                                        $json_array=array(
+                                                            "journey_cost"=>$journey_cost,
+                                            
+                                                            "journey_title"=>$journey_title,
+                                            
+                                                            "discount_applied"=>$row->eb_discount,
+                                            
+                                                            "without_discount"=>$actual_total_price,
+                                            
+                                                            "meals_cost"=>$discounted_meals_cost,
+                                            
+                                                            "rooms_cost"=>$discounted_rooms_cost,
+                                            
+                                                            "rooms_cost_details"=>$rooms_cost_details,
+                                            
+                                                            "meals_cost_details"=>$meals_cost_details,
+                                                            
+                                                            "indiv_cost_array"=>$indiv_cost_array,
+                                            
+                                                            "office_profit"=>$discounted_office_profit,
+                                            
+                                                            "promoter_provision"=>$discounted_promoter_provision,
+                                            
+                                                            "MwSt"=>$discounted_MwSt,                                            
+                                        );
+                                    
+                                        array_walk_recursive($json_array, function (&$value) {
+                                            $value = htmlentities($value);
+                                        });
+                                            
+                                    
+                                    ?>
+
+                                    <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" method="post">
+
+                                        <input type="hidden" name="locations_name" value="<?php echo $locations_name; ?>" />
+
+                                        <input type="hidden" name="bookings_num_traveler" value="<?php echo $num_traveler; ?>" />
+
+                                        <input type="hidden" name="hotels_name" value="<?php echo $hotels_name; ?>" />
+
+                                        <input type="hidden" name="bookings_check_in_date" value="<?php echo $date_from; ?>" />
+
+                                        <input type="hidden" name="bookings_check_out_date" value='<?php echo $end_date->format(" Y-m-d "); ?>' />
+
+                                        <input type="hidden" name="bookings_summary" value='<?php echo json_encode($json_array, JSON_UNESCAPED_UNICODE); ?>' />
+
+                                        <button name="Submit_booking" type="submit" class="btn green-haze"><i class="fa fa-calendar"></i> Buchen</button>
+
+                                    </form>
+                                </div>
                             </div>
                             <div class="portlet-body">
                                 <div class="row">
-                                    <?php 
-                                    
-                                    $indiv_discounted_promoter_provision = $discounted_promoter_provision / $num_traveler;
+                                    <?php
 
-                                    $indiv_discounted_office_profit = $discounted_office_profit / $num_traveler;
-
-                                    $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
-                                
-                                    $indiv_cost_array=array();
-                                    
-                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
-
-                                    foreach($rooms_cost_details as $key1 => $rooms){
-                                    
-                                        $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"];
-                                        
-                                        foreach($meals_cost_details as $key2 => $meals){
-                                            
-                                            unset($indiv_cost_array[$key1]);
-                                            
-                                            $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"];
-                                        }
-                                    }
-
-                                    foreach($indiv_cost_array as $key => $invid_cost_room_and_meal):
-                                    
-                                            $indiv_total_discounted_price = $invid_cost_room_and_meal + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                    foreach($indiv_cost_array as $key => $indiv_total_discounted_price):
 
                                     ?>
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
-                                        <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
-                                            <div class="visual">
-                                                <i class="fa fa-euro"></i>
-                                            </div>
-                                            <div class="details">
-                                                <div class="number">
-                                                    <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 dashboard-stat-special">
+                                            <div class="dashboard-stat <?php echo $colors_picked_temp; ?>">
+                                                <div class="visual">
+                                                    <i class="fa fa-euro"></i>
                                                 </div>
-                                                <div class="desc">
-                                                    <b><?php echo $key; ?></b> <!--<br/> Gesamtpreis pro Reisender-->
+                                                <div class="details">
+                                                    <div class="number">
+                                                        <?php echo number_format($indiv_total_discounted_price, 2, ',', '.');; ?>&euro;
+                                                    </div>
+                                                    <div class="desc">
+                                                        <b><?php echo $key; ?></b>
+                                                        <!--<br/> Gesamtpreis pro Reisender-->
 
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <?php endforeach; ?>
+                                        <?php endforeach; ?>
 
                                 </div>
                             </div>

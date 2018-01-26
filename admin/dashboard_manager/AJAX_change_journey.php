@@ -6,7 +6,7 @@ if(isset($_POST["locations_ID"])){
 
 	$locations_ID = $_POST["locations_ID"];
 
-	$sql = "SELECT j.journey_title,j.journey_ID FROM ".$db_suffix."journey j WHERE j.locations_ID='$locations_ID' ORDER BY j.journey_title ASC";
+	$sql = "SELECT j.journey_title,j.journey_ID FROM ".$db_suffix."journey j WHERE j.locations_ID='$locations_ID' AND journey_status=1 ORDER BY j.journey_title ASC";
 	
 	$news_query = mysqli_query($db,$sql);
 	

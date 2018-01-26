@@ -6,7 +6,7 @@ if(isset($_POST["locations_ID"])){
 
 	$locations_ID = $_POST["locations_ID"];
 
-	$sql = "SELECT hotels_name, hotels_ID, hotels_star FROM ".$db_suffix."hotels WHERE locations_ID='$locations_ID' ORDER BY hotels_name";
+	$sql = "SELECT hotels_name, hotels_ID, hotels_star FROM ".$db_suffix."hotels WHERE locations_ID='$locations_ID' AND hotels_status=1 ORDER BY hotels_name";
 	
 	$news_query = mysqli_query($db,$sql);
 	

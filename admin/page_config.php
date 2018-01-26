@@ -69,7 +69,17 @@ $pages = array(
 						
 						"addcosts"  => "locations_costs_manager/add_costs.php",
                             
-                        "editcosts"  => "locations_costs_manager/edit_costs.php",    
+                        "editcosts"  => "locations_costs_manager/edit_costs.php", 
+                            
+                        "bookings"  => "bookings_manager/bookings.php", 
+                            
+                        "editbookings"  => "bookings_manager/edit_bookings.php",     
+                            
+                        "travelers"  => "bookings_manager/travelers.php",
+                            
+                        "addtravelers"  => "bookings_manager/add_travelers.php", 
+                            
+                        "edittravelers"  => "bookings_manager/edit_travelers.php",    
 						
 						),     
     
@@ -177,6 +187,8 @@ $menus = array(
                                "locations" => "Destinations Liste",  
 
                                "addlocations"  => "Destination einfügen",
+                                
+                                "bookings"  => "Buchungen",
                                
                             ),	
 
