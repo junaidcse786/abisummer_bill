@@ -16,6 +16,7 @@ $err=0;
 $messages = array(
 					'eb_discount_date_from' => array('status' => '', 'msg' => ''),
                     'eb_discount' => array('status' => '', 'msg' => ''),
+                    'eb_stay_from' => array('status' => '', 'msg' => ''),
                     'eb_status' => array('status' => '', 'msg' => ''),
                     'eb_notes' => array('status' => '', 'msg' => ''),
 				);
@@ -48,6 +49,13 @@ if(isset($_POST['Submit']))
 		
 	endif;
     
+    if($date_from1<$date_to)
+    {
+		$messages["eb_stay_from"]["status"]=$err_easy;
+		$messages["eb_stay_from"]["msg"]="Reisedatum muss später als Buchungsdatum sein";
+		$err++;		
+	}    
+    
     if(empty($eb_discount))
 	{
 		$messages["eb_discount"]["status"]=$err_easy;
@@ -64,8 +72,16 @@ if(isset($_POST['Submit']))
         if(!empty($date_to) && empty($date_from))
             
             $date_from=$date_to;
+        
+        if(!empty($date_from1) && empty($date_to1))
+            
+            $date_to1=$date_from1;
+        
+        if(!empty($date_to1) && empty($date_from1))
+            
+            $date_from1=$date_to1;
 		
-		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes'";
+		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes, eb_stay_from='$date_from1', eb_stay_to='$date_to1'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -163,7 +179,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                            	  </div>
                                    
                               <div class="form-group <?php echo $messages["eb_discount_date_from"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="eb_discount_date_from">Rabatt für Datum</label>
+                              		<label class="control-label col-md-3" for="eb_discount_date_from">Buchungsdatum</label>
                               		<div class="col-md-4">
                                  		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
                                                             <input type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from" value="<?php echo $date_from; ?>">
@@ -171,7 +187,18 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                             <input type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to" value="<?php echo $date_to; ?>"> </div>
                                  		<span for="eb_discount_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_from"]["msg"] ?></span>
                               		</div>
-                           	  </div>   
+                           	  </div>  
+                                   
+                              <div class="form-group <?php echo $messages["eb_stay_from"]["status"] ?>">
+                              		<label class="control-label col-md-3" for="eb_stay_from">Reisedatum</label>
+                              		<div class="col-md-4">
+                                 		<div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                                                            <input required type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from1" value="<?php echo $date_from1; ?>">
+                                                            <span class="input-group-addon"> - </span>
+                                                            <input required type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to1" value="<?php echo $date_to1; ?>"> </div>
+                                 		<span for="eb_stay_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_stay_from"]["msg"] ?></span>
+                              		</div>
+                           	  </div>       
                                    
                               <div class="form-group  <?php echo $messages["eb_notes"]["status"] ?>">
                               		<label class="control-label col-md-3" for="eb_notes">Notes</label>

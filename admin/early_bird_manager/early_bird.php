@@ -86,7 +86,8 @@ $news_query = mysqli_query($db,$sql);
                            <tr>
                               <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_2 .checkboxes" /></th>
                               <th>Rabatt</th>
-                              <th>Dauerhaft</th>
+                              <th>Buchungsdauerhaft</th>
+                              <th>Reisedauerhaft</th>   
 							  <th>Notes</th>							  
                               <th >Status</th>
                                <th >eingefügt am</th>
@@ -114,7 +115,19 @@ $news_query = mysqli_query($db,$sql);
 								
 									echo '<span class="label label-sm label-warning"><b>'.$row->eb_discount_date_from.'</b></span>';	
 									
-								?></td>    
+								?></td>
+                               
+                              <td><?php 
+							  
+								if($row->eb_stay_from!=$row->eb_stay_to)
+								
+									echo '<span class="label label-sm label-danger"><b>'.$row->eb_stay_from.'</b> bis <b>'.$row->eb_stay_to.'</b></span>';
+									
+								else if($row->eb_stay_from!='0000-00-00')
+								
+									echo '<span class="label label-sm label-danger"><b>'.$row->eb_stay_from.'</b></span>';	
+									
+								?></td>   
 							  <td><?php echo $row->eb_notes;?></td>	
                               <td> 
 							  <?php if($row->eb_status)

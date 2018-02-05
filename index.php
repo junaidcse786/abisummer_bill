@@ -997,7 +997,7 @@ if(isset($_POST["Submit"])){
 
                 <?php 
 
-             $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_to>=CURDATE() AND eb_discount_date_from<='$date_from'";	
+             $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_from<=CURDATE() AND CURDATE()<=eb_discount_date_to AND eb_stay_from<='$date_from' AND '$date_from'<=eb_stay_to";	
              $parent_query = mysqli_query($db, $sql_parent_menu);
             $counter=1;
             while($row = mysqli_fetch_object($parent_query)):

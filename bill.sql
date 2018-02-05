@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.7.0
+-- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 08, 2018 at 10:21 PM
--- Server version: 10.1.10-MariaDB
--- PHP Version: 7.0.3
+-- Generation Time: Feb 05, 2018 at 09:39 AM
+-- Server version: 10.1.25-MariaDB
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -19,6 +21,33 @@ SET time_zone = "+00:00";
 --
 -- Database: `bill`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bill_bookings`
+--
+
+CREATE TABLE `bill_bookings` (
+  `bookings_ID` int(11) NOT NULL,
+  `bookings_code` varchar(35) CHARACTER SET utf8 NOT NULL,
+  `bookings_num_traveler` int(11) NOT NULL,
+  `locations_name` varchar(500) CHARACTER SET utf8 NOT NULL,
+  `hotels_name` varchar(500) CHARACTER SET utf8 NOT NULL,
+  `bookings_check_in_date` date NOT NULL,
+  `bookings_check_out_date` date NOT NULL,
+  `bookings_summary` text CHARACTER SET utf8 NOT NULL,
+  `bookings_notes` text NOT NULL,
+  `bookings_status` tinyint(1) NOT NULL DEFAULT '1',
+  `bookings_creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `bill_bookings`
+--
+
+INSERT INTO `bill_bookings` (`bookings_ID`, `bookings_code`, `bookings_num_traveler`, `locations_name`, `hotels_name`, `bookings_check_in_date`, `bookings_check_out_date`, `bookings_summary`, `bookings_notes`, `bookings_status`, `bookings_creation_time`) VALUES
+(26, 'JN6KP-6Q3J5-WGTV7-VQ9JW', 10, 'Calella', 'Hotel Calella Special Entry', '2018-01-26', '2018-01-31', '{\"journey_cost\":\"1005\",\"journey_title\":\"Busreise\",\"discount_applied\":\"10\",\"without_discount\":\"8216.0179817816\",\"meals_cost\":\"675\",\"rooms_cost\":\"3600\",\"rooms_cost_details\":{\"EinzelzimmerÃ¼\":{\"costs_this_room_the_whole_time\":\"4000\",\"rooms_persons_to_fit\":\"10\",\"rooms_ordered\":\"10\"}},\"meals_cost_details\":{\"FrÃ¼hstÃ¼ck\":{\"costs_this_meal_the_whole_time\":\"750\",\"meals_ordered\":\"10\"}},\"indiv_cost_array\":{\"EinzelzimmerÃ¼ + FrÃ¼hstÃ¼ck\":\"765.40873062818\"},\"office_profit\":\"1000\",\"promoter_provision\":\"995.03134981663\",\"MwSt\":\"379.05595646516\"}', '', 1, '2018-01-26 10:56:00');
 
 -- --------------------------------------------------------
 
@@ -82,6 +111,15 @@ CREATE TABLE `bill_early_bird` (
   `eb_update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `bill_early_bird`
+--
+
+INSERT INTO `bill_early_bird` (`eb_ID`, `hotels_ID`, `eb_discount`, `eb_discount_date_from`, `eb_discount_date_to`, `eb_status`, `eb_notes`, `eb_creation_time`, `eb_update_time`) VALUES
+(1, 3, 10, '2018-01-01', '2018-01-31', 1, '', '2018-01-12 12:44:31', '2018-01-12 13:18:32'),
+(2, 3, 5, '2018-02-01', '2018-02-28', 1, '', '2018-01-12 12:44:59', '0000-00-00 00:00:00'),
+(3, 3, 15, '2018-01-24', '2018-01-30', 1, '', '2018-01-12 14:15:40', '0000-00-00 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -132,7 +170,8 @@ INSERT INTO `bill_journey` (`journey_ID`, `locations_ID`, `journey_title`, `jour
 (1, 1, 'Busreise', 100.5, 'possible pick up', 1, '2017-12-19 09:46:16', '2017-12-21 11:41:21'),
 (2, 1, 'Flugreise', 200, '', 1, '2017-12-19 10:18:26', '2017-12-19 10:26:45'),
 (3, 2, 'Busreise', 100, '', 1, '2017-12-19 10:26:23', '2017-12-19 10:26:45'),
-(4, 2, 'Flugreise', 200, '', 1, '2017-12-19 10:26:29', '2017-12-19 10:26:45');
+(4, 2, 'Flugreise', 200, '', 1, '2017-12-19 10:26:29', '2017-12-19 10:26:45'),
+(5, 1, 'Eigenanreise', 0, '', 1, '2018-01-17 09:16:47', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -183,9 +222,9 @@ CREATE TABLE `bill_locations_costs` (
 --
 
 INSERT INTO `bill_locations_costs` (`lc_ID`, `locations_ID`, `lc_title`, `lc_costs`, `lc_costs_date_from`, `lc_costs_date_to`, `lc_notes`, `lc_status`, `lc_creation_time`, `lc_update_time`) VALUES
-(6, 1, 'Office Profit', '100â‚¬', '0000-00-00', '0000-00-00', '', 1, '2018-01-04 16:10:43', '0000-00-00 00:00:00'),
-(8, 1, 'Office Profit', '55', '2018-01-12', '2018-01-12', '', 1, '2018-01-04 16:14:12', '2018-01-04 16:19:36'),
-(10, 1, 'Office Profit', '7%', '2018-01-31', '0000-00-00', '', 1, '2018-01-04 16:20:00', '2018-01-04 16:20:16');
+(8, 1, 'MwSt', '19%', '0000-00-00', '0000-00-00', '', 1, '2018-01-12 09:40:55', '0000-00-00 00:00:00'),
+(9, 1, 'Promoter Provision', '13%', '0000-00-00', '0000-00-00', '', 1, '2018-01-12 09:41:00', '2018-01-15 16:34:48'),
+(10, 1, 'Office Profit', '100â‚¬', '0000-00-00', '0000-00-00', '', 1, '2018-01-26 13:07:15', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -256,8 +295,8 @@ CREATE TABLE `bill_meals_price` (
 INSERT INTO `bill_meals_price` (`mp_ID`, `hotels_ID`, `meals_ID`, `mp_price`, `mp_price_date_from`, `mp_price_date_to`, `mp_notes`, `mp_status`, `mp_creation_time`, `mp_update_time`) VALUES
 (23, 3, 1, 50, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:16', '0000-00-00 00:00:00'),
 (24, 3, 2, 15, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:19', '0000-00-00 00:00:00'),
-(25, 3, 3, 30, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:24', '0000-00-00 00:00:00'),
-(26, 3, 4, 30, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:28', '2018-01-04 19:25:38');
+(26, 3, 4, 30, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:28', '2018-01-04 19:25:38'),
+(29, 3, 3, 30, '0000-00-00', '0000-00-00', '', 1, '2018-01-09 13:49:45', '2018-01-19 10:24:44');
 
 -- --------------------------------------------------------
 
@@ -374,7 +413,7 @@ CREATE TABLE `bill_rooms` (
 --
 
 INSERT INTO `bill_rooms` (`rooms_ID`, `rooms_title`, `rooms_notes`, `rooms_status`, `rooms_persons_to_fit`, `rooms_creation_time`, `rooms_update_time`) VALUES
-(1, 'Einzelzimmer', 'just a note', 1, 1, '2017-12-19 11:29:22', '2017-12-21 15:48:22'),
+(1, 'EinzelzimmerÃ¼', 'just a note', 1, 1, '2017-12-19 11:29:22', '2018-01-25 15:55:18'),
 (2, 'Doppelzimmer', '', 1, 2, '2017-12-20 15:06:28', '0000-00-00 00:00:00'),
 (3, '3er Zimmer', '', 1, 3, '2017-12-20 15:06:28', '0000-00-00 00:00:00'),
 (4, '4er Zimmer', '', 1, 4, '2017-12-20 15:06:28', '0000-00-00 00:00:00');
@@ -403,10 +442,29 @@ CREATE TABLE `bill_rooms_price` (
 --
 
 INSERT INTO `bill_rooms_price` (`rp_ID`, `hotels_ID`, `rooms_ID`, `rp_price`, `rp_price_date_from`, `rp_price_date_to`, `rp_notes`, `rp_status`, `rp_creation_time`, `rp_update_time`) VALUES
-(8, 3, 1, 50, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:49', '0000-00-00 00:00:00'),
-(9, 3, 2, 60, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:53', '0000-00-00 00:00:00'),
-(10, 3, 3, 70, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:56', '0000-00-00 00:00:00'),
-(11, 3, 4, 80, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:26:00', '0000-00-00 00:00:00');
+(8, 3, 1, 80, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:49', '2018-01-19 10:32:50'),
+(9, 3, 2, 90, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:53', '2018-01-19 10:32:57'),
+(10, 3, 3, 50, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:25:56', '2018-01-19 12:17:16'),
+(11, 3, 4, 35, '0000-00-00', '0000-00-00', '', 1, '2018-01-04 19:26:00', '2018-01-19 10:33:08'),
+(16, 3, 3, 100, '2018-01-23', '2018-01-23', '', 1, '2018-01-19 12:18:08', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bill_travelers`
+--
+
+CREATE TABLE `bill_travelers` (
+  `travelers_ID` int(11) NOT NULL,
+  `travelers_first_name` varchar(500) NOT NULL,
+  `travelers_last_name` varchar(500) NOT NULL,
+  `travelers_email` varchar(500) NOT NULL,
+  `travelers_package` varchar(500) NOT NULL,
+  `travelers_status` tinyint(1) NOT NULL,
+  `travelers_creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `travelers_update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `bookings_ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -446,6 +504,12 @@ INSERT INTO `bill_user` (`user_id`, `role_id`, `user_first_name`, `user_last_nam
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `bill_bookings`
+--
+ALTER TABLE `bill_bookings`
+  ADD PRIMARY KEY (`bookings_ID`);
 
 --
 -- Indexes for table `bill_config`
@@ -546,6 +610,13 @@ ALTER TABLE `bill_rooms_price`
   ADD KEY `rp_rooms_id` (`rooms_ID`);
 
 --
+-- Indexes for table `bill_travelers`
+--
+ALTER TABLE `bill_travelers`
+  ADD PRIMARY KEY (`travelers_ID`),
+  ADD KEY `travelers_booking_id` (`bookings_ID`);
+
+--
 -- Indexes for table `bill_user`
 --
 ALTER TABLE `bill_user`
@@ -555,6 +626,11 @@ ALTER TABLE `bill_user`
 -- AUTO_INCREMENT for dumped tables
 --
 
+--
+-- AUTO_INCREMENT for table `bill_bookings`
+--
+ALTER TABLE `bill_bookings`
+  MODIFY `bookings_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 --
 -- AUTO_INCREMENT for table `bill_config`
 --
@@ -569,7 +645,7 @@ ALTER TABLE `bill_draft_message`
 -- AUTO_INCREMENT for table `bill_early_bird`
 --
 ALTER TABLE `bill_early_bird`
-  MODIFY `eb_ID` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `eb_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `bill_hotels`
 --
@@ -579,7 +655,7 @@ ALTER TABLE `bill_hotels`
 -- AUTO_INCREMENT for table `bill_journey`
 --
 ALTER TABLE `bill_journey`
-  MODIFY `journey_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `journey_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `bill_locations`
 --
@@ -599,7 +675,7 @@ ALTER TABLE `bill_meals`
 -- AUTO_INCREMENT for table `bill_meals_price`
 --
 ALTER TABLE `bill_meals_price`
-  MODIFY `mp_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `mp_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 --
 -- AUTO_INCREMENT for table `bill_message`
 --
@@ -629,7 +705,12 @@ ALTER TABLE `bill_rooms`
 -- AUTO_INCREMENT for table `bill_rooms_price`
 --
 ALTER TABLE `bill_rooms_price`
-  MODIFY `rp_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `rp_ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+--
+-- AUTO_INCREMENT for table `bill_travelers`
+--
+ALTER TABLE `bill_travelers`
+  MODIFY `travelers_ID` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `bill_user`
 --
@@ -676,6 +757,13 @@ ALTER TABLE `bill_meals_price`
 ALTER TABLE `bill_rooms_price`
   ADD CONSTRAINT `rp_hotels_id` FOREIGN KEY (`hotels_ID`) REFERENCES `bill_hotels` (`hotels_ID`) ON DELETE CASCADE,
   ADD CONSTRAINT `rp_rooms_id` FOREIGN KEY (`rooms_ID`) REFERENCES `bill_rooms` (`rooms_ID`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `bill_travelers`
+--
+ALTER TABLE `bill_travelers`
+  ADD CONSTRAINT `traveler_booking_id` FOREIGN KEY (`bookings_ID`) REFERENCES `bill_bookings` (`bookings_ID`) ON DELETE CASCADE;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

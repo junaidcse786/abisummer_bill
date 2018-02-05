@@ -929,7 +929,7 @@ if(isset($_POST["Submit_booking"])){
 
                                         <input type="hidden" name="bookings_summary" value='<?php echo json_encode($json_array, JSON_UNESCAPED_UNICODE); ?>' />
 
-                                        <button name="Submit_booking" type="submit" class="btn green-haze"><i class="fa fa-calendar"></i> Buchen</button>
+                                        <button name="Submit_booking" type="submit" class="btn green-haze hide"><i class="fa fa-calendar"></i> Buchen</button>
 
                                     </form>
                                 </div>
@@ -975,7 +975,7 @@ if(isset($_POST["Submit_booking"])){
 
 <?php 
 
-             $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_to>=CURDATE() AND eb_discount_date_from<='$date_from'";	
+             $sql_parent_menu = "SELECT eb_discount,eb_discount_date_from, eb_discount_date_to FROM ".$db_suffix."early_bird where hotels_ID='$hotels_ID' AND eb_status='1' AND eb_discount_date_from<=CURDATE() AND CURDATE()<=eb_discount_date_to AND eb_stay_from<='$date_from' AND '$date_from'<=eb_stay_to";	
              $parent_query = mysqli_query($db, $sql_parent_menu);
             $counter=1;
             while($row = mysqli_fetch_object($parent_query)):
@@ -1217,7 +1217,7 @@ if(isset($_POST["Submit_booking"])){
 
                                         <input type="hidden" name="bookings_summary" value='<?php echo json_encode($json_array, JSON_UNESCAPED_UNICODE); ?>' />
 
-                                        <button name="Submit_booking" type="submit" class="btn green-haze"><i class="fa fa-calendar"></i> Buchen</button>
+                                        <button name="Submit_booking" type="submit" class="btn green-haze hide"><i class="fa fa-calendar"></i> Buchen</button>
 
                                     </form>
                                 </div>
