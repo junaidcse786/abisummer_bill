@@ -511,14 +511,18 @@ if(isset($_POST["Submit"])){
 
 ?>
                 </h3>
-                <!--<div class="page-bar">
+                <div class="page-bar">
                     <ul class="page-breadcrumb">
                         <li>
                             <i class="fa fa-home"></i>
-                            <a href="<?php echo SITE_URL_ADMIN; ?>">Home</a>
+                            <a href="<?php echo SITE_URL; ?>">Startseite</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-angle-right"></i>
+                            <a href="<?php echo SITE_URL.'signup.php'; ?>">Mit Buchungscode anmelden</a>
                         </li>
                     </ul>
-                </div>-->
+                </div>
                 <!-- END PAGE HEADER-->
 
                 <?php if(!isset($_POST["Submit"])): ?>
@@ -658,6 +662,9 @@ if(isset($_POST["Submit"])){
                         <div class="portlet box grey-cascade">
                             <div class="portlet-title">
                                 <div class="caption"><i class="fa fa-reorder"></i>Buchungsinfo checken</div>
+                                <div class="actions">
+                                        <a href="<?php echo SITE_URL.'signup.php'; ?>" class="btn green-haze">Mit Buchungscode anmelden</a>
+                                </div>
                             </div>
                             <div class="portlet-body form">
 
@@ -669,32 +676,32 @@ if(isset($_POST["Submit"])){
                                     </div>
 
 
-                                    <form action="<?php echo str_replace('&s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    <form action="<?php echo SITE_URL.'view_bookings.php';?>" class="form-horizontal" method="get" enctype="multipart/form-data">
 
 
                                         <div class="form-group">
                                             <label class="control-label col-md-3" for="lc_costs_date_from">Buchungscode</label>
                                             <div class="col-md-3">
-                                                
+
                                                 <input required type="text" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" class="form-control input-medium" name="bookings_code" />
-                                                
+
                                                 <span for="lc_costs_date_from" class="help-block"></span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group">
                                             <label class="control-label col-md-3" for="lc_costs_date_from">Nachname</label>
                                             <div class="col-md-3">
-                                                
+
                                                 <input required type="text" placeholder="" class="form-control input-medium" name="travelers_last_name" />
-                                                
+
                                                 <span for="lc_costs_date_from" class="help-block"></span>
                                             </div>
                                         </div>
 
                                         <div class="form-actions fluid">
                                             <div class="col-md-offset-3 col-md-9">
-                                                <button type="submit" name="Submit" class="btn green">Submit</button>
+                                                <button type="submit" name="Submit_booking" class="btn green">Submit</button>
                                                 <button type="reset" class="btn default">Abbrechen</button>
                                             </div>
                                         </div>

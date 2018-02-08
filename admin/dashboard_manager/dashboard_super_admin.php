@@ -929,7 +929,7 @@ if(isset($_POST["Submit_booking"])){
 
                                         <input type="hidden" name="bookings_summary" value='<?php echo json_encode($json_array, JSON_UNESCAPED_UNICODE); ?>' />
 
-                                        <button name="Submit_booking" type="submit" class="btn green-haze hide"><i class="fa fa-calendar"></i> Buchen</button>
+                                        <button name="Submit_booking" type="submit" class="btn green-haze"><i class="fa fa-calendar"></i> Buchen</button>
 
                                     </form>
                                 </div>
@@ -1217,7 +1217,7 @@ if(isset($_POST["Submit_booking"])){
 
                                         <input type="hidden" name="bookings_summary" value='<?php echo json_encode($json_array, JSON_UNESCAPED_UNICODE); ?>' />
 
-                                        <button name="Submit_booking" type="submit" class="btn green-haze hide"><i class="fa fa-calendar"></i> Buchen</button>
+                                        <button name="Submit_booking" type="submit" class="btn green-haze"><i class="fa fa-calendar"></i> Buchen</button>
 
                                     </form>
                                 </div>

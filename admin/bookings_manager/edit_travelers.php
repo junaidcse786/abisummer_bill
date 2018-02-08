@@ -16,6 +16,7 @@ if(mysqli_num_rows($query) > 0)
 	$travelers_last_name    = $content->travelers_last_name;
     $travelers_email    = $content->travelers_email;
     $travelers_status    = $content->travelers_status;
+    $travelers_notes    = $content->travelers_notes;
     $travelers_update_time    = $content->travelers_update_time;
     $bookings_ID=$content->bookings_ID;
     
@@ -29,7 +30,7 @@ foreach($rooms_cost_details as $key => $rooms){
     
     $ordered_amount = $rooms["rooms_persons_to_fit"];
     
-    $allocated_amount = mysqli_num_rows(mysqli_query($db, "SELECT travelers_ID from ".$db_suffix."travelers where bookings_ID = $bookings_ID AND travelers_package like '%$key%'"));
+    $allocated_amount = mysqli_num_rows(mysqli_query($db, "SELECT travelers_ID from ".$db_suffix."travelers where bookings_ID = $bookings_ID AND travelers_package like '%$key%' AND travelers_ID != '$travelers_ID'"));
     
     $rooms_cost_details[$key]["amount_left"] = $ordered_amount - $allocated_amount;
     
@@ -39,7 +40,7 @@ foreach($meals_cost_details as $key => $meals){
     
     $ordered_amount = $meals["meals_ordered"];
     
-    $allocated_amount = mysqli_num_rows(mysqli_query($db, "SELECT travelers_ID from ".$db_suffix."travelers where bookings_ID = $bookings_ID AND travelers_package like '%$key%'"));
+    $allocated_amount = mysqli_num_rows(mysqli_query($db, "SELECT travelers_ID from ".$db_suffix."travelers where bookings_ID = $bookings_ID AND travelers_package like '%$key%' AND travelers_ID != '$travelers_ID'"));
     
     $meals_cost_details[$key]["amount_left"] = $ordered_amount - $allocated_amount;
     
@@ -91,7 +92,7 @@ if(isset($_POST['Submit']))
     
     if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."travelers SET travelers_last_name='$travelers_last_name',travelers_first_name='$travelers_first_name',travelers_status='$travelers_status',travelers_email='$travelers_email', travelers_package='$travelers_package' WHERE travelers_ID='$travelers_ID'";
+		$sql = "UPDATE ".$db_suffix."travelers SET travelers_last_name='$travelers_last_name',travelers_first_name='$travelers_first_name',travelers_status='$travelers_status',travelers_email='$travelers_email', travelers_package='$travelers_package', travelers_notes='$travelers_notes' WHERE travelers_ID='$travelers_ID'";
 		if(mysqli_query($db,$sql))
 		{		
 			$alert_message="Daten erfolgreich aktualisiert";		
@@ -214,12 +215,19 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 											
                                                 $selected=($parent_obj->locations_ID == $locations_ID)? 'selected="selected"': '';
                                             
-												echo '<option '.$selected.' value="'.$key.'">'.$key.' ()</option>';
+												echo '<option '.$selected.' value="'.$key.'">'.$key.'</option>';
 									
 										}
                                         ?>
                                        
                                     </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group  <?php echo $messages[" travelers_notes "]["status "] ?>">
+                            <label class="control-label col-md-3" for="travelers_notes">Notes</label>
+                            <div class="col-md-9">
+                                <textarea rows="6" class="form-control" name="travelers_notes"><?php echo $travelers_notes; ?></textarea>
                             </div>
                         </div>
 
