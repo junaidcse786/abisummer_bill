@@ -519,19 +519,6 @@ if(isset($_POST["Submit_booking"])){
 
 
                         <div class="form-group">
-                            <label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
-                            <div class="col-md-3">
-                                <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
-
-                                <input required type="number" step="1" min="1" placeholder="Wie viele N&auml;chte?" class="form-control input-medium" name="num_nights" /><br/>
-
-                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
-
-                                <span for="lc_costs_date_from" class="help-block"></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             <label for="locations_ID" class="control-label col-md-3">Destination</label>
                             <div class="col-md-8">
 
@@ -577,6 +564,19 @@ if(isset($_POST["Submit_booking"])){
                                     <option value=""></option>
 									</select>
                                 <span for="hotels_ID" class="help-block"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
+                            <div class="col-md-3">
+                                <input required type="date" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control date_from" name="date_from"> <br/>
+
+                                <input required type="number" step="1" min="1" placeholder="Wie viele N&auml;chte?" class="form-control input-medium" name="num_nights" /><br/>
+
+                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
+
+                                <span for="lc_costs_date_from" class="help-block"></span>
                             </div>
                         </div>
 
@@ -1375,11 +1375,34 @@ if(isset($_POST["Submit_booking"])){
                         });
                     },
                 });
+                
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_dates.php',
+                    dataType: "json",
+                    data: {
+                        hotels_ID: hotels_ID
+                    },
+                    success: function(data) {
+                        
+                        $(".date_from").attr({
+                           "min" : data[0],        
+                           "max" : data[1]          
+                        });
+                        $(".date_from").val(data[0]);
+                    },
+                });
+                
             } else {
                 $(".rooms_ID").val(null).trigger("change");
                 $(".rooms_ID option").remove();
                 $(".meals_ID").val(null).trigger("change");
                 $(".meals_ID option").remove();
+                $(".date_from").attr({
+                   "min" : '<?php date('Y-m-d')?>',        
+                   "max" : '<?php date('Y-m-d')?>'          
+                });
+                $(".date_from").val('<?php date('Y-m-d')?>');
 
             }
         });

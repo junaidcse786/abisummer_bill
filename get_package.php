@@ -57,9 +57,7 @@ if(isset($_POST['bookings_code'])){
 
         foreach($indiv_cost_array as $key => $value )	
 
-                echo '<option value="'.$key.'">'.$key.'</option>';
-        
-        
+                echo '<option value="'.$key.'">'.$key.' ('.number_format($value, 2, ',', '.').'&euro;)</option>';
     }
 	
 }

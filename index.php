@@ -548,37 +548,24 @@ if(isset($_POST["Submit"])){
 
 
                                         <div class="form-group">
-                                            <label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
-                                            <div class="col-md-3">
-                                                <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_from"> <br/>
-
-                                                <input required type="number" step="1" min="1" placeholder="Wie viele N&auml;chte?" class="form-control input-medium" name="num_nights" /><br/>
-
-                                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
-
-                                                <span for="lc_costs_date_from" class="help-block"></span>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
                                             <label for="locations_ID" class="control-label col-md-3">Destination</label>
                                             <div class="col-md-8">
 
                                                 <select required class="form-control input-medium select2me" data-placeholder="Auswaehlen" tabindex="0" id="locations_ID" name="locations_ID">
-                                    <option value=""></option>
+                                                    <option value=""></option>
 									
-									<?php 
+                                                    <?php 
+
+                                                         $sql_parent_menu = "SELECT locations_id, locations_name FROM ".$db_suffix."locations where locations_status=1";	
+                                                         $parent_query = mysqli_query($db, $sql_parent_menu);
+
+                                                         while($parent_obj = mysqli_fetch_object($parent_query))
+
+                                                            echo '<option value="'.$parent_obj->locations_id.':::'.$parent_obj->locations_name.'">'.$parent_obj->locations_name.'</option>';										
+
+                                                    ?>
 									
-										 $sql_parent_menu = "SELECT locations_id, locations_name FROM ".$db_suffix."locations where locations_status=1";	
-										 $parent_query = mysqli_query($db, $sql_parent_menu);
-										 
-										 while($parent_obj = mysqli_fetch_object($parent_query))
-										 
-											echo '<option value="'.$parent_obj->locations_id.':::'.$parent_obj->locations_name.'">'.$parent_obj->locations_name.'</option>';										
-									
-									?>
-									
-                                     </select>
+                                                </select>
 
                                                 <span for="locations_ID" class="help-block"></span>
 
@@ -606,6 +593,19 @@ if(isset($_POST["Submit"])){
                                     <option value=""></option>
 									</select>
                                                 <span for="hotels_ID" class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
+                                            <div class="col-md-3">
+                                                <input required type="date" min="<?php echo date('Y-m-d'); ?>" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control date_from" name="date_from"> <br/>
+
+                                                <input required type="number" step="1" min="1" placeholder="Wie viele N&auml;chte?" class="form-control input-medium" name="num_nights" /><br/>
+
+                                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
+
+                                                <span for="lc_costs_date_from" class="help-block"></span>
                                             </div>
                                         </div>
 
@@ -663,7 +663,7 @@ if(isset($_POST["Submit"])){
                             <div class="portlet-title">
                                 <div class="caption"><i class="fa fa-reorder"></i>Buchungsinfo checken</div>
                                 <div class="actions">
-                                        <a href="<?php echo SITE_URL.'signup.php'; ?>" class="btn green-haze">Mit Buchungscode anmelden</a>
+                                    <a href="<?php echo SITE_URL.'signup.php'; ?>" class="btn green-haze">Mit Buchungscode anmelden</a>
                                 </div>
                             </div>
                             <div class="portlet-body form">
@@ -1340,11 +1340,34 @@ if(isset($_POST["Submit"])){
                             });
                         },
                     });
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_dates.php',
+                        dataType: "json",
+                        data: {
+                            hotels_ID: hotels_ID
+                        },
+                        success: function(data) {
+
+                            $(".date_from").attr({
+                               "min" : data[0],        
+                               "max" : data[1]          
+                            });
+                            $(".date_from").val(data[0]);
+                        },
+                    });
+
                 } else {
                     $(".rooms_ID").val(null).trigger("change");
                     $(".rooms_ID option").remove();
                     $(".meals_ID").val(null).trigger("change");
                     $(".meals_ID option").remove();
+                    $(".date_from").attr({
+                       "min" : '<?php date('Y-m-d')?>',        
+                       "max" : '<?php date('Y-m-d')?>'          
+                    });
+                    $(".date_from").val('<?php date('Y-m-d')?>');
 
                 }
             });
