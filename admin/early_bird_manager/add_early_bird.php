@@ -81,7 +81,7 @@ if(isset($_POST['Submit']))
             
             $date_from1=$date_to1;
 		
-		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes, eb_stay_from='$date_from1', eb_stay_to='$date_to1'";
+		$sql = "INSERT INTO ".$db_suffix."early_bird SET hotels_ID='$hotels_ID',eb_discount_date_from='$date_from',eb_discount_date_to='$date_to',eb_discount='$eb_discount',eb_status='$eb_status',eb_notes='$eb_notes', eb_stay_from='$date_from1', eb_stay_to='$date_to1'";
         
 		if(mysqli_query($db,$sql))
 		{		
