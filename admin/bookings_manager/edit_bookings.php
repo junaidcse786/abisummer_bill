@@ -678,8 +678,7 @@ $actual_total_price = $meals_cost + $rooms_cost + $journey_cost + $office_profit
 
             $.ajax({
                 type: "POST",
-                url: '<?php echo SITE_URL_ADMIN.'
-                content_manager / delete_record.php ' ; ?>',
+                url: '<?php echo SITE_URL_ADMIN.'content_manager/delete_record.php ' ; ?>',
                 dataType: "text",
                 data: {
                     id: id,
@@ -709,8 +708,7 @@ $actual_total_price = $meals_cost + $rooms_cost + $journey_cost + $office_profit
 
             $.ajax({
                 type: "POST",
-                url: '<?php echo SITE_URL_ADMIN.'
-                content_manager / change_status.php ' ; ?>',
+                url: '<?php echo SITE_URL_ADMIN.'content_manager/change_status.php'; ?>',
                 dataType: "text",
                 data: {
                     id: id,

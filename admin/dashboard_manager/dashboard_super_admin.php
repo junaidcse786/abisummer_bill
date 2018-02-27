@@ -1479,13 +1479,10 @@ if(isset($_POST["Submit_booking"])){
                 $(".meals_ID").val(null).trigger("change");
                 $(".meals_ID option").remove();
                 $(".date_from").attr({
-                    "min": '<?php date('
-                    Y - m - d ')?>',
-                    "max": '<?php date('
-                    Y - m - d ')?>'
+                    "min": '<?php echo date('Y- m-d') ?>',
+                    "max": '<?php echo date('Y- m-d')?>'
                 });
-                $(".date_from").val('<?php date('
-                    Y - m - d ')?>');
+                $(".date_from").val('<?php echo  date('Y- m-d')?>');
 
             }
         });
