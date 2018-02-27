@@ -207,7 +207,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
 
                                     <form action="<?php echo str_replace('?s_factor=1', '', $_SERVER['REQUEST_URI']);?>" class="form-horizontal" method="post" enctype="multipart/form-data">
 
-                                        <div class="form-group <?php echo $messages["travelers_first_name"]["status "] ?>">
+                                        <div class="form-group <?php echo $messages["travelers_first_name"]["status"] ?>">
                                             <label class="control-label col-md-3" for="travelers_first_name">Vorname <span class="required">*</span></label>
                                             <div class="col-md-4">
                                                 <input required type="text" placeholder="" class="form-control" name="travelers_first_name" value="<?php echo $travelers_first_name;?>" />
@@ -215,7 +215,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             </div>
                                         </div>
 
-                                        <div class="form-group <?php echo $messages["travelers_last_name"]["status "] ?>">
+                                        <div class="form-group <?php echo $messages["travelers_last_name"]["status"] ?>">
                                             <label class="control-label col-md-3" for="travelers_last_name">Nachname <span class="required">*</span></label>
                                             <div class="col-md-4">
                                                 <input type="text" required placeholder="" class="form-control" name="travelers_last_name" value="<?php echo $travelers_last_name;?>" />
@@ -223,7 +223,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             </div>
                                         </div>
 
-                                        <div class="form-group <?php echo $messages["travelers_email"]["status "] ?>">
+                                        <div class="form-group <?php echo $messages["travelers_email"]["status"] ?>">
                                             <label class="control-label col-md-3" for="travelers_email">Email-adresse <span class="required">*</span></label>
                                             <div class="col-md-4">
                                                 <input type="email" required placeholder="" class="form-control" name="travelers_email" value="<?php echo $travelers_email;?>" />
@@ -231,7 +231,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             </div>
                                         </div>
 
-                                        <div class="form-group <?php echo $messages["bookings_code"]["status "] ?>">
+                                        <div class="form-group <?php echo $messages["bookings_code"]["status"] ?>">
                                             <label class="control-label col-md-3" for="bookings_code">Buchungscode <span class="required">*</span></label>
                                             <div class="col-md-4">
                                                 <input type="text" required placeholder="" class="form-control" name="bookings_code" value="<?php echo $bookings_code;?>" />
@@ -239,7 +239,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                             </div>
                                         </div>
 
-                                        <div class="form-group <?php echo $messages["travelers_package"]["status "] ?>">
+                                        <div class="form-group <?php echo $messages["travelers_package"]["status"] ?>">
                                             <label for="parent" class="control-label col-md-3">Reisepaket <span class="required">*</span></label>
                                             <div class="col-md-4">
                                                 <select required class="form-control" name="travelers_package"> 

@@ -90,7 +90,13 @@ $pages = array(
 						
 						"addjourney"  => "journey_manager/add_journey.php",
                             
-                        "editjourney"  => "journey_manager/edit_journey.php",    
+                        "editjourney"  => "journey_manager/edit_journey.php", 
+                            
+                        "journeylocation" 	=> "journey_location_manager/journey_location.php",
+						
+						"addjourneylocation"  => "journey_location_manager/add_journey_location.php",
+                            
+                        "editjourneylocation"  => "journey_location_manager/edit_journey_location.php",    
 						
 						), 
     

@@ -22,6 +22,14 @@ if(mysqli_num_rows($query) > 0)
     $bookings_summary=json_decode($content->bookings_summary, true);	
 }
 
+if(!empty($bookings_summary["abfahrsort"]))
+    
+    $abfahrsort=$bookings_summary["abfahrsort"];
+
+else
+    
+    $abfahrsort="";
+
 $rooms_cost=$bookings_summary["rooms_cost"]; 
 
 $meals_cost=$bookings_summary["meals_cost"]; 
@@ -347,6 +355,10 @@ $actual_total_price = $meals_cost + $rooms_cost + $journey_cost + $office_profit
                                         <td> </td>
                                         <td> Anreisekosten
                                             <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
+
+                                            <?php if(!empty($abfahrsort)): ?>
+                                            <br/><br/> Abfahrsort (<b><?php echo $abfahrsort; ?></b>)
+                                            <?php endif; ?>
                                             <td style="text-align:right;">
                                                 <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                     </tr>
@@ -666,7 +678,8 @@ $actual_total_price = $meals_cost + $rooms_cost + $journey_cost + $office_profit
 
             $.ajax({
                 type: "POST",
-                url: '<?php echo SITE_URL_ADMIN.'content_manager/delete_record.php' ; ?>',
+                url: '<?php echo SITE_URL_ADMIN.'
+                content_manager / delete_record.php ' ; ?>',
                 dataType: "text",
                 data: {
                     id: id,
@@ -696,7 +709,8 @@ $actual_total_price = $meals_cost + $rooms_cost + $journey_cost + $office_profit
 
             $.ajax({
                 type: "POST",
-                url: '<?php echo SITE_URL_ADMIN.'content_manager/change_status.php' ; ?>',
+                url: '<?php echo SITE_URL_ADMIN.'
+                content_manager / change_status.php ' ; ?>',
                 dataType: "text",
                 data: {
                     id: id,

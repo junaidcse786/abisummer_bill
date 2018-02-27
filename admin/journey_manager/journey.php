@@ -77,8 +77,8 @@ $news_query = mysqli_query($db,$sql);
                               <th>Destination</th>
                               <th>Notes</th>   
                               <th >Status</th>
-                               <th >eingefügt am</th>
-                              <!--<th >&nbsp;</th>    -->                          
+                              <th >eingefügt am</th>
+                              <th >&nbsp;</th>                              
                            </tr>
                         </thead>
                         <tbody>
@@ -104,13 +104,13 @@ $news_query = mysqli_query($db,$sql);
 											echo '<span class="label label-md label-danger">inaktiv</span>';
 									?>
                               </td>
-                            <td><?php echo $row->journey_creation_time;?></td>
-                              <!--<td>
+                              <td><?php echo $row->journey_creation_time;?></td>
+                              <td>
                               
-                              <a href="<?php echo '?mKey='.$mKey.'&pKey=editjourney&id='.$row->journey_ID;?>" class="btn default btn-xs purple"><i class="fa fa-edit"></i> Edit</a>
+                              <a href="<?php echo '?mKey='.$mKey.'&pKey=journeylocation&id='.$row->journey_ID;?>" class="btn default btn-xs purple"><i class="fa fa-bus"></i> Abfahrtsortliste</a>
                               
-                              <a data-href="<?php echo SITE_URL_ADMIN; ?>content_manager/delete_content.php?id=<?php echo $row->content_id;?>" data-toggle="modal" href="#" data-target="#confirmation" class="btn default btn-xs red delete"><i class="fa fa-trash"></i> Delete</a>
-                              </td>  -->                             
+                              <!--<a data-href="<?php echo SITE_URL_ADMIN; ?>content_manager/delete_content.php?id=<?php echo $row->content_id;?>" data-toggle="modal" href="#" data-target="#confirmation" class="btn default btn-xs red delete"><i class="fa fa-trash"></i> Delete</a>-->
+                              </td>                               
                            </tr>
                            
           <?php } ?>       

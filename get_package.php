@@ -43,14 +43,24 @@ if(isset($_POST['bookings_code'])){
 
         foreach($indiv_cost_array_temp as $key => $value){
 
-            $room_title = explode(" + ", $key)[0];
-            $meal_title = explode(" + ", $key)[1];
+            $exploded_array=explode(" + ", $key);
+            
+            if(count($exploded_array)>1){
+            
+                $room_title = $exploded_array[0];
+                $meal_title = $exploded_array[1];
+            }
+            else{
+                
+                $room_title = $exploded_array[0];
+                $meal_title = $room_title;                
+            }
 
-            if($rooms_cost_details[$room_title]["amount_left"]<=0)
+            if(array_key_exists($room_title, $rooms_cost_details) && $rooms_cost_details[$room_title]["amount_left"]<=0)
 
                 unset($indiv_cost_array[$key]); 
 
-            else if($meals_cost_details[$meal_title]["amount_left"]<=0)
+            else if(array_key_exists($meal_title, $meals_cost_details) && $meals_cost_details[$meal_title]["amount_left"]<=0)
 
                 unset($indiv_cost_array[$key]); 
         }

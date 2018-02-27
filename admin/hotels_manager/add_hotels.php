@@ -9,6 +9,7 @@ $hotels_status = 1;
 $hotels_star = "";
 $hotels_notes = "";
 $locations_ID = "";
+$hotels_offer_from = "Abireise";
 
 $err=0;
 
@@ -48,7 +49,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "INSERT INTO ".$db_suffix."hotels SET locations_ID='$locations_ID',hotels_name='$hotels_name',hotels_star='$hotels_star',hotels_status='$hotels_status',hotels_notes='$hotels_notes'";
+		$sql = "INSERT INTO ".$db_suffix."hotels SET locations_ID='$locations_ID',hotels_name='$hotels_name',hotels_star='$hotels_star',hotels_status='$hotels_status',hotels_notes='$hotels_notes', hotels_offer_from='$hotels_offer_from'";
         
 		if(mysqli_query($db,$sql))
 		{		
@@ -156,7 +157,17 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                        
                                     </select>
                                  </div>
-                              </div>   
+                              </div> 
+                                   
+                              <div class="form-group">
+                                  <label for="hotels_offer_from" class="control-label col-md-3">Angebot von</label>
+                                  <div class="col-md-2">
+                                     <select class="form-control" name="hotels_offer_from">
+                                        <option <?php if($hotels_offer_from=="Abisummer") echo 'selected="selected"'; ?> value="Abisummer">Abisummer</option>
+                                        <option <?php if($hotels_offer_from=="Abireise") echo 'selected="selected"'; ?> value="Abireise">Abireise</option>
+                                     </select>
+                                  </div>
+                              </div>        
                                                           
                                <div class="form-group <?php echo $messages["hotels_name"]["status"] ?>">
                               		<label class="control-label col-md-3" for="hotels_name">Hotelname <span class="required">*</span></label>

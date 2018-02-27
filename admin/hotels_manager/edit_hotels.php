@@ -11,6 +11,7 @@ if(mysqli_num_rows($query) > 0)
 	$hotels_name    = $content->hotels_name;
     $hotels_star    = $content->hotels_star;
     $hotels_status    = $content->hotels_status;
+    $hotels_offer_from    = $content->hotels_offer_from;
     $hotels_notes    = $content->hotels_notes;
     $hotels_update_time    = $content->hotels_update_time;
 }
@@ -56,7 +57,7 @@ if(isset($_POST['Submit']))
 	
 	if($err == 0)
 	{
-		$sql = "UPDATE ".$db_suffix."hotels SET locations_ID='$locations_ID',hotels_name='$hotels_name',hotels_star='$hotels_star',hotels_status='$hotels_status',hotels_notes='$hotels_notes' WHERE hotels_ID=$hotels_ID";
+		$sql = "UPDATE ".$db_suffix."hotels SET locations_ID='$locations_ID',hotels_name='$hotels_name',hotels_star='$hotels_star',hotels_status='$hotels_status',hotels_notes='$hotels_notes', hotels_offer_from='$hotels_offer_from' WHERE hotels_ID=$hotels_ID";
         
        if(mysqli_query($db,$sql))
 		{		
@@ -162,7 +163,17 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                        
                                     </select>
                                  </div>
-                              </div>   
+                              </div>
+                                   
+                              <div class="form-group">
+                                  <label for="hotels_offer_from" class="control-label col-md-3">Angebot von</label>
+                                  <div class="col-md-2">
+                                     <select class="form-control" name="hotels_offer_from">
+                                        <option <?php if($hotels_offer_from=="Abisummer") echo 'selected="selected"'; ?> value="Abisummer">Abisummer</option>
+                                        <option <?php if($hotels_offer_from=="Abireise") echo 'selected="selected"'; ?> value="Abireise">Abireise</option>
+                                     </select>
+                                  </div>
+                              </div>       
                                                           
                                <div class="form-group <?php echo $messages["hotels_name"]["status"] ?>">
                               		<label class="control-label col-md-3" for="hotels_name">Hotelname <span class="required">*</span></label>

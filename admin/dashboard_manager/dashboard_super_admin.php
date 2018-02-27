@@ -25,7 +25,7 @@ if(isset($_POST["Submit"])){
     
     $exp_hotels_ID=explode(":::", $hotels_ID);
     $hotels_ID=$exp_hotels_ID[0];
-    $hotels_name=$exp_hotels_ID[1];
+    $hotels_name=$exp_hotels_ID[1]." ($offer_from)";
     
     $exp_locations_ID=explode(":::", $locations_ID);
     $locations_ID=$exp_locations_ID[0];
@@ -53,20 +53,31 @@ if(isset($_POST["Submit"])){
     
     if(!empty($journey_ID)){
         
-        $sql = "select journey_price from ".$db_suffix."journey where journey_ID = $journey_ID AND journey_status=1 limit 1";				
-        $query = mysqli_query($db, $sql);
+        $sql = "select journey_price from ".$db_suffix."journey where journey_ID = $journey_ID AND journey_status=1 limit 1";			$query = mysqli_query($db, $sql);
         if(mysqli_num_rows($query) > 0)
         {
             $content     = mysqli_fetch_object($query);
             $journey_price       = $content->journey_price; 
-            
-            if(!empty($num_traveler))
+            $abfahrsort="";
+            if(!empty($city_location)){
+                
+                $sql = "select jl_price, jl_city_location from ".$db_suffix."journey_location where journey_ID = $journey_ID AND jl_ID='$city_location' limit 1";			
+                $query = mysqli_query($db, $sql);
+                if(mysqli_num_rows($query) > 0)
+                {
+                    $content     = mysqli_fetch_object($query);
+                    $journey_price       = $content->jl_price;
+                    $abfahrsort = $content->jl_city_location;
+                }
+                
+            }
+            /*if(!empty($num_traveler))
                 
                 $journey_cost=$journey_price*$num_traveler;
             
-            else
+            else*/
                 
-                $journey_cost=$journey_price;
+            $journey_cost=$journey_price;
         }
     }
     
@@ -544,15 +555,32 @@ if(isset($_POST["Submit_booking"])){
                         </div>
 
                         <div class="form-group">
+                            <label for="offer_from" class="control-label col-md-3">Angebot von</label>
+                            <div class="col-md-1">
+                                <select required class="form-control input-medium" id="offer_from" name="offer_from">
+								</select>
+                                <span for="offer_from" class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="journey_ID" class="control-label col-md-3">Art der Anreise</label>
                             <div class="col-md-1">
 
                                 <select class="form-control input-medium select2me" data-placeholder="Auswaehlen" tabindex="0" id="journey_ID" name="journey_ID">
                                     <option value=""></option>
-									</select> <br/>
-                                <!-- <br/>
-									<input type="number" step="1" min="1" placeholder="Wie viel?" class="form-control" name="journey_num_person"/> -->
+									</select>
                                 <span for="journey_ID" class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group abfahrsort">
+                            <label for="city_location" class="control-label col-md-3">Abfahrsort</label>
+                            <div class="col-md-1">
+                                <select class="form-control input-medium select2me" data-placeholder="Abfahrsort Auswaehlen" tabindex="0" id="city_location" name="city_location">
+                                        <option value=""></option>
+									</select>
+                                <span for="city_location" class="help-block"></span>
                             </div>
                         </div>
 
@@ -566,7 +594,7 @@ if(isset($_POST["Submit_booking"])){
                                 <span for="hotels_ID" class="help-block"></span>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="control-label col-md-3" for="lc_costs_date_from">Reisedatum</label>
                             <div class="col-md-3">
@@ -574,9 +602,9 @@ if(isset($_POST["Submit_booking"])){
 
                                 <input required type="number" step="1" min="1" placeholder="Wie viele N&auml;chte?" class="form-control input-medium" name="num_nights" /><br/>
 
-                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium" name="num_traveler" />
+                                <input required type="number" step="1" min="1" placeholder="Wie viele Personen?" class="form-control input-medium num_traveler" name="num_traveler" />
 
-                                <span for="lc_costs_date_from" class="help-block"></span>
+                                <span for="lc_costs_date_from" class="help-block lc_costs_date_from"></span>
                             </div>
                         </div>
 
@@ -587,13 +615,14 @@ if(isset($_POST["Submit_booking"])){
                                 <select class="form-control input-medium rooms_ID" name="rooms_ID[]"> 
                                     <option value=""></option>
 									</select> <br/>
-                                <input type="number" step="1" min="1" placeholder="Wie viele Zimmer?" class="form-control input-medium" name="num_rooms[]" />
+                                <input type="number" step="1" min="1" placeholder="Wie viele Zimmer?" class="form-control input-medium num_rooms_array" name="num_rooms[]" />
                                 <span for="rooms_ID" class="help-block"></span>
                             </div>
                             <div class="col-md-offset-1 col-md-1">
                                 <i style="cursor:pointer;" class="fa fa-plus clone-it"></i> &nbsp;&nbsp;&nbsp;
                                 <i style="cursor:pointer;" class="fa fa-minus hide remove-it"></i>
                             </div>
+                            <span for="zimmertyp" class="help-block"></span>
                         </div>
 
                         <div class="form-group">
@@ -665,10 +694,9 @@ if(isset($_POST["Submit_booking"])){
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    <?php echo $date_from; ?>
+                                    <?php echo $start_date->format("d.m.Y"); ?>
                                 </div>
                                 <div class="desc">
-                                    Hotel:
                                     <?php echo $hotels_name; ?> <br/>
                                 </div>
                             </div>
@@ -686,7 +714,7 @@ if(isset($_POST["Submit_booking"])){
                                 </div>
                                 <div class="desc">
                                     Check-out:
-                                    <?php echo $end_date->format("Y-m-d"); ?>
+                                    <?php echo $end_date->format("d.m.Y"); ?>
                                 </div>
                             </div>
                         </div>
@@ -820,6 +848,10 @@ if(isset($_POST["Submit_booking"])){
                                         <td> </td>
                                         <td> Anreisekosten
                                             <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
+
+                                            <?php if(!empty($abfahrsort)): ?>
+                                            <br/><br/> Abfahrsort (<b><?php echo $abfahrsort; ?></b>)
+                                            <?php endif; ?>
                                             <td style="text-align:right;">
                                                 <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                     </tr>
@@ -890,6 +922,8 @@ if(isset($_POST["Submit_booking"])){
                                     
                                         $json_array=array(
                                                             "journey_title"=>$journey_title,
+                                            
+                                                            "abfahrsort"=>$abfahrsort,
                                             
                                                             "journey_cost"=>$journey_cost,
                                             
@@ -1096,9 +1130,13 @@ if(isset($_POST["Submit_booking"])){
                                     <tr>
                                         <td> </td>
                                         <td> Anreisekosten
-                                            <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?> </td>
-                                        <td style="text-align:right;">
-                                            <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
+                                            <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
+
+                                            <?php if(!empty($abfahrsort)): ?>
+                                            <br/><br/> Abfahrsort (<b><?php echo $abfahrsort; ?></b>)
+                                            <?php endif; ?>
+                                            <td style="text-align:right;">
+                                                <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
                                     </tr>
 
                                     <tr>
@@ -1307,10 +1345,54 @@ if(isset($_POST["Submit_booking"])){
 
                 $.ajax({
                     type: "POST",
-                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_hotels.php',
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_offers.php',
                     dataType: "text",
                     data: {
                         locations_ID: locations_ID
+                    },
+                    success: function(data) {
+
+                        $("#offer_from").val(null).trigger("change");
+                        $('#offer_from option').remove();
+                        $('#offer_from').append('<option value=""></option>' + data);
+                    },
+                });
+
+                $(".rooms_ID").val(null).trigger("change");
+                $(".rooms_ID option").remove();
+                $(".meals_ID").val(null).trigger("change");
+                $(".meals_ID option").remove();
+            } else {
+
+                $("#offer_from").val(null).trigger("change");
+                $("#offer_from option").remove();
+                $("#journey_ID").val(null).trigger("change");
+                $("#journey_ID option").remove();
+                $("#hotels_ID").val(null).trigger("change");
+                $("#hotels_ID option").remove();
+                $(".rooms_ID").val(null).trigger("change");
+                $(".rooms_ID option").remove();
+                $(".meals_ID").val(null).trigger("change");
+                $(".meals_ID option").remove();
+
+            }
+        });
+
+        $('#offer_from').change(function() {
+
+            var locations_ID = $('#locations_ID').val();
+
+            var offer_from = $('#offer_from').val();
+
+            if (locations_ID != '' && offer_from != '') {
+
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_hotels.php',
+                    dataType: "text",
+                    data: {
+                        locations_ID: locations_ID,
+                        offer_from: offer_from
                     },
                     success: function(data) {
 
@@ -1326,8 +1408,6 @@ if(isset($_POST["Submit_booking"])){
                 $(".meals_ID option").remove();
             } else {
 
-                $("#journey_ID").val(null).trigger("change");
-                $("#journey_ID option").remove();
                 $("#hotels_ID").val(null).trigger("change");
                 $("#hotels_ID option").remove();
                 $(".rooms_ID").val(null).trigger("change");
@@ -1375,7 +1455,7 @@ if(isset($_POST["Submit_booking"])){
                         });
                     },
                 });
-                
+
                 $.ajax({
                     type: "POST",
                     url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_dates.php',
@@ -1384,25 +1464,28 @@ if(isset($_POST["Submit_booking"])){
                         hotels_ID: hotels_ID
                     },
                     success: function(data) {
-                        
+
                         $(".date_from").attr({
-                           "min" : data[0],        
-                           "max" : data[1]          
+                            "min": data[0],
+                            "max": data[1]
                         });
                         $(".date_from").val(data[0]);
                     },
                 });
-                
+
             } else {
                 $(".rooms_ID").val(null).trigger("change");
                 $(".rooms_ID option").remove();
                 $(".meals_ID").val(null).trigger("change");
                 $(".meals_ID option").remove();
                 $(".date_from").attr({
-                   "min" : '<?php date('Y-m-d')?>',        
-                   "max" : '<?php date('Y-m-d')?>'          
+                    "min": '<?php date('
+                    Y - m - d ')?>',
+                    "max": '<?php date('
+                    Y - m - d ')?>'
                 });
-                $(".date_from").val('<?php date('Y-m-d')?>');
+                $(".date_from").val('<?php date('
+                    Y - m - d ')?>');
 
             }
         });
@@ -1424,6 +1507,79 @@ if(isset($_POST["Submit_booking"])){
             $(this).parent().parent('.form-group').remove();
 
         });
+
+
+        function pax_calculate() {
+
+            var total_booked = $('.num_traveler').val();
+
+            if (total_booked) {
+
+                var total_selected = 0;
+
+                $(".num_rooms_array").each(function() {
+
+                    total_selected += $(this).parent().find('.rooms_ID').find(':selected').data('persons') * $(this).val();
+
+                });
+
+                var message_for_rooms = "";
+
+                if (total_booked == total_selected)
+
+                    message_for_rooms = '<font style="color:green">Sie haben alle Pax verteilt!</font>';
+
+                if (total_booked > total_selected)
+
+                    message_for_rooms = '<font style="color:red">Sie haben noch <b>' + (total_booked - total_selected) + ' Pax </b>zu verteilen!</font>';
+
+                if (total_booked < total_selected)
+
+                    message_for_rooms = '<font style="color:red">die Verteilung passt NICHT!</font>';
+
+                $(".lc_costs_date_from").html(message_for_rooms);
+            } else {
+
+                $(".lc_costs_date_from").html('<font style="color:red">Personenzahl zuerst bitte eingeben!</font>');
+            }
+        }
+
+        $('.num_rooms_array').live('change', pax_calculate);
+        $('.rooms_ID').live('change', pax_calculate);
+
+        $('#journey_ID').change(function() {
+
+            var journey_ID = $(this).val();
+
+            if (journey_ID != '') {
+
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo SITE_URL_ADMIN?>dashboard_manager/AJAX_change_city_location.php',
+                    dataType: "text",
+                    data: {
+                        journey_ID: journey_ID
+                    },
+                    success: function(data) {
+
+                        if (data) {
+                            $(".abfahrsort").show();
+                            $("#city_location").attr("required", true);
+                            $("#city_location").val(null).trigger("change");
+                            $("#city_location option").remove();
+                            $("#city_location").append('<option value=""></option>' + data);
+                        } else {
+                            $('#city_location').removeAttr('required');
+                            $(".abfahrsort").hide();
+                        }
+                    },
+                });
+            } else {
+                $(".abfahrsort").hide();
+            }
+        });
+
+        $(".abfahrsort").hide();
 
     </script>
 
