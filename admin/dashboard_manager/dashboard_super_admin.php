@@ -575,9 +575,9 @@ if(isset($_POST["Submit_booking"])){
                         </div>
 
                         <div class="form-group abfahrsort">
-                            <label for="city_location" class="control-label col-md-3">Abfahrsort</label>
+                            <label for="city_location" class="control-label col-md-3">Abfahrtsort</label>
                             <div class="col-md-1">
-                                <select class="form-control input-medium select2me" data-placeholder="Abfahrsort Auswaehlen" tabindex="0" id="city_location" name="city_location">
+                                <select class="form-control input-medium select2me" data-placeholder="Abfahrtsort auswaehlen" tabindex="0" id="city_location" name="city_location">
                                         <option value=""></option>
 									</select>
                                 <span for="city_location" class="help-block"></span>
@@ -850,7 +850,7 @@ if(isset($_POST["Submit_booking"])){
                                             <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
 
                                             <?php if(!empty($abfahrsort)): ?>
-                                            <br/><br/> Abfahrsort (<b><?php echo $abfahrsort; ?></b>)
+                                            <br/><br/> Abfahrtsort (<b><?php echo $abfahrsort; ?></b>)
                                             <?php endif; ?>
                                             <td style="text-align:right;">
                                                 <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
@@ -898,26 +898,83 @@ if(isset($_POST["Submit_booking"])){
                                     
                                         $indiv_journey_cost = $journey_cost / $num_traveler;
 
-                                        $indiv_promoter_provision = $promoter_provision / $num_traveler;
+                                        $indiv_office_profit = $office_profit / $num_traveler; 
+                                                    
+                                        if($other_costs_list["MwSt"]["type"]=="percent")
+        
+                                            $indiv_MwSt = $indiv_office_profit * $other_costs_list["MwSt"]["costs"] / 100 ; 
 
-                                        $indiv_office_profit = $office_profit / $num_traveler;
+                                        else
 
-                                        $indiv_MwSt = $MwSt / $num_traveler;                                    
-
+                                            $indiv_MwSt = $other_costs_list["MwSt"]["costs"];
+                                                    
                                         $indiv_cost_array=array();
 
                                         $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
 
                                         foreach($rooms_cost_details as $key1 => $rooms){
+                                            
+                                            $indiv_promoter_provision=0;
+                                            
+                                            $indiv_costs_this_room_whole_time = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"];
 
-                                            $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"]) + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+                                            for($excel_loop=1;$excel_loop<=20;$excel_loop++){
 
+                                                if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+                                                    $indiv_promoter_provision = ( ($indiv_promoter_provision + $indiv_costs_this_room_whole_time + $indiv_office_profit + $indiv_MwSt) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
+
+                                                else
+
+                                                    $indiv_promoter_provision = $other_costs_list["Promoter Provision"]["costs"];
+
+
+                                                if($other_costs_list["MwSt"]["type"]=="percent")
+
+                                                    $indiv_MwSt = ( ($indiv_promoter_provision + $indiv_office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
+
+                                                else
+
+                                                    $indiv_MwSt = $other_costs_list["MwSt"]["costs"];
+                                            }
+                                            
+                                            
+                                            $indiv_cost_array[$key1] = $indiv_costs_this_room_whole_time + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+
+                                            if($meals_cost>0):
+                                            
                                             foreach($meals_cost_details as $key2 => $meals){
 
                                                 unset($indiv_cost_array[$key1]);
+                                                
+                                                $indiv_promoter_provision=0;
+                                            
+                                                $indiv_costs_this_meal_and_room_whole_time = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"];
+                                                
+                                                for($excel_loop=1;$excel_loop<=20;$excel_loop++){
 
-                                                $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"] + $meals["costs_this_meal_the_whole_time"] / $meals["meals_ordered"]) + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
+                                                    if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+                                                        $indiv_promoter_provision = ( ($indiv_promoter_provision + $indiv_costs_this_room_whole_time + $indiv_office_profit + $indiv_MwSt) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
+
+                                                    else
+
+                                                        $indiv_promoter_provision = $other_costs_list["Promoter Provision"]["costs"];
+
+
+                                                    if($other_costs_list["MwSt"]["type"]=="percent")
+
+                                                        $indiv_MwSt = ( ($indiv_promoter_provision + $indiv_office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
+
+                                                    else
+
+                                                        $indiv_MwSt = $other_costs_list["MwSt"]["costs"];
+                                                }
+
+                                                $indiv_cost_array[$key1." + ". $key2] = $indiv_costs_this_meal_and_room_whole_time + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
                                             }
+                                            
+                                            endif;
                                         }
                                     
                                         $json_array=array(
@@ -1133,7 +1190,7 @@ if(isset($_POST["Submit_booking"])){
                                             <?php if(!empty($journey_title)) echo '(<b>'.$journey_title.'</b>)'; ?>
 
                                             <?php if(!empty($abfahrsort)): ?>
-                                            <br/><br/> Abfahrsort (<b><?php echo $abfahrsort; ?></b>)
+                                            <br/><br/> Abfahrtsort (<b><?php echo $abfahrsort; ?></b>)
                                             <?php endif; ?>
                                             <td style="text-align:right;">
                                                 <?php echo number_format($journey_cost, 2, ',', '.'); ?>&euro; </td>
@@ -1186,27 +1243,88 @@ if(isset($_POST["Submit_booking"])){
 
                                     <?php 
                                     
+                                        $indiv_discounted_journey_cost=$indiv_discounted_journey_cost;
+                                                    
                                         $indiv_discounted_promoter_provision = $discounted_promoter_provision / $num_traveler;
 
                                         $indiv_discounted_office_profit = $discounted_office_profit / $num_traveler;
 
-                                        $indiv_discounted_MwSt = $discounted_MwSt / $num_traveler;
+                                        if($other_costs_list["MwSt"]["type"]=="percent")
 
-                                        $indiv_cost_array=array();
+                                        $indiv_discounted_MwSt = $indiv_discounted_office_profit * $other_costs_list["MwSt"]["costs"] / 100 ; 
 
-                                        $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
+                                    else
 
-                                        foreach($rooms_cost_details as $key1 => $rooms){
+                                        $indiv_discounted_MwSt = $other_costs_list["MwSt"]["costs"];
 
-                                            $indiv_cost_array[$key1] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                    $indiv_cost_array=array();
 
-                                            foreach($meals_cost_details as $key2 => $meals){
+                                    $colors_picked_temp = $colors_to_pick_array[mt_rand(0, count($colors_to_pick_array) - 1)];
 
-                                                unset($indiv_cost_array[$key1]);
+                                    foreach($rooms_cost_details as $key1 => $rooms){
 
-                                                $indiv_cost_array[$key1." + ". $key2] = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"] + $indiv_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
-                                            }
+                                        $indiv_discounted_promoter_provision=0;
+
+                                        $indiv_discounted_costs_this_room_whole_time = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"];
+
+                                        for($excel_loop=1;$excel_loop<=20;$excel_loop++){
+
+                                            if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+                                                $indiv_discounted_promoter_provision = ( ($indiv_discounted_promoter_provision + $indiv_discounted_costs_this_room_whole_time + $indiv_discounted_office_profit + $indiv_discounted_MwSt) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
+
+                                            else
+
+                                                $indiv_discounted_promoter_provision = $other_costs_list["Promoter Provision"]["costs"];
+
+
+                                            if($other_costs_list["MwSt"]["type"]=="percent")
+
+                                                $indiv_discounted_MwSt = ( ($indiv_discounted_promoter_provision + $indiv_discounted_office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
+
+                                            else
+
+                                                $indiv_discounted_MwSt = $other_costs_list["MwSt"]["costs"];
                                         }
+
+
+                                        $indiv_cost_array[$key1] = $indiv_discounted_costs_this_room_whole_time + $indiv_discounted_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+
+                                        if($meals_cost>0):
+
+                                        foreach($meals_cost_details as $key2 => $meals){
+
+                                            unset($indiv_cost_array[$key1]);
+
+                                            $indiv_discounted_promoter_provision=0;
+
+                                            $indiv_discounted_costs_this_meal_and_room_whole_time = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"] + ($meals["costs_this_meal_the_whole_time"] - $meals["costs_this_meal_the_whole_time"]*$row->eb_discount/100) / $meals["meals_ordered"] ;
+
+                                            for($excel_loop=1;$excel_loop<=20;$excel_loop++){
+
+                                                if($other_costs_list["Promoter Provision"]["type"]=="percent")
+
+                                                    $indiv_discounted_promoter_provision = ( ($indiv_discounted_promoter_provision + $indiv_discounted_costs_this_room_whole_time + $indiv_discounted_office_profit + $indiv_discounted_MwSt) * $other_costs_list["Promoter Provision"]["costs"] ) /100 ;
+
+                                                else
+
+                                                    $indiv_discounted_promoter_provision = $other_costs_list["Promoter Provision"]["costs"];
+
+
+                                                if($other_costs_list["MwSt"]["type"]=="percent")
+
+                                                    $indiv_discounted_MwSt = ( ($indiv_discounted_promoter_provision + $indiv_discounted_office_profit) * $other_costs_list["MwSt"]["costs"] ) /100 ;
+
+                                                else
+
+                                                    $indiv_discounted_MwSt = $other_costs_list["MwSt"]["costs"];
+                                            }
+
+                                            $indiv_cost_array[$key1." + ". $key2] = $indiv_discounted_costs_this_meal_and_room_whole_time + $indiv_discounted_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
+                                        }
+
+                                        endif;
+                                    } 
                                     
                                         $json_array=array(
                                                             "journey_cost"=>$journey_cost,
