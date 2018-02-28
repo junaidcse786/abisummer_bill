@@ -1,7 +1,8 @@
 <?php 
 
 require_once('config/dbconnect.php');
-	
+$abfahrsort=""; 
+$rooms_regular_price="";	
 $total_cost=0; $rooms_cost=0; $meals_cost=0; $journey_cost=0; $other_cost=0;
 
 $other_costs_list=array();
@@ -66,7 +67,7 @@ if(isset($_POST["Submit"])){
             
             else*/
                 
-            $journey_cost=$journey_price;
+            $journey_cost=$journey_price*$num_traveler;
         }
     }
     
@@ -1448,26 +1449,7 @@ if(isset($_POST["Submit"])){
 
                 }
             });
-
-            $('.clone-it').live('click', function() {
-
-                var $cloned_div = $(this).parent().parent('.form-group');
-
-                var $html_content = $cloned_div.clone();
-
-                $cloned_div.before($html_content);
-
-                $cloned_div.find('.remove-it').removeClass('hide');
-
-            });
-
-            $('.remove-it').live('click', function() {
-
-                $(this).parent().parent('.form-group').remove();
-
-            });
-
-
+            
             function pax_calculate() {
 
                 var total_booked = $('.num_traveler').val();
@@ -1503,6 +1485,28 @@ if(isset($_POST["Submit"])){
                 }
             }
 
+            $('.clone-it').live('click', function() {
+
+                var $cloned_div = $(this).parent().parent('.form-group');
+
+                var $html_content = $cloned_div.clone();
+
+                $cloned_div.before($html_content);
+
+                $cloned_div.find('.remove-it').removeClass('hide');
+                
+                pax_calculate();
+            });
+
+            $('.remove-it').live('click', function() {
+
+                $(this).parent().parent('.form-group').remove();
+                
+                pax_calculate();
+
+            });
+
+            $('.num_traveler').live('change', pax_calculate);
             $('.num_rooms_array').live('change', pax_calculate);
             $('.rooms_ID').live('change', pax_calculate);
 

@@ -1,5 +1,6 @@
 <?php 
-
+$abfahrsort="";
+$rooms_regular_price="";
 function generateRandomString($length = 20) {
     $characters = '23456789ABCDEFGHJKMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
@@ -57,8 +58,7 @@ if(isset($_POST["Submit"])){
         if(mysqli_num_rows($query) > 0)
         {
             $content     = mysqli_fetch_object($query);
-            $journey_price       = $content->journey_price; 
-            $abfahrsort="";
+            $journey_price       = $content->journey_price;             
             if(!empty($city_location)){
                 
                 $sql = "select jl_price, jl_city_location from ".$db_suffix."journey_location where journey_ID = $journey_ID AND jl_ID='$city_location' limit 1";			
@@ -77,7 +77,7 @@ if(isset($_POST["Submit"])){
             
             else*/
                 
-            $journey_cost=$journey_price;
+            $journey_cost=$journey_price*$num_traveler;
         }
     }
     
@@ -1486,26 +1486,7 @@ if(isset($_POST["Submit_booking"])){
 
             }
         });
-
-        $('.clone-it').live('click', function() {
-
-            var $cloned_div = $(this).parent().parent('.form-group');
-
-            var $html_content = $cloned_div.clone();
-
-            $cloned_div.before($html_content);
-
-            $cloned_div.find('.remove-it').removeClass('hide');
-
-        });
-
-        $('.remove-it').live('click', function() {
-
-            $(this).parent().parent('.form-group').remove();
-
-        });
-
-
+        
         function pax_calculate() {
 
             var total_booked = $('.num_traveler').val();
@@ -1541,6 +1522,29 @@ if(isset($_POST["Submit_booking"])){
             }
         }
 
+        $('.clone-it').live('click', function() {
+
+            var $cloned_div = $(this).parent().parent('.form-group');
+
+            var $html_content = $cloned_div.clone();
+
+            $cloned_div.before($html_content);
+
+            $cloned_div.find('.remove-it').removeClass('hide');
+            
+            pax_calculate();
+
+        });
+
+        $('.remove-it').live('click', function() {
+
+            $(this).parent().parent('.form-group').remove();
+            
+            pax_calculate();
+
+        });
+
+        $('.num_traveler').live('change', pax_calculate);
         $('.num_rooms_array').live('change', pax_calculate);
         $('.rooms_ID').live('change', pax_calculate);
 

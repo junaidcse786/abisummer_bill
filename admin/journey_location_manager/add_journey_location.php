@@ -163,7 +163,7 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                         </div>
 
                         <div class="form-group <?php echo $messages[" jl_price "]["status "] ?>">
-                            <label class="control-label col-md-3" for="jl_price">Reisetyp Preis (Euro) <span class="required">*</span></label>
+                            <label class="control-label col-md-3" for="jl_price">Gesammtpreis von diesem Ort <span class="required">*</span></label>
                             <div class="col-md-4">
                                 <input type="number" step="any" placeholder="" class="form-control" name="jl_price" value="<?php echo $jl_price;?>" />
                                 <span for="jl_price" class="help-block"><?php echo $messages["jl_price"]["msg"] ?></span>

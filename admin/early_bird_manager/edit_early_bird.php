@@ -4,7 +4,7 @@ $alert_message=""; $alert_box_show="hide"; $alert_type="success";
 	
 $err_easy="has-error";
 
-$err=0;
+$err=0; $confirmation=0;
 
 $eb_ID = isset($_REQUEST['id']) ? $_REQUEST['id']: 0;
 $sql = "select * from ".$db_suffix."early_bird where eb_ID = $eb_ID limit 1";				
@@ -43,17 +43,26 @@ if(isset($_POST['Submit']))
         
             $messages["eb_discount_date_from"]["status"]=$err_easy;
             $messages["eb_discount_date_from"]["msg"]="Rabatt Datum ist Pflichtfeld";
-            $err++;	
-			
+            $err++;
 	endif;
 	
 	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_from' OR eb_discount_date_to='$date_from') AND eb_ID!='$eb_ID'"))>0):		
         
-		$messages["eb_discount_date_from"]["status"]=$err_easy;
-		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
-		$err++;		        
-		
+		if(!$confirmation):
+            $messages["eb_discount_date_from"]["status"]=$err_easy;
+            $messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+            $err++;
+        endif;		
 	endif;
+    
+    if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_to' OR eb_discount_date_to='$date_to') AND eb_ID!='$eb_ID'"))>0):		
+        
+		if(!$confirmation):
+            $messages["eb_discount_date_from"]["status"]=$err_easy;
+            $messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+            $err++;	
+        endif;		
+	endif;    
     
     if($date_from1<$date_to)
     {
@@ -62,15 +71,7 @@ if(isset($_POST['Submit']))
 		$err++;		
 	}
 	
-	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_to' OR eb_discount_date_to='$date_to') AND eb_ID!='$eb_ID'"))>0):		
-        
-		$messages["eb_discount_date_from"]["status"]=$err_easy;
-		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
-		$err++;		        
-		
-	endif;
-    
-    if(empty($eb_discount))
+	if(empty($eb_discount))
 	{
 		$messages["eb_discount"]["status"]=$err_easy;
 		$messages["eb_discount"]["msg"]="Rabatt ist Pflichtfeld";
@@ -203,6 +204,17 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                  		<span for="eb_discount_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_from"]["msg"] ?></span>
                               		</div>
                            	  </div>
+                                   
+                              <div class="form-group <?php echo $messages["eb_discount_date_from"]["status"];  if(empty($messages["eb_discount_date_from"]["status"])) echo 'hide';  ?>">
+                              		<label class="control-label col-md-3" for="eb_discount_date_from">Bestätigung</label>
+                              		<div class="col-md-4">
+                                 		<select class="form-control" name="confirmation">
+                                            <option <?php if($confirmation==0) echo 'selected="selected"'; ?> value="0">Nein, das geht nicht</option>
+                                            <option <?php if($confirmation==1) echo 'selected="selected"'; ?> value="1">Ja, alles klar, ich verstehe</option>
+                                     </select>
+                                        <span for="eb_discount_date_from" class="help-block">Bitte bestätigen</span>
+                              		</div>
+                           	  </div>       
                                    
                               <div class="form-group <?php echo $messages["eb_stay_from"]["status"] ?>">
                               		<label class="control-label col-md-3" for="eb_stay_from">Reisedatum</label>

@@ -10,6 +10,7 @@ $eb_discount_date_from = "";
 $eb_status = 1;
 $eb_discount = "";
 $eb_notes = "";
+$confirmation=0;
 
 $err=0;
 
@@ -34,19 +35,19 @@ if(isset($_POST['Submit']))
 	endif;
 	
 	if(!empty($date_from) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_from' OR eb_discount_date_to='$date_from')"))>0):		
-        
-		$messages["eb_discount_date_from"]["status"]=$err_easy;
-		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
-		$err++;		        
-		
+        if(!$confirmation):
+            $messages["eb_discount_date_from"]["status"]=$err_easy;
+            $messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+            $err++;		        
+		endif;
 	endif;
 	
 	if(!empty($date_to) && mysqli_num_rows(mysqli_query($db, "SELECT eb_ID from ".$db_suffix."early_bird where hotels_ID = $hotels_ID AND (eb_discount_date_from='$date_to' OR eb_discount_date_to='$date_to')"))>0):		
-        
-		$messages["eb_discount_date_from"]["status"]=$err_easy;
-		$messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
-		$err++;		        
-		
+        if(!$confirmation):
+            $messages["eb_discount_date_from"]["status"]=$err_easy;
+            $messages["eb_discount_date_from"]["msg"]="Besonderrabatt für diesen Datum schon existiert";
+            $err++;		        
+		endif;
 	endif;
     
     if($date_from1<$date_to)
@@ -187,7 +188,18 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                                                             <input type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" class="form-control" name="date_to" value="<?php echo $date_to; ?>"> </div>
                                  		<span for="eb_discount_date_from" class="help-block">z.B. DD.MM.YYYY - DD.MM.YYYY oder nur den einzigen Datum z.B. DD.MM.YYYY<br/><?php echo $messages["eb_discount_date_from"]["msg"] ?></span>
                               		</div>
-                           	  </div>  
+                           	  </div>
+                                   
+                              <div class="form-group <?php echo $messages["eb_discount_date_from"]["status"]; if(empty($messages["eb_discount_date_from"]["status"])) echo 'hide';  ?>">
+                              		<label class="control-label col-md-3" for="eb_discount_date_from">Bestätigung</label>
+                              		<div class="col-md-4">
+                                 		<select class="form-control" name="confirmation">
+                                            <option <?php if($confirmation==0) echo 'selected="selected"'; ?> value="0">Nein, das geht nicht</option>
+                                            <option <?php if($confirmation==1) echo 'selected="selected"'; ?> value="1">Ja, alles klar, ich verstehe</option>                                            
+                                     </select>
+                                        <span for="eb_discount_date_from" class="help-block">Bitte bestätigen</span>
+                              		</div>
+                           	  </div>        
                                    
                               <div class="form-group <?php echo $messages["eb_stay_from"]["status"] ?>">
                               		<label class="control-label col-md-3" for="eb_stay_from">Reisedatum</label>
