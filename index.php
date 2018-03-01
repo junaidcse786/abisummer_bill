@@ -988,6 +988,8 @@ if(isset($_POST["Submit"])){
                                             
                                             $indiv_promoter_provision=0;
                                             
+                                            if($meals_cost<=0):
+                                            
                                             $indiv_costs_this_room_whole_time = $rooms["costs_this_room_the_whole_time"] / $rooms["rooms_persons_to_fit"];
 
                                             for($excel_loop=1;$excel_loop<=20;$excel_loop++){
@@ -1013,7 +1015,7 @@ if(isset($_POST["Submit"])){
                                             
                                             $indiv_cost_array[$key1] = $indiv_costs_this_room_whole_time + $indiv_journey_cost + $indiv_promoter_provision + $indiv_MwSt + $indiv_office_profit;
 
-                                            if($meals_cost>0):
+                                            else:
                                             
                                             foreach($meals_cost_details as $key2 => $meals){
 
@@ -1275,6 +1277,8 @@ if(isset($_POST["Submit"])){
                                                     foreach($rooms_cost_details as $key1 => $rooms){
 
                                                         $indiv_discounted_promoter_provision=0;
+                                                        
+                                                        if($meals_cost<=0):
 
                                                         $indiv_discounted_costs_this_room_whole_time = ($rooms["costs_this_room_the_whole_time"] - $rooms["costs_this_room_the_whole_time"]*$row->eb_discount/100) / $rooms["rooms_persons_to_fit"];
 
@@ -1301,7 +1305,7 @@ if(isset($_POST["Submit"])){
 
                                                         $indiv_cost_array[$key1] = $indiv_discounted_costs_this_room_whole_time + $indiv_discounted_journey_cost + $indiv_discounted_promoter_provision + $indiv_discounted_MwSt + $indiv_discounted_office_profit;
 
-                                                        if($meals_cost>0):
+                                                        else:
 
                                                         foreach($meals_cost_details as $key2 => $meals){
 
